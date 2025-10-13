@@ -120,7 +120,6 @@ button.btn {
   text-align: center;
   padding: 8px 0;
   border-radius: 6px;
-  /* Position the tooltip text - see examples below! */
   position: absolute;
   z-index: 1;
   width: 125px;
@@ -131,10 +130,10 @@ button.btn {
 }
 
 .btn .tooltip::after {
-  content: " ";
+   content: " ";
    position: absolute;
    top: 50%;
-   left: 100%; /* To the right of the tooltip */
+   left: 100%;
    margin-top: -7px;
    border-width: 7px;
    border-style: solid;

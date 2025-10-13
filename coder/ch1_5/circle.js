@@ -1,36 +1,48 @@
 "use strict";
 let canvas = document.getElementById("circle");
-canvas.width = 320;
-canvas.height = 320;
+canvas.width = 440;
+canvas.height = 360;
 
 let ctx = canvas.getContext("2d");
 ctx.fillStyle = "white";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.font = 'bold 16px Consolas';
 
-function drawArc(radius, angle)
+function drawCircle(radius, angle)
 {
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const a = angle * Math.PI / 180;
+  const a = -angle * Math.PI / 180;
+  let x = canvas.width / 2 + radius * Math.cos(a);
+  let y = canvas.height / 2 + radius * Math.sin(a);
   ctx.beginPath();
-  ctx.fillStyle = "blue";
-  ctx.strokeStyle = "blue";
-  ctx.lineWidth = 5;
-  ctx.arc(160, 160, radius, 0, a, false);
+  ctx.fillStyle = "black";
+  ctx.strokeStyle = "black";
+  ctx.moveTo(canvas.width / 2, canvas.height / 2);
+  ctx.lineTo(x, y);
+  ctx.lineWidth = 1.0;
   ctx.stroke();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.fillStyle = "#2F5FFF";
+  ctx.strokeStyle = "#2F5FFF";
+  ctx.lineWidth = 4;
+  ctx.arc(canvas.width / 2, canvas.height / 2, radius, a, 0, false);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.arc(x, y, 4, 0, 2 * Math.PI);
+  ctx.fill();
   ctx.closePath();
   ctx.beginPath();
   ctx.fillStyle = "black";
   ctx.strokeStyle = "black";
-  ctx.arc(160, 160, 6, 0, 2 * Math.PI);
+  ctx.arc(canvas.width / 2, canvas.height / 2, 4, 0, 2 * Math.PI);
   ctx.fill();
+  ctx.fillText("(0, 0)", canvas.width / 2 + 5, canvas.height / 2 + 14);
   ctx.closePath();
-  ctx.beginPath();
-  ctx.moveTo(160, 160);
-  ctx.lineTo(160 + radius * Math.cos(a), 160 + radius * Math.sin(a));
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  ctx.closePath();
+  ctx.fillStyle = "red";
+  ctx.fillText("(x, y)", x + 5, y + 14);
 }
 
 function getRadius()
@@ -39,7 +51,7 @@ function getRadius()
   let r = slide.value;
 
   const txt = document.getElementById("val-r");
-  txt.innerHTML = (r / 20).toString();
+  txt.innerHTML = (r / 20).toFixed(1);
 
   return r;
 }
@@ -50,7 +62,7 @@ function getAngle()
   let a = slide.value;
 
   const txt = document.getElementById("val-ang");
-  txt.innerHTML = a.toString();
+  txt.innerHTML = a.toString().padStart(3, "\u00A0");
 
   return a;
 }
@@ -59,7 +71,7 @@ function manageSliders()
 {
   const radius = getRadius();
   const angle = getAngle();
-  drawArc(radius, angle);
+  drawCircle(radius, angle);
 }
 
 manageSliders();

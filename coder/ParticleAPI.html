@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Particle API Reference</title>
+  </head>
+  <body text=#000000 bgcolor=#FFFFFF link=#0000FF alink=#0000FF vlink=#0000FF>
+    <link rel="stylesheet" href="styles.css"/>
+    <h1>Particle Scripting API Reference</h1>
+    <table width=100%>
+      <tr>
+      <td><a href="../index.html"><strong>&lt;&lt;&lt;&nbsp;PREV</strong></a></td>
+      </tr>
+    </table>
+    <br>
+    The technical documentation of the Lua Scripting API for the Particle System Plugin. Contains details about <strong>plugin data entities</strong> (purpose, property field names, expected value types), <strong>built-in functions</strong> (purpose, arguments, returned values) and <strong>built-in constants</strong>.<br><br>
+    <h3>Conventions used in this document</h3>
+    This document follows certain guidelines for maintaining consistency in presenting information clearly.<br><br>
+    <h4>Plugin data entity descriptions</h4>
+    Plugin data entities are shortly characterized (i.e. what data they represent inside the plugin) and all of their field names are listed in a table, each with a description of what data / value type they hold what is the expected value range (if user assigns a value). There is also a specification of whether the field is <strong>read-only</strong>, meaning that the plugin allows the user to get the value of a field, but does not allow directly assigning new values it (which doesn’t imply that the value given by said field cannot be changed through other means).<br><br>
+    <table cellpadding = "15" cellspacing = "15" class="tab">
+    <caption><span class="func">DataEntityType</span></caption>
+    <tr>
+      <td colspan="5">Description of what <span class="var">DataEntityType</span> represents</td>
+    </tr>
+    <tr>
+      <th><strong>Field name</strong></th>
+      <th><strong>Value type</strong></th>
+      <th><strong>Range restriction</strong></th>
+      <th><strong>Default value</strong></th>
+      <th><strong>Read-only</strong></th>
+    </tr>
+    <span class="var">
+    <tr>
+      <td class="var">fieldOne</td>
+      <td class="var">integer</td>
+      <td class="var">0 - 255</td>
+      <td class="var">1</td>
+      <td class="var">false</td>
+    </tr>
+    <tr>
+      <td class="var">fieldTwo</td>
+      <td class="var">number</td>
+      <td class="var">&ge; 0</td>
+      <td class="var">0</td>
+      <td class="var">false</td>
+    </tr>
+    <tr>
+      <td class="var">fieldThree</td>
+      <td class="var">string</td>
+      <td class="var">up to 20 characters</td>
+      <td class="var">"text"</td>
+      <td class="var">true</span></td>
+    </tr>
+    </span>
+    </table>
+    <br>
+    <h4>Built-in function descriptions</h4>
+    Built-in functions take the form of:
+    <span class="func">functionName(arg1: type1, arg2: type2, ..., argN: typeN)</span>
+    <hr>
+    <h2>Sections</h2>
+    <strong>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id1">1. Plugin Data Entities</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id2">2. Built-in Functions</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id3">3. Built-in Constants</a><br>
+    </strong>
+    <hr>
+    <a name="id1"><h2 style="display: block; text-align: center">Built-in Functions</h2></a>
+    <ul style="list_style_type: square">
+      <li><span class="func">abs(x: number)</span><br>
+        Returns: the absolute value<br>
+        Arguments:
+        <ul style="list_style_type: disc">
+          <li><span class="var">x</span> - number for which to get the absolute value of</li>
+        </ul>
+      </li>
+    </ul>
+  </body>
+</html>

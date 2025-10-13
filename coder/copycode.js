@@ -1,23 +1,28 @@
-
 function resetText(ttip)
 {
-  ttip.innerHTML = "Copy to clipboard";
+	ttip.innerHTML = 'Copy to clipboard';
+}
+
+function stripCodeHtml(html)
+{
+	html = html.replace(/<br\s*\/?>(?=(<br\s*\/?>))/gi, '\n');
+	html = html.replace(/[^\S\r\n]{2,}/g, '');
+	html = html.replace(/&nbsp;/gi, ' ');
+
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = html;
+	tempDiv.querySelectorAll('button').forEach(el => el.remove());
+
+	return tempDiv.textContent;
 }
 
 function copyCode(btn)
 {
-	let tooltip = btn.firstElementChild;
-	tooltip.innerHTML = "Text copied!";
+	const tooltip = btn.firstElementChild;
+	tooltip.innerHTML = 'Text copied!';
 	setTimeout(resetText, 1500, tooltip);
 
-	let code = btn.parentElement.innerHTML; // the surrounding "code" div html
-	// some nasty regex to extract the code and clear tags, don't do this, kids!
-	code = code.replace(/[^\S\r\n]{2,}/g, "");
-	code = code.replace(/<button.*?>.*?<\/button>/gi, "");
-	code = code.replace(/<span.*?>((.|\n)*?)<\/span>/gi, "$1");
-	code = code.replace(/<br>(?=<br>)/gi, "\n");
-	code = code.replace(/<br>/gi, "");
-	code = code.replace(/&nbsp;/gi, " ");
+	const code = stripCodeHtml(btn.parentElement.innerHTML);
 
 	navigator.clipboard.writeText(code.trim());
 }

@@ -39,7 +39,7 @@
     If you are a developer, although you must be familiar with both interfaces, you will be using the module interface much more extensively in your developer role. Developers write <strong>module scripts</strong> for level builders to use (you might be both a developer and a builder, in which case as a level builder, you will use your own modules).<br><br>
     <hr>
     <a name="id2"><h3>Module scripts</h3></a>
-    Module scripts are Lua script files located in the <span class="var">effects</span> subfolder (which does not exist, it must be <u>newly added to the root directory</u> of the TRLE project). Module scripts can be named freely, with any suitable file name accepted by the Windows file system.<br><br>
+    Module scripts are Lua script files located in the <span class="var">modulescripts</span> subfolder (which does not exist, it must be <u>newly added to the root directory</u> of the TRLE project). Module scripts can be named freely, with any suitable file name accepted by the Windows file system.<br><br>
     If you intend to make your custom particle effects, you should be writing them in the form of modules. There are obvious reasons why this approach is preferrable.<br><br>
     The first is that the module system provides the benefit of scripting an effect once, but being able to reuse it several times. This way, you don’t have to resort to copy-pasting the same code into multiple level scripts. The second is if you intend to kindly share your very special effect with the rest of the TRLE builder community, module scripts are the most convenient way of doing so. As a developer, you can further add all kinds of parameters for end users to customize the effect.<br><br>
     To begin a module script, it is customary to call a special, built-in function in the plugin’s API, <span class="var">createModule()</span>. This is not mandatory, Lua scripts can still work as modules without calling <span class="var">createModule()</span>.
@@ -133,8 +133,8 @@
     <a name="id2"><h3>Importing modules</h3></a>
     So far, we have reminded ourselves that in this plugin, there are level scripts and modules that we can use in them. But how do we introduce the modules into our level scripts?<br><br>
     The foundation of the module import system is the <span class="var">require()</span> function. It’s a built-in function in the plugin’s API.<br><br>
-    The function takes one argument, which is the name of the module (as a string), but <u>without any file extension</u>. The plugin reads modules from the subfolder <span class="var">effects</span> (placed in the main game folder / <span class="var">Engine</span> folder if using TombIDE). This <span class="var">effects</span> folder is where you must place all modules used for your TRLE project, otherwise the plugin won’t see them.<br><br>
-    For the sake of example, say we have one module called <span class="var">ice.lua</span> and another called <span class="var">fire.lua</span> (both placed in the <span class="var">effects</span> folder). To import these modules into a level, in its associated level script (e.g. <span class="var">tut1.lua</span>) we write:
+    The function takes one argument, which is the name of the module (as a string), but <u>without any file extension</u>. The plugin reads modules from the subfolder <span class="var">modulescripts</span> (placed in the main game folder / <span class="var">Engine</span> folder if using TombIDE). This <span class="var">modulescripts</span> folder is where you must place all modules used for your TRLE project, otherwise the plugin won’t see them.<br><br>
+    For the sake of example, say we have one module called <span class="var">ice.lua</span> and another called <span class="var">fire.lua</span> (both placed in the <span class="var">modulescripts</span> folder). To import these modules into a level, in its associated level script (e.g. <span class="var">tut1.lua</span>) we write:
     <div class="code">
       require("ice") <span class="com">-- imports ice.lua from 'effects' subfolder</span><br>
       require('fire') <span class="com">-- imports fire.lua from 'effects' subfolder</span>
@@ -217,6 +217,85 @@
       <li>The module itself must be in text form, so the code can be examined directly. Modules in precompiled form should not be accepted due to safety concerns.</li>
     </ol><br>
     These are only some of my own personal thoughts about how module sharing between community members should look like. It would be wonderful to have a repository of module scripts created by members of the TRLE community, but some form of quality control would be necessary to make this feasable, hence I have given some of my own ideas on how to approach this matter.<br>
+    <hr>
+    <hr>
+    <a name="id7"><h3>Bonus: parametric expressions for velocity</h3></a>
+    So, you’re curious to know why in the last section, the formula for velocity needed <span class="var">cos()</span> instead of <span class="var">sin()</span> to achieve a curve like <span class="var">sin(x)</span>?<br>
+    To explain why this is, I must go on a tangent about the exact mathematical relation between velocity and position. I know, there is a lot of maths as of late, but I told you this section is optional, if maths is not your cup of tea.<br><br>
+    <h4>To find a derivative…</h4>
+    When we think of velocity, what is the first thing that comes to mind? We can say it specifies the number of spatial units an object travels at an exact moment in time. Another way of phrasing this is by stating that velocity is the rate of change of position at a given point in time. It means that at that exact moment, the object travels this amount of spatial units (meters, kilometers, feet, miles) per unit of time (second, minute, hour) on the X, Y and Z axis.<br><br>
+    Notice that the phrase: “<i>rate of change at an exact point in time</i>”, though intuitively makes sense to us, is a bit nonsensical, after giving it some thought. After all, to calculate a rate of <i>change</i> to position, we need to measure the position coordinates at two different points in time, then get the difference between these two positions (i.e. the <i>change</i>) and divide it by the difference in time between the measurements. If we narrow it down to a single spatial dimension, we can imagine the object traveling along the X axis. If we have a current measurment <span class="var">(xNow, timeNow)</span> and a previous measurement <span class="var">(xPrev, timePrev)</span>, the formula to get the approximate velocity should look like this:<br><br>
+    <span class="var">
+    xVel = (xNow - xPrev) / (timeNow - timePrev)
+    </span><br><br>
+    If we are literal about the meaning of “an exact point in time”, this would imply that <span class="var">timePrev</span> is the same as <span class="var">timeNow</span>. Since&nbsp;&nbsp;<span class="var">(timeNow - timeNow)</span>&nbsp;&nbsp;will always result in 0, we end up dividing the difference in position by zero!<br><br>
+    <img class="fig" src="ch2/divisionby0.jpg"><br>
+    So it seems like there is no way to make sense of a “<i>rate of change at a given point in time</i>”… or is there?<br><br>
+    Mathematicians in the late 17th century (Newton and Leibniz) cleverly came up with something called <i>calculus</i>. It is a branch of mathematics dedicated to studying the rates of change (derivatives) and how numerous tiny changes add up to something (integrals). In calculus, to answer the above “paradox” of the immediate rate of change at an exact point in time, we don’t look at the rate when the time difference is exactly 0, but rather examine what the average given by the above formula tends to as the time difference gets closer and closer to 0. For example, a difference of 0.000001 seconds, rather than <i>exactly</i> 0 seconds. The smaller this difference is, the better approximation of the “<i>rate of change at a given point in time</i>” you end up with. However, even with this approach, it is ultimately just an approximation, thus we can’t obtain the precise value for a  “difference” of 0… or can we?<br><br>
+    Turns out, if the position is described as a function of time (function being used here in the mathematical sense) with a known mathematical formula behind it, you can almost certainly <u>derive</u> a correct formula for its <i>exact</i> rate of change at a given point in time. Notice the underlined <u>derive</u> word, because the process of finding this special function which gives the rate of change is called <i>deriving</i> the function, or alternatively, finding the function’s <i>derivative</i>. And it is this <i>derivative</i> that gives the formula for the <i>exact</i> rate of change (in our specific case, velocity). However, the process of deriving the function can get a bit tricky.<br><br>
+    Say you have the following function <span class="var">f(t)</span>, which gives an output based on the input of time, <span class="var">t</span>. The definition for <span class="var">f(t)</span> can be something like:<br><br>
+    <span class="var">
+      f(t) = t³ + sin(t)<br><br>
+    </span>
+    This function can describe the position on an axis (e.g. X) in regards to time <span class="var">t</span>, so <span class="var">f(t)</span> can be seen as <span class="var">x(t)</span>:<br><br>
+    <span class="var">
+      x(t) = t³ + sin(t)<br><br>
+    </span>
+    The derivative function is the function denoted as <span class="var">x'(t)</span> (notice the apostrophe, which is pronounced “<i>prime</i>”). This derivative function will give the “instantaneous” velocity based on <span class="var">t</span> (as if we got it from a time difference of exactly 0). What would such a derivative function even look like? Once we work it out, we learn it will take the form of:<br><br>
+    <span class="var">
+    x'(t) = 3t² + cos(t)<br><br>
+    </span>
+    Even at a quick glance, the are some slight similarities between <span class="var">x(t)</span> and <span class="var">x'(t)</span>, right? In particular, the term <span class="var">sin(t)</span> turned into <span class="var">cos(t)</span>, which is what we have seen happen in the case of our wave particles.<br><br>
+    Trust me, I didn’t just pull this out of… thin air. I obtained the <span class="var">x'(t)</span> formula by applying something known as <i>differentiation rules</i> (also called <i>derivative rules</i>) to the function <span class="var">x(t)</span>. Specifically, I applied the <i>addition rule</i> to the whole expression, the <i>power rule</i> to <span class="var">t³</span> and the trigonometric rule to <span class="var">sin(t)</span>.<br><br>
+    I consider the topic of differentiation to be far outside the scope of a tutorial focused on particle scripting, so I will not venture into it. Nonetheless, I am signalling it for those readers who are inquisitive about this topic for further research. Online tools like <a href="https://www.wolframalpha.com/" target="_blank"><strong>WolframAlpha</strong></a> allow you to enter nearly any mathematical function, no matter how complex, and get its derivative function with respect to some variable, like x or t, with prompts of the form:<br>
+    <div class="code">
+      [function formula] derivative<br>
+      [function formula] derivative with respect to [variable]
+    </div>
+    We live in the era of AI chatbot craze, so ChatGPT might be tempting to use for this purpose. I wouldn’t count on it giving correct solutions, though, as LLM (Large Language Model) chatbots like ChatGPT are infamous for answering mathematical queries blatantly wrong (they output text that is meant to “sound about right” to a human, but not necessarily make actual sense, factually or mathematically). WolframAlpha is more reliable, gives more accurate answers tailored specifically to mathematical prompts and predates LLM bots like ChatGPT, Gemini or Claude by well over a decade.<br><br>
+    <h4>Math lesson over. Bring your homework assignments on Monday!</h4>
+    This very long tangent about calculus is over. I brought it up simply to point out that getting formula for velocity from a formula for position is not as straightforward as one would think. Unfortunately, when we want to formulate mathematically defined trails for particles by using velocity and not position, we must transform the formula for a curve with derivative functions.<br><br>
+    This begs the question: with all this trouble, why even bother with changing the velocity, when we can change the position of the particle directly without getting involved with calculus in the first place?<br><br>
+    Great question.<br><br>
+    Well, you can directly set positions of particles in update, nothing is stopping you. But keep in mind that, unless particles are attached to moveable, particle positions are absolute. When you do something like this in update:
+    <div class="code">
+      local t = getGameTick() * 0.1<br>
+      part.pos.x = sin(t) * 100
+    </div>
+    What does <span class="var">part.pos.x</span> become? Something in the range of <span class="var">[-100, 100]</span>, as <span class="var">sin(t)</span> returns a value in the range <span class="var">[-1, 1]</span> and we multiply it by 100. But <span class="var">X = -100</span class="var"> is outside of the editor’s map grid bounds and <span class="var">X = 100</span> just barely within them. We are placing our particles outside of the level map! We could find a value of X where we know it to be somewhere in our level map, but that be some weird number like <span class="var">78321</span>, hardly convenient and difficult to work with (remember getting the <a href="Chapter1.html#id6">absolute position</a> values for our dust effect? Eugh…)<br><br>
+    <i>Aha</i>, but we have the <span class="var">emitterIndex</span> which attaches particles to moveables, right? Sadly, I have not told you the full story of how <span class="var">emitterIndex</span> really works. There is a feature in the plugin I have not touched on yet, called the <strong>Tethering System</strong>. I will explain it properly at some point, but suffice to say, it controls how particles can be attached to an object and how long they stay attached. When you use the <span class="var">emitterIndex</span>, particles are indeed attached to the moveable, but by default, the moment the particles exit the init function, the relative coordinates get converted to absolute world coordinates and the particle loses its relation to the moveable. This behavior can be changed, of course, but that isn’t something I intended to cover yet, considering there will be a dedicated section to the Tethering System in a future chapter. For now, let’s assume this approach is a no-go.<br><br>
+    Also, consider that you may have particles spawned in with slightly random offsets in the init function. If we overwrite the position directly in update, we lose information of what this random offset was. But velocity will preserve this offset, as it adds itself on top of what was already stored in the position vector. This is what makes setting velocity preferrable to setting position in the overwhelming majority of cases, as the original starting point of the particle remains untouched. Look at these diagrams to see the difference between setting position and setting velocity in update:<br>
+    <div style="display: block; text-align: center">
+      <img src="ch2/parts_pos.png">&nbsp;<img src="ch2/parts_vel.png">
+    </div><br>
+    The arrows point to where the particles will end up in the next frame. You see that the offset is preserved in case of changing the velocity, but no longer the case if we overwrite the position.<br><br><br>
+    So, what do we do if we want particles to travel along a helical path? In the previous mini-chapter we set up an “animated” <a href="Chapter1_5.html#helix">helix of particles</a>, but while the helix itself was animated, the particles were really only moving in a straight line. Now we want to flip it around, the helix will be static, but the particles themselves will travel along the helix. It’s also possible to do so, but in this case we need to calculate velocities for two axes, like X and Y.<br><br>
+    If you followed through that section, you know that the <i>parametric equations</i> for a circle look like this:<br><br>
+    <span class="var">
+    x = cos(a) * r<br>
+    y = sin(a) * r
+    </span><br><br>
+    These equations take a radius <span class="var">r</span> and an angle <span class="var">a</span>. As the values of the angle <span class="var">a</span> sweep through the range 0 to 2 pi, the <span class="var">x</span> and <span class="var">y</span> coordinates will draw out a circle of the given radius <span class="var">r</span>.<br><br>
+    Since we want the circle to “sweep” over time, we swap out the variable <span class="var">a</span> with time <span class="var">t</span>:<br><br>
+    <span class="var">
+    x = cos(t) * r<br>
+    y = sin(t) * r
+    </span><br><br>
+    Of course, <span class="var">t</span> will most likely come from <span class="var">getGameTick()</span>, but most likely, we will not use the raw value, but rather scale it by a constant scale factor<br><br>
+    <span class="var">s</span>:
+    <span class="var">
+    x = cos(t*s) * r<br>
+    y = sin(t*s) * r
+    </span><br><br>
+    These formulae will give us the <u>position</u> on the circle. To get the velocity formulae, we need to
+    If we leave this as is, we indeed obtain just a regular circle. But we are dealing with 3D space, not 2D space, our velocity also has Z-axis component. Right now we are not assigning anythin to it, so we have:
+    These formulae will give us the velocity components <span class="var">vx</span>, <span class="var">vy</span> for the X and Y axis, respectively. However, this is only true when we don’t change scale (through multiplication or division) of the angle <span class="var">a</span>.<br>
+    If any changes are made to the scale of a, it needs to be reflected by the formula for velocity. This is where the trickiness of obtaining correct formulas for velocity becomes apparant, as this is another one of the rules you must apply when working out a derivative function. We obtain the following:<br><br>
+    <span class="var">
+    vx = m * -sin(m * a) * r<br>
+    vy = m * cos(m * a) * r
+    </span><br><br>
+    Where <span class="var">m</span> represents some multiplication constant. Again, this only applies to the above specific case, the transformations between the normal position function and derivative function need to be worked out case-by-case.<br>
     <hr>
     The above covers virtually everything there is to know about the level scripts and module scripts as a developer. In the next chapter, we will be talking about <strong>mesh particles</strong>.<br><br>
     <table width=100%>

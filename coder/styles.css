@@ -21,9 +21,22 @@ h1 {
   text-align: center;
 }
 
+figure.fig {
+  display: table;
+  margin: 0 auto;
+  text-align: center;
+}
+
 img.fig {
-  display: block;
+  display: block; /* removes inline spacing below image */
   margin: 24px auto;
+  height: auto;
+}
+
+figcaption.fig {
+  margin-top: 0.5em;
+  font-size: 0.9em;
+  color: #555;
 }
 
 hr {
@@ -61,6 +74,13 @@ div.code {
   font-family: 'Consolas';
   font-size: 100%;
   font-weight: normal;
+}
+
+.func {
+  color: #324048;
+  font-family: 'Consolas';
+  font-size: 110%;
+  font-weight: bold;
 }
 
 table.tab {

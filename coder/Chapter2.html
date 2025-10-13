@@ -1,399 +1,526 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>2 – Update functions</title>
-	</head>
-	<body text=#000000 bgcolor=#FFFFFF link=#0000FF alink=#0000FF vlink=#0000FF>
-		<link rel="stylesheet" href="styles.css"/>
-		<script src="copycode.js"></script>
-    <h1>Update functions</h1>
+  <head>
+    <title>2 – Plugin logger</title>
+  </head>
+  <body text=#000000 bgcolor=#FFFFFF link=#0000FF alink=#0000FF vlink=#0000FF>
+    <link rel="stylesheet" href="styles.css"/>
+    <script src="copycode.js"></script>
+    <h1>Plugin logger, error handling and debugging features</h1>
     <table width=100%>
       <tr>
       <td><a href="Chapter1_5.html"><strong>&lt;&lt;&lt;&nbsp;PREV</strong></a></td>
-      <td style="text-align: right"><a href="Chapter2_5.html" ><strong>NEXT&nbsp;&gt;&gt;&gt;</strong></a></td>
+      <td style="text-align: right"><a href="Chapter3.html" ><strong>NEXT&nbsp;&gt;&gt;&gt;</strong></a></td>
       </tr>
-    </table>
-		<br>
-		The moment we’ve all been waiting for…<br><br>
-    Up to this point, we have seen effects that may have been great for adding some extra eye-candy to you level, but were otherwise ambient and didn’t have much influence on the world around them. Starting from this chapter, we will be implementing particles that exhibit complex, dynamic behavior and can have tangible effects on the game itself, beyond just the graphical qualities they provide. Particles, which can be characterized by reactivity and/or interactivity (with Lara, other entities or the room geometry). This is made possible thanks to update functions, which allow to define the behavior a particle group will exhibit. This mechanism permits the particles to act in a user-defined way and have unique attributes (such as colliding with the environment, setting Lara on fire, doing damage on contact with an enemy, homing onto a target, etc).<br><br>
-		More than anything else, it is this ability to code custom behavior which sets apart the particles offered by this plugin from the particles you have seen before, in FLEP or the classic engine. The incredible flexibility provided by update functions in tandem with the various API functions allows one to script things ranging from new traps, new weapons and attacks for both Lara and her foes, magical abilities, unique puzzles, never seen before gameplay mechanics, the list goes on.<br><br>
-		This feature is very powerful, but as we all know, “<i>with great power comes great responsibility</i>”. It can easily lead to some disastrous results (including but not limited to: crashing the game) if you are not being cautious, so tread carefully.<br><br><br>
-    In the first section of the chapter, we will return to the previously neglected update function of the dust effect from <strong>Chapter 1</strong>. This time around, I’ll give a proper explanation of update functions and how to write a simple one that makes the particles animate.<br><br>
-		Afterwards, we will learn of the <strong>t-parameter</strong> property of particles, which allows to correlate a particle’s age with another property through some mathematical formula. A specific example of this will be given in the section on shaping particle trajectories. We will also revisit the t-parameter in context of explaining how the <span class="var">sizeCust</span> and <span class="var">colCust</span> override fields work.<br><br>
-		There is an optional bonus chapter at the end that dives deeper into the trajectory-shaping topic and explains how you create parametric formulas for velocity in general, by applying differentiated functions.<br><br>
-    Similarly to Chapter 1, this chapter is also split into two halves for convenience, otherwise it would make for a very long read.<br>
-		<hr>
+    </table><br>
+    When writing code, there is always a high chance of making mistakes. Sometimes, this can be simply due to a lack of knowledge about the language or a feature, but not always. In reality, it happens to the best of us. It’s easy to overlook something when working with text on the screen. Often, we are tired after a long day, or we are in dire need of a break after focusing on a task for an extended period of time, and sooner or later we end up making a mistake. Not a big deal, either way!<br><br>
+    Regardless of the reason for the mistake, programming languages like Lua are rather strict with what is and what isn’t accepted (even more strict than natural languages, like English, Spanish or Japanese), leaving little room for leniency. Whether it’s a problem with Lua syntax, or giving something the wrong type of value, or some other unexpected occurence in code, the plugin will complain about it in the form of an <strong>error message</strong>, letting the coder know what went wrong, in which Lua file and in which line it happened. Where do we encounter this special route of communication, though? We have not seen such error messages as of yet. Well, that is because they are sent to the <strong>plugin’s logging system</strong>, which is not enabled by default and must be enabled manually as a main plugin setting (MPS) flag for the Particle System plugin.<br><br>
+    In this chapter, we will learn about the plugin’s logger and how to enable it. We’ll discover the different types of log messages and their meanings. We’ll get to know the error handling system and understand how to decipher the various error messages the plugin can give us. Finally, we’ll learn how to use the <span class="var">print()</span> function to help with narrowing down silent bugs in the code. Although this chapter may be more of a dry read compared to the exciting previous chapter, learning about these very useful functionalities of the plugin will be a tremendous help, especially once we start tackling update functions in Chapter 3 and other more complex features further on.<br>
+    <hr>
     <h2>Sections</h2>
     <strong>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id1">1. Update functions, for real this time</a><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id2">2. Particle t-parameter</a><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id3">3. Shaping particle trajectories</a><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id4">4. Particle sizeCust and colCust</a><br>
-    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id5">5. Bonus: parametric expressions for velocity</a><br>
-		</strong><br>
-		<hr>
-    <a name="id1"><h3>Update functions, for real this time</h3></a>
-    Back in <strong>Chapter 1</strong>, when we created our <a href="Chapter1.html#id1">dust particle effect</a>, we started writing an update function for it. However, we quickly abandoned it when it became apparent that we don’t need it for our dust effect.<br><br>
-    Don’t worry, we will be bringing that poor little update function back from oblivion now! Let’s recall the entire dust module script, including the (then commented out) <span class="var">dustUpdate()</span> function:
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id1">1. The plugin logger</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id2">2. How to enable the logger</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id3">3. Filtering out log messages</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id4">4. Error handling in the plugin</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id5">5. Fixing warning and error messages</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id6">6. Using the print() function for debugging</a><br>
+    </strong>
+    <hr>
+    <a name="id1"><h3>The plugin logger</h3></a>
+    The logger is an indispensable tool to have once you start to experiment more with the Particle System plugin and its scripting on your own. It not only reports any warnings or errors of things going wrong in your Lua code, but can give other useful infos about the internal processes going on in the plugin. Last but not least, it provides a reliable way to debug your modules and verify if your code works as intended.<br><br>
+    The logger is built into <span class="var">Plugin_ParticleSystem.dll</span> and can display 4 categories of log messages:<br><br>
+    <table cellpadding = "15" cellspacing = "15" class="tab">
+      <tr>
+        <th>Message&nbsp;Type</th>
+        <th>Use and Meaning</th>
+      </tr>
+      <tr>
+        <td><span class="var">INFO</span></td>
+        <td>Logs more detailed information about plugin-side operations, e.g. that a specific level script or module was loaded.</td>
+      </tr>
+      <tr>
+        <td><span class="var">DEBUG</span></td>
+        <td>Logs debug output from the <span class="var">print()</span> function (explained further in this chapter).</td>
+      </tr>
+      <tr>
+        <td><span class="var">WARN</span></td>
+        <td>Logs warnings – not quite errors yet, but alerts of some improper input (e.g. value not in range), that the plugin can rectify by itself. However, relying on the plugin may hamper performance and it’s recommended to fix these warnings in final code whenever possible.</td>
+      </tr>
+      <tr>
+        <td><span class="var">ERROR</span></td>
+        <td>Logs errors – alerts of something going terribly wrong, e.g. improper Lua syntax, assigning the incorrect type value to a field, missing a necessary function argument. These errors cause the Lua environment to abort executing the script code and they must be fixed to resume normal operation.</td>
+      </tr>
+    </table>
+    <br><br>
+    The <span class="var">INFO</span> messages are only for providing extra context and can be safely ignored for the most part. In fact, there is a setting to filter them out if they prove distracting, which will be described further down this chapter. <span class="var">DEBUG</span> messages arise due to user activity, coming from the use of the <span class="var">print()</span> debugging function, which we will also cover later. The main group of messages relevant to coders are <span class="var">WARN</span> and <span class="var">ERROR</span>. With these message types, the plugin gives explicit indications of something not going right with a module or level script, hence they should be paid attention to. Given that these messages can be rather cryptic if you don’t know how to read them, this chapter also holds a section dedicated to interpreting examples of these messages and what actions you should carry out, in order to correct the module or level script code.<br><br>
+    <h4>Modes of operation</h4>
+    The logger is disabled by default, but can be manually enabled in one of two modes of operation:
+    <ol>
+      <li><strong>Console mode</strong></li>
+      <li><strong>File-dump mode</strong></li>
+    </ol>
+    Let’s take a look at the console mode first, then we’ll examine the file-dump mode.<br><br>
+    <h4>Console mode</h4>
+    The <strong>Console mode</strong> of the logger makes the game open a secondary window during boot, hosting an output console which displays the log messages from the plugin:
+    <img src="ch2/logger_console.png" class="fig"><br>
+    Various log messages are displayed in the console window in real-time, while the game is running. This can give you <u>real-time feedback</u> as to what is going on, and allows to track down when a specific log entry or error occurs.<br><br>
+    In console mode, the log messages are color-coded with the following scheme:<br><br>
+    <table cellpadding = "15" cellspacing = "15" style="color: white; background-color: black; font-family: 'Consolas'; font-size: 90%">
+      <tr>
+        <td><span style="color: white">INFO</span> (white)</td>
+      </tr>
+      <tr>
+        <td><span style="color: lime">DEBUG</span> (green)</td>
+      </tr>
+      <tr>
+        <td><span style="color: yellow">WARN</span> (yellow)</td>
+      </tr>
+      <tr>
+        <td><span style="color: red">ERROR</span> (red)</td>
+      </tr>
+    </table><br><br>
+    When enabling the console log mode, it is <u>strongly recommended</u> to also switch on <strong>windowed mode</strong> in the configuration settings of the game (the config window is displayed by holding <strong>CTRL</strong> before the game launches), or at the very least, use the <strong>Soft Full Screen</strong> setting. I’m aware it’s annoying to switch between different config settings during building, however in the course of testing the plugin across different PCs, there were hangs, crashes or otherwise odd behavior, when the console window was enabled and the game remained in proper fullscreen mode. You can of course return to the normal fullscreen setting once you no longer use the console logger.<br><br>
+    <h4>File-dump mode</h4>
+    The <strong>File-dump mode</strong> works differently. Instead of logging the messages to a separate console window, it <strong>dumps</strong> the logs to a newly generated text file each time the game is booted. This file is named with the general scheme:
     <div class="code">
-			<button class="btn" onclick="copyCode(this)"><span class="tooltip">Copy to clipboard</span><img src="clipboard.png"></button>
-	    local dustgroup<br><br>
-	    local function dustInit()<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(dustgroup) <span class="com">-- create a sprite particle of the "dust" group</span><br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getLaraIndex() <span class="com">-- get Lara's tomb4 index</span><br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 30 * 4 <span class="com">-- 30 frames * 4 = 4 seconds</span><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randint(150, 300)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart * 3 <span class="com">-- make dust slowly expand over time</span><br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = randint(130, 150)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.g = randint(100, 120)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.b = randint(70, 85)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.colEnd = part.colStart<br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- randomize position</span><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;local dx = randfloat(-512, 512)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;local dy = randfloat(-512, 512)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;local dz = randfloat(-512, 512)<br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- since we assigned an emitterIndex, the particle spawn position is in relation to the emitter item</span><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.pos.x = dx<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.pos.y = dy<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.pos.z = dz<br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- randomize velocity</span><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.vel.x = randfloat(-5, 5)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.vel.y = randfloat(-5, 5)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.vel.z = randfloat(-5, 5)<br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 0 <span class="com">-- "smoke" sprite texture</span><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.fadeIn = 30 <span class="com">-- fade in for 1 second</span><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = 30 <span class="com">-- fade out for 1 second</span><br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- randomize rot and rotVel</span><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;local degrees = randint(0, 359)<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.rot = degToRad(degrees)<br><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;local rotspeed = randomNegate(randfloat(2, 4)) <span class="com">-- generate a random value between 2 and 4, negate it half of the time</span><br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;part.rotVel = degToRad(rotspeed)<br>
-	    end<br><br>
-	    <span class="com">--[[<br>
-	    local function dustUpdate(part)<br>
-	    end<br>
-	    --]]</span>
-			<br>
-	    <br>
-	    <span class="com">-- creation of our particle group and assigning it to the variable</span><br>
-	    dustgroup = createGroup(dustInit, nil) <span class="com">-- passing nil in place of our dustUpdate</span>
-		</div>
-		<br>
-		<h4>Recovering the update function</h4>
-    First things first, we’ll uncomment the <span class="var">dustUpdate()</span> function. We can do this either by removing the multiline comment tags or adding an extra minus to the opening comment tag,&nbsp;<span class="var">---[[</span>&nbsp;. Both ways are acceptable, it will opt to simply remove the comment tags altogether. The next step is to restore <span class="var">dustUpdate</span> as the second argument to <span class="var">createGroup()</span>, in place of the <span class="var">nil</span> value we put before:
+      Plugin_ParticleSystem_YYYYMMDD_HHMMSS_log.txt
+    </div>
+    Where <span class="var">YYYYMMDD</span> stands for the current date, and <span class="var">HHMMSS</span> stands for the current system time on the PC, registered when the game is booted. These log files become available only after the game is closed and can be found in the working directory, where the <span class="var">Plugin_ParticleSystem.dll</span> is present, alongside <span class="var">tomb4.exe</span>. Though file dump logs do not allow to investigate the plugin behavior in real time, they are a more durable form of registering the plugin activity, which can later be examined at any time, or sent over to someone else (e.g. the plugin devs, in case of a suspected plugin bug). These text file logs are preferable to screenshots from the log console in such cases, as they give direct access to the text of each log message in chronological order. Here is a snippet showing example contents of a log text file:
+    <div class="code"><span class="com">
+      INFO: Loading scripts of level: Playable Tutorial Level<br>
+      INFO: Loading module: dust<br>
+      WARN: modulescripts\dust.lua:55: -1 is less than the minimum of 0, clamping to minimum<br>
+      stack traceback:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;modulescripts\dust.lua:55: in main chunk<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;[C]: in global 'require'<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;levelscripts\tut1.lua:107: in main chunk<br>
+      DEBUG: Test string after loading module 'dust'<br>
+      INFO: Loading module: burn<br>
+      ERROR: levelscripts\karnak.lua:8: attempt to access inexistent field 'damage'<br>
+      stack traceback:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;[C]: in metamethod 'newindex'<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;levelscripts\karnak.lua:8: in main chunk<br>
+      ERROR: cannot load 'temple' level script<br>
+      stack traceback:<br>
+      ERROR: modulescripts\burn.lua:95: Vector3f expected<br>
+      stack traceback:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;[C]: in global 'soundEffect'<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;modulescripts\burn.lua:95: in function &lt;modulescripts\burn.lua:74&gt;
+    </span>
+    </div>
+    File-dump logs do not have color-coding as in the console (since they are dumped to a plain-text file), but still retain appropriate tags in the first line, which inform of the category of the given message.<br>
+    <hr>
+    <a name="id2"><h3>How to enable the logger</h3></a>
+    By default, the logger of the Particle System plugin is not enabled. You must enable it manually.<br><br>
+    The logger is enabled with special <span class="var">MPS_</span> flag constants understood by the Particle System plugin. There are two such flags:
+    <ol>
+      <li><span class="var">MPS_LOGGER_CONSOLE</span></li>
+      <li><span class="var">MPS_LOGGER_FILE</span></li>
+    </ol>
+    As you might guess, the first enables the <strong>console mode</strong> of the logger, while the second enables the <strong>file-dump mode</strong>. These constants should be placed in the <span class="var">Plugin=</span> command that gets added to <span class="var">script.txt</span> in the <span class="var">[Options]</span> section, when installing the plugin through <strong>TombIDE</strong> or <strong>NG Center</strong>. For example, the plugin command for <span class="var">Plugin_ParticleSystem</span> could be:
     <div class="code">
-    local function dustUpdate(part)<br>
-    end<br><br>
-  	<span class="com">-- creation of our particle group and assigning it to the variable</span><br>
-    dustgroup = createGroup(dustInit, dustUpdate) <span class="com">-- restored dustUpdate as second argument</span>
-	  </div>
-	  By the way, I feel like I should explain why I generally write the parentheses after the name of a function, e.g. <span class="var">dustUpdate()</span>, but specifically when speaking of passing the function as an argument to a function like <span class="var">createGroup()</span>, I drop the parentheses, i.e. <span class="var">dustUpdate</span>.<br><br>
-	  This inconsistency is not by mistake or due to negligence. When I write the name of a function generally, I add the parentheses to emphasize it being a function (and not an ordinary variable). However, when I talk of passing a function as an argument to another function, I deliberately omit the parentheses after the name. This is because attempting to pass the function with parentheses to its name, like for example:
-	  <div class="code">
-	  dustgroup = createGroup(dustInit(), dustUpdate() ) <span class="com">-- this is incorrect!</span>
-		</div>
-	  is improper syntax in Lua. In the above snippet, we are no longer passing the <span class="var">dustInit()</span> and <span class="var">dustUpdate()</span> functions as arguments, but rather <i>calling</i> each function without any arguments, then passing the returned values (or rather lack thereof, since neither should return anything according to our rules!) as the actual arguments passed to <span class="var">createGroup()</span>. If the functions were to return something, like a number, we would be passing that returned number as an argument to <span class="var">createGroup()</span> (this is not what <span class="var">createGroup()</span> is expecting to receive as arguments, the plugin will complain). If the functions do not return anything (as is in our case), it is the same as passing <span class="var">nil</span> instead of the function. Effectively, the <span class="var">createGroup()</span> call turns into <span class="var">createGroup(nil, nil)</span>. This is the same problem as we had by not respecting the correct order of the code back in Chapter 1, <a href="Chapter1.html#order">if you remember</a>.<br><br>
-	  If this does not make sense to you with the above explanation, it may help to look at this from another angle. Remember when I said that function names are really <a href="LuaManual.html#funcvars"><strong>disguised variables</strong></a>? This means that the variable is storing a value. What value, exactly? The definition of some function (this is an oversimplification, but assume that’s what happens when you ask for a function’s “value”). When we want to pass a Lua function as an argument, we want to pass its value (the definition), and not its result, so we are treating it as we would any other variable that holds a value. To simply get a value from a variable, we don’t use parentheses, right?<br>
-		To emphasize the difference between calling functions and passing them as arguments, I will omit the parentheses to indicate that a function will not be called, but rather passed as an argument to another function (i.e. treated as a variable with a value). In all other cases, I’ll refer to the function with parentheses attached to its name.<br><br>
-		<h4>How update functions work</h4>
-		Coming back to our group definition, we are now constructing our group with both an init and an update function. Of course, our update function is not doing anything at the moment. But before we do that, we should first be able to answer the question – what <i>are</i> update functions?<br><br>
-		I already mentioned a few times by now that the update function expects a single argument, a particle instance. The function argument’s name becomes an alias for the particle instance it is currently working on. We can choose whatever alias we want, really, but in these tutorials we always use the name <span class="var">part</span>.<br><br>
-	  <i>But wait,</i> – you might ask – <i>doesn’t that go against the rule of not using an identical name for another variable in the script? After all, we’ve already used </i><span class="var">part</span><i> as a name for the variable in the </i><span class="var">dustInit()</span><i> function…</i><br><br>
-	  Fret not, in this case it doesn’t matter. The reason why it’s okay to used the name <span class="var">part</span> in both the <span class="var">dustInit()</span> and <span class="var">dustUpdate()</span> functions is because these are, in fact, two unrelated variables. Both are enclosed within the scope of their respective functions (one being the init, the other being the update), not in an outer scope of the script, like the <span class="var">dustgroup</span> variable, for example. If we were to use <span class="var">part</span> more than once in the main script scope, outside of all functions, if blocks and for loops, then indeed we would be dealing with a name collision and could run into problems. But in our case, the <span class="var">part</span> variables are occupying two different locations in the code and Lua is smart enough to recognize that these are not identical, but completely distinct variables that just happen to use the same name in their respective scopes (one scope is the init function, the other scope is the update function). If you want to be extra careful though, you may of course use a different name in the update function. Just use another short one for your own sake, unless you love typing a lot.<br><br>
-		Anyway, what purpose does the argument <span class="var">part</span> serve to <span class="var">dustUpdate()</span>? Simply put, <span class="var">part</span> is one of the particles belonging to the group. During each in-game frame, the particle system iterates through all currently existing particles and, on top of performing generic updates to each of those particles (like updating their positions or decreasing their life counters), it calls the update function we assigned to the group (unless <span class="var">nil</span> was used in its place, that is), passing the current particle through the <span class="var">part</span> argument.<br>
-		<img class="fig" src="ch2/update.png">
-		Given that update is called for each of the particles in the group, <span class="var">part</span> becomes the alias of the <i>specific</i> particle on which the update function was called. This way, every particle in the group has the opportunity to be modified by its designated update function on each game tick. In our update function, through the <span class="var">part</span> alias, we have access to the particle’s properties, including all of the properties we have talked about in the chapters prior to this one. We can then inspect or change the particles’ positions, velocities, rotations, sizes, colors, so on and so forth, to our own will and liking!<br><br>
-	  Okay, enough of the exposition, already. Time to make the update function actually do something with our particles!<br><br>
-		<a name="update"><h4>Writing a simple update function</h4></a>
-	  How about this – for testing purposes, we make the particles change their sprite texture on every frame. They will start out with <span class="var">part.spriteIndex = 0</span> in the init function, then keep iterating through the different textures from <strong>DEFAULT_SPRITES</strong> in the update.<br>
-		The update function should look something like this:
-	  <div class="code">
-	  local function dustUpdate(part)<br>
-	  &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = part.spriteIndex + 1<br>
-	  end
-		</div>
-	  Nothing too sophisticated, as you see. We are getting the current value of <span class="var">part.spriteIndex</span>, adding 1 and assigning this new value back to <span class="var">spriteIndex</span>. Easy, right?<br><br>
-    Let’s run the game and see what we have. We launch the level and…<br>
-		<img class="fig" src="ch2/ch2_g1.gif"><br>
-		Indeed, all of the particles animate through the sprite textures, but only once, then they stop at the last texture! Not only that, but if we enable the console to see what’s going on behind the scenes, we’re being bombarded with warning messages:<br>
-		<img class="fig" src="ch2/update_error.png"><br>
-    Don’t worry, we can fix this. We have just blundered with the above code for increasing the <span class="var">part.spriteIndex</span>, that’s all. To learn why this doesn’t work, let’s inspect the <strong>DEFAULT_SPRITES</strong> object in WadTool, WadMerger’s sprite editor or the sprite tool in NG Center (on the first Tools tab). If you are using an unmodified <strong>DEFAULT_SPRITES</strong>, we can see that there are 33 textures, indexed 0 to 32.<br><br>
-    The particles first have texture 0, as we indicated in the init function. The update function makes <span class="var">part.spriteIndex</span> move to texture 1, then 2, then 3… if we continue this pattern, we eventually reach the last texture at index 32. What happens during the update that point? The index will increase to 33, but… there is no texture with that index number in the <strong>DEFAULT_SPRITES</strong>!
-    This situation, if left unmanaged, would result in a nasty crash, since the Tomb4 engine would not know how to handle it. However, as we have just seen, the particles simply stop updating their texture upon reaching the final one, why is that? This is a protective measure within the plugin. To ensure that this crash never occurs, if the <span class="var">part.spriteIndex</span> goes beyond the number of existing sprite textures, the plugin sets it back to the highest possible texture index. Consider it a kind gesture from the plugin developers… ;)<br><br>
-  	But you probably don’t want the particle to animate only a single time and stop, it would be better if this animation would repeat over and over again!
-    Since the number of textures in (unmodified) <strong>DEFAULT_SPRITES</strong> is 33 and we want the update function to keep going through all the indices 0-32, but never go above 32, there is a specific <a href="LuaManual.html#arith">arithmetic operator</a> that solves this exact problem. Do you remember which one? I hope you had the modulo operator <span class="var">%</span> in mind. If you did not, then… nothing, just remember it from now on!<br><br>
-    We first need to put the expression where we increment the sprite in parentheses. As you recall from mathematics, when something is in parentheses, that calculation is performed first. After the closing parenthesis we place the modulo operator <span class="var">%</span> with the total number of sprite textures in <strong>DEFAULT_SPRITES</strong> (33) as the dividend:
+      Plugin= 1, Plugin_ParticleSystem, IGNORE
+    </div>
+    If you have other plugins installed, the ID (first number) for <span class="var">Plugin_ParticleSystem</span> could be different, but it does not matter (and you shouldn’t change this number yourself, anyway). To enable the one of the logger modes, you add the desired <span class="var">MPS_</span> constant in place of the default <span class="var">IGNORE</span>:
     <div class="code">
-    local function dustUpdate(part)<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = (part.spriteIndex + 1) % 33<br>
-    end
-	  </div>
-	  Let’s try running it in game again.<br>
-		<img class="fig" src="ch2/ch2_g2.gif"><br>
-		Problem averted! Though the aesthetic quality of such particles is questionable, we see they loop flawlessly through all of the textures in <strong>DEFAULT_SPRITES</strong>.<br><br>
-	  You can actually use this approach to make particles animate through a looping sprite sequence (and not a bunch of unrelated sprites as in our example). However, I’ll soon demonstrate a function called <span class="var">particleAnimate()</span> that does this for us and allows to set both the exact range and the framerate for this animation.<br>
-		<hr>
-	  <a name="id2"><h3>Particle t-parameter</h3></a>
-	  As you know by now, a particle has two life properties. The first one, <span class="var">part.lifeSpan</span>, as the name implies, describes the total amount of life the particle has. The other life property, <span class="var">part.lifeCounter</span>, counts down the remaining life of the particle. In the init function it is implicitly assigned the same amount as <span class="var">part.lifeSpan</span>, but afterwards is automatically decreased by 1 on each game tick. Once <span class="var">part.lifeCounter</span> reaches 0, the particle dies and is no longer updated or drawn by the particle system.<br><br>
-	  Let’s ponder for a moment about the following. Assume we wanted to have a general way to describe a particle’s “age”, regardless of its actual <span class="var">lifeSpan</span> or <span class="var">lifeCounter</span> value. Something of a percentage of elapsed life. How could we do that?<br><br>
-		Instead of using the particle’s <span class="var">part.lifeCounter</span> values, we instead imagine such “age” as a decimal value between 0.0 and 1.0 (i.e equivalent to a percentage between 0% and 100%). At 0.0, the particle has been newly born into the world. At 1.0 (100%), the particle reached the end of its life and ceases to exist. All in-between values describe the percentage of how far a given particle is into its life course, regardless of the actual <span class="var">lifeSpan</span> and <span class="var">lifeCounter</span> the particle in question has. For example, a value of 0.5 would mean that the particle is halfway through its existence (and likely experiencing a mid-life crisis).<br><br>
-	  Jokes aside, having the <span class="var">lifeSpan</span> and <span class="var">lifeCounter</span> values, how do we obtain this “current lifestage” percentage value? It’s actually a pretty simple calculation of the form:<br><br>
-	  <span class="var">
-	  age = (part.lifeSpan - part.lifeCounter) / part.lifeSpan</span><br><br>
-	  We just subtract <span class="var">part.lifeCounter</span> from total <span class="var">part.lifeSpan</span> and divide the result by <span class="var">part.lifeSpan</span> again. This value will always be somewhere between 0 and 1, regardless of how big or small <span class="var">lifeCounter</span> and <span class="var">lifeSpan</span> really are (that is, unless you tamper with the <span class="var">part.lifeCounter</span> value, which you should not do, as we will learn in the section about immortal particles).<br><br>
-	  Fortunately, we don’t have to carry out this calculation ourselves whenever we want to use this value. Particles provide a special read-only property called the <strong>t-parameter</strong>, with the field name <span class="var">part.t</span> (that is, a single lowercase t), which gives this 0 to 1 age fraction value for the particle:
-	  <div class="code">
-	  part.t <span class="com">-- read-only property, gives a 0 - 1 normalized age for the part</span>
-		</div>
-		Okay, that’s great and all, but what would this t-parameter even be useful for?<br><br>
-	  Well, picture the following situation. You would like another particle property, like its size, color or velocity, to depend on this “lifestage” value in some way. Since it’s always in the predictable range 0 to 1 (unlike <span class="var">part.lifeCounter</span> values), by applying some math you can come up with a formula that translates the 0-1 value of <span class="var">part.t</span> to a value usable for the size, color or velocity.<br>
-	  You may say that for velocity we already have a way to change it without using an update function, which would be using acceleration. I say – okay, but what if we want the particle move in a circular orbit? This involves a continuous change in acceleration (along with velocity and position) over time, we can’t just set the <span class="var">part.accel</span> vector in init and be done with it. This forces us to use an update function, no way around it.<br><br>
-		Here’s where the t-parameter can shine – since its value is guaranteed to be between 0 to 1 and increases at a constant rate as the particle gets older, we can create an equation that makes the velocity depend on this t-parameter in some way.<br><br>
-	  Perhaps you still don’t see the full picture of all of this. Well, let’s see an example in the next section!<br>
-		<hr>
-	  <a name="id3"><h3>Shaping particle trajectories</h3></a>
-	  We will now entertain a scenario in which we want the particle velocity to depend on the age percentage in some way. The specifics of it are entirely up to us. If you need a suggestion, what about using the trusty trigonometric functions, <span class="var">sin()</span> and/or <span class="var">cos()</span>? To come up with a velocity formula, we’ll utilize what we know of the t-parameter. Considering it has a 0-1 range, regardless of the particle life span, we can perform mathematical operations on the value given by <span class="var">part.t</span> to end up with a velocity corresponding to the current age of the particle. The <span class="var">sin()</span> and <span class="var">cos()</span> functions are <i>continuous</i> (without any gaps) and <i>periodic</i> (repeating). They repeat with an interval of 2π (2*pi) radians and smoothly oscillate between values of 1 and -1. If this language didn’t speak to you, or perhaps you’re blanking out because you have not dealt with any of this in a long time, look at the graphs of both functions below, they should jog your memory:
-		<img class="fig" src="ch2/sin_plot.png"><br>
-		<img class="fig" src="ch2/cos_plot.png"><br>
-		The function graphs look mostly identical, the difference is that <span class="var">cos()</span> is shifted in regards to <span class="var">sin()</span>, since the peaks and valleys do not line up with each other (we say that <span class="var">cos()</span> is <i>phase shifted</i> by π/2 compared to <span class="var">sin()</span>, i.e. <span class="var">cos(x) = sin(x + π/2)</span>). Another implication of this is that the “cycle” (formally referred to as the <i>period</i>) for <span class="var">sin()</span> starts at the output value 0, whereas for <span class="var">cos()</span> it starts at 1. Apart from those two features, the functions are very similar in how they behave, having both the same amplitude and frequency. We can take advantage of these characteristics to make particles move in “squiggles” or “waves”, for instance.<br><br>
-		<h4>Waving particles</h4>
-	  To achieve an undulating “wave” of particles, we can give particles a Y velocity derived from the sine function output given an input of <span class="var">part.t</span>, paired with a constant (unchanging) velocity for one (or both) of the horizontal axes, X and Z. This sounds a lot scarier than it actually is, you’ll see.<br><br>
-		Given the below orangish-pink particles with a <span class="var">part.lifeSpan</span> of 240 (8 seconds), spawning from an emitter item with NGLE index 3:
-	  <div class="code">
-			<button class="btn" onclick="copyCode(this)"><span class="tooltip">Copy to clipboard</span><img src="clipboard.png"></button>
-		  local wave<br><br>
-		  local function waveInit()<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(wave)<br><br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getTombIndex(3)<br><br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 240<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randint(64, 128)<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart<br><br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 14<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.fadeIn = 30<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = 30<br><br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = 255<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.g = randint(96, 128)<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.b = randint(96, 128)<br><br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.r = randint(192, 255)<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.g = part.colStart.g - 30<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.b = part.colStart.b + 30<br><br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;local dx = randfloat(-512, 512)<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;local dy = randfloat(-64, 64)<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;local dz = randfloat(-64, 64)<br><br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.pos.x = dx<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.pos.y = dy<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.pos.z = dz<br>
-		  end
-		</div>
-		we’ll come up with an update function which modifies the Y velocity component using the sine function. We use <span class="var">part.t</span> inside the <span class="var">sin()</span> function, as so:
-		<div class="code">
-		  local function waveUpdate(part)<br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.vel.y = sin(part.t) <span class="com">-- velocity derived from the sin() function</span><br>
-		  &nbsp;&nbsp;&nbsp;&nbsp;part.vel.z = -20 <span class="com">-- constant Z velocity</span><br>
-		  end<br><br>
-		  wave = createGroup(waveInit, waveUpdate)
-		</div>
-		As you see, in the <span class="var">waveUpdate()</span> function we’re setting a Y velocity via the formula <span class="var">-sin(part.t)</span> and for the Z velocity we set the constant value <span class="var">-20</span>.<br><br>
-		We give it a run in game, and uhh…<br>
-		<img class="fig" src="ch2/ch2_img1.jpg"/><br>
-		the particles aren’t really waving that much, but moving in a rather straight line. Because the raw value of <span class="var">part.t</span> is between 0 and 1, maybe it’s too small for the wavy nature of <span class="var">sin()</span> to become apparent? We should make it larger.<br><br>
-		Since trigonometric functions anticipate radians as input, a good start would be to multiply <span class="var">part.t</span> by 2*π, the interval of the sine function. By doing so, the particles should at least complete a single “wave”. For our purposes, we will take the well-known approximation of pi, <span class="var">3.14</span>.<br>
-		We’ll make the following modification for calculating the Y velocity in the <span class="var">waveUpdate()</span>:
-		<div class="code">
-		  part.vel.y = sin(part.t * 2 * 3.14)<br>
-		</div>
-		<img class="fig" src="ch2/ch2_img2.jpg"/><br>
-		Erm… still no evident waving. Let’s remind ourselves that <span class="var">sin()</span> and <span class="var">cos()</span> functions return values in the -1 to 1 range, making the resulting Y velocity oscillations very tiny. Let’s turn it up a notch by multiplying the returned result by 20 (or something in that ballpark).
-		<div class="code">
-		  part.vel.y = sin(part.t * 2 * 3.14) * 20<br>
-		</div>
-		<img class="fig" src="ch2/ch2_img3.jpg"/><br>
-		Okay, now we’re able to see something! The wave shape is more pronounced, at least.<br><br>
-		If you are paying close attention, assuming that we are looking at the traced curve as if it started out at the origin point (0, 0) on the graphs above, you may notice the shape of the curve does not match up with the graph for <span class="var">sin(x)</span>, despite us using the <span class="var">sin(x)</span> function. No, the functions didn’t get mixed up with one another, there are different reasons for this.<br><br>
-		Reason number one: in the TR engine, the direction for the Y axis is inverted, so as it decreases to lower and more negative values, you go higher up. That’s an easy fix, we just need add a minus in front of the call to <span class="var">sin()</span>, in order to negate the output. But, that’s not all.<br><br>
-		The other reason why it does not match up with the <span class="var">sin(x)</span> graph is because we are modifying the <u>velocity</u> (rate of change to position) of the particles, rather than <u>position</u> directly. We cannot simply reapply the formula we’d use for position, as if it were the formula for velocity, because in the majority of cases, the result will be vastly different. The reasoning behind it is a mathematical concept known as <i>calculus</i>. I give a very brief overview of it in the bonus section on <a href="#calculus">parametric expressions</a> (at the end of this chapter). But I will not bother you with it right now, all you need to know is that if we want the shape of the curve to match up with <span class="var">sin(x)</span> when we are modifying the <u>velocity</u> and not <u>position</u>, we should actually use the <span class="var">cos()</span> function. So the expression changes to:
-		<div class="code">
-	    part.vel.y = -cos(part.t * 2 * 3.14) * 20<br>
-	  </div>
-		<img class="fig" src="ch2/ch2_img4.jpg"/><br>
-		 Nice, we finally have a proper wave of particles. One interval is a bit boring, though, so let’s squeeze in more of them. The way to do that is very simple. Instead of multiplying <span class="var">part.t</span> by 2π, multiply it by 6π, which should result in 3 complete intervals during each particle’s life:
-	  <div class="code">
-	    part.vel.y = -cos(part.t * 6 * 3.14) * 20<br>
-	  </div>
-		<img class="fig" src="ch2/ch2_g5.gif"/><br>
-		Ah, wonderful!<br><br>
-		<h4>Animating the wave through time</h4>
-		What if we went a step further and made the wave shape animate over time? It's easy to achieve, we need to add a time variable into the expression. And by time variable, I mean <span class="var">getGameTick()</span>. Unfortunately, the raw game tick value will increase way too fast to achieve a nice effect. We can downsize it by a factor of, say, <span class="var">0.002</span>, then add it to <span class="var">part.t</span> inside parenthesis, before scaling it by 6π:
-		<div class="code">
-			local time = getGameTick() * 0.002<br>
-	    part.vel.y = -cos((part.t + time) * 6 * 3.14) * 20
-	  </div>
-		<img class="fig" src="ch2/ch2_g6.gif"/>
-		<i>Voilà!</i><br><br>
-		I’ll share a neat tidbit with you - you don’t actually need to remember the value of π to use it in scripts. You can obtain its value (well, a very good approximation) by typing the constant <span class="var">PI</span>, in all-caps. With this, the formula can be rewritten as:
-		<div class="code">
-			part.vel.y = -cos((part.t + time) * 6 * PI) * 20<span class="com">-- using the PI built-in constant</span>
-		</div>
-		Lua will step in and convert the <span class="var">PI</span> constant to the (approximate) π value when parsing the script. There are a few more variants: <span class="var">PI_HALF</span> (pi/2), <span class="var">PI_THIRD</span> (pi/3), <span class="var">PI_QUART</span> (pi/4) and <span class="var">PI_TWO</span> (pi*2).<br><br>
-		Hopefully, the concept of shaping particle trajectories by using <span class="var">part.t</span> is not too complicated to grasp. You just need to know what mathematical calculations to use with <span class="var">part.t</span> to get your desired shape, which depending on your expertise in maths, can get tricky. The bonus section at the end of the chapter delves deeper into this topic. If that’s not something that really interests you, proceed to the next section on particle <span class="var">sizeCust</span> and <span class="var">colCust</span> properties.<br>
-		<hr>
-		<a name="id4"><h3>Particle sizeCust and colCust</h3></a>
-		When it comes to the particle size and color properties, there are respective <span class="var">_Start</span>, <span class="var">_End</span> and <span class="var">_Cust</span> variants for them. All the way back in Chapter 1, when we learned about about these properties in context of init functions, I said that only the <span class="var">_Start</span> and <span class="var">_End</span> variants are important in init, while the <span class="var">_Cust</span> variants are only useful in update functions. Since update functions are now our topic of interest, it’s time to cover the <span class="var">_Cust</span> variants as well.<br><br>
-	  <span class="var">_Start</span> and <span class="var">_End</span> property variants (for size and color) were used in init functions to indicate the initial and final values (respectively) of a particle property. A particles size would be somewhere between <span class="var">part.sizeStart</span> and <span class="var">part.sizeEnd</span>, depending on the age of the particle. Side note: do you see the connection with the t-parameter here? It is also involved in determining the current size from the Start and End values. The formula for it, carried out inside the plugin, resembles something like this:<br><br>
-		<span class="var">sizeNow = sizeStart * (1 - part.t) + sizeEnd * part.t</span><br><br>
-		Side note: the general expression of the form <span class="var">c = a * (1-t) + b * t</span> (where <span class="var">t</span> is between 0 and 1) is known as a <i><strong>l</strong>inear int<strong>erp</strong>olation</i>, or a <strong><i>lerp</i></strong>. I am bringing your attention to it, because it’s very useful and we will be encountering it quite often, in the form of the API function <span class="var">lerp()</span>.<br><br>
-		The same speech applies to how <span class="var">part.colStart</span> and <span class="var">part.colEnd</span> behave. The current color of the particle is linearly blended between these two colors depending on how old the particle is.<br><br>
-		What are the <span class="var">_Cust</span> fields for, then? If we do not make any assigments to them, they simply carry the blended (<span class="var">_Now</span>) values of the properties they represent. However, when you assign some value, like a size to the particle’s <span class="var">sizeCust</span> field or a color to the <span class="var">colCust</span> field, this will result in overriding the blended size (or color) calculated from the start and end values.<br><br>
-		Importantly, this overriding of the value is valid for only one frame when it has been assigned. Afterwards, the particle system sets the size (color) with the re-calculated blended value for the next frame again. This is why assigning to <span class="var">_Cust</span> variants in init is pointless, as we need to override the blended values from the particle system on every frame to see the result. Fortunately, this job can be perfectly fulfilled by the update function, whose job it is to change particle properties on every single frame.<br><br>
-		<h4>Modifying sizeCust</h4>
-		You can combine the knowledge regarding the t-parameter and <span class="var">part.sizeCust</span> to make the size of a particle depend on the “lifestage” given by the <span class="var">part.t</span>. For example, making the particle dynamically grow and shrink.<br><br>
-	  In my opinion, dealing with <span class="var">part.sizeCust</span> is rather straightforward, you just assign the size values, given by your custom formula, in update. Below is a simple example:
-		<div class="code">
-			local t = part.t * 20 * PI<span class="com">-- pre-multiply the t-parameter and save it in a var</span><br>
-			part.sizeCust = sin(t) * 100 + 150 <span class="com">-- oscillates size between 50 and 250
-		</div>
-		We are getting <span class="var">part.t</span>, multiplying it by <span class="var">PI * 20</span> and saving it to a variable <span class="var">local t</span>. The multiplication factor <span class="var">20*π</span>, should result in 10 full oscillations of the sine wave during the particle lifeSpan. We then take the <span class="var">local t</span> value and pass it to <span class="var">sin()</span>. The result of <span class="var">sin(t)</span> is multiplied by <span class="var">100</span>. This should give a value in the range <span class="var">&lt;-100, 100&gt;</span>. Particles cannot have negative size though, so we add 150 on top of that, shifting the oscillation range to <span class="var">&lt;50, 250&gt;</span>. We assign this final result to <span class="var">part.sizeCust</span>. This should result in the particle nicely oscillating its size, in 10 cycles, between 50 and 250.<br>
-		<img class="fig" src="ch2/ch2_g7.gif"/><br>
-			What would be the difference if we used the value of <span class="var">getGameTick()</span> instead of <span class="var">part.t</span>? Well, since the game tick is uniform and not unique to each particle, all the particles would be synchronized with each other, growing and shrinking at the same time. Differently, <span class="var">part.t</span> will give the individual age of each particle, so they grow and shrink independently of each other.<br><br>
-		<h4>The remap function</h4>
-		When it comes to moving a value from one range to another, like we just witnessed in the last example:
-		<ul>
-			<li>scaling <span class="var">part.t</span> from <span class="var">&lt;0, 1&gt;</span> to <span class="var">&lt;0, 20π&gt;</span>;</li>
-			<li>moving the output of <span class="var">sin(t)</span> from <span class="var">&lt;-1, 1&gt;</span> to <span class="var">&lt;50, 250&gt;</span></li>
-		</ul>
-		there comes a very handy little function from the API, called <span class="var">remap()</span>. It requires 5 arguments in total:
-		<div class="code">
-			remap(x, oldMin, oldMax, newMin, newMax) <span class="com">-- remaps argument "x" from &lt;oldMin, oldMax&gt; to &lt;newMin, newMax&gt;</span>
-		</div>
-	 	To call this function, we must specify the <span class="var">x</span> value which will be remapped, the original min-max range of the x value with the pair <span class="var">oldMin, oldMax</span>, then finally the new range, via <span class="var">newMin, newMax</span>.<br><br>
-		We must do two remappings. The first one, to scale <span class="var">part.t</span> by <span class="var">20π</span>:
-		<div class="code">
-			local t = remap(part.t, 0, 1, 0, 20 * PI) <span class="com">-- remap part.t to &lt;0, 20π&gt;</span>
-		</div>
-		and then the second one, take the output of <span class="var">sin(t)</span> from <span class="var">&lt;-1, 1&gt;</span> to <span class="var">&lt;50, 250&gt;</span>:
-		<div class="code">
-			part.sizeCust = remap(sin(t), -1, 1, 50, 250) <span class="com">-- remap sin(t) to &lt;50, 100&gt;</span>
-		</div>
-		These remap function does the same thing as the mathematical calculations from before, but I think it simplifies obtaining the correct values, as you do not need to think about how much to multiply and add to get your expected result. The only caveat is knowing what the original range of the remapped <span class="var">x</span> value is. For <span class="var">part.t</span> it’s <span class="var">&lt;0, 1&gt;</span>, while for the trigonometric functions, <span class="var">sin()</span> and <span class="var">cos()</span>, the range is <span class="var">&lt;-1, 1&gt;</span>.<br><br><br>
-		<h4>Modifying colCust</h4>
-		Changing particle size on the fly is really neat, but changing colors is even cooler! I will show an example of modifying <span class="var">part.colCust</span> by using another great function from the API, <span class="var">colorHSV()</span>.<br><br>
-		<h4>HSV Color Space</h4>
-	  The function <span class="var">colorHSV()</span> returs a ColorRGB object. Unlike the <span class="var">colorRGB()</span> function, it does not take values for the RGB channels. Instead, it takes arguments of <strong>H</strong>ue, <strong>S</strong>aturation and <strong>V</strong>alue, according to the <strong>HSV color space</strong>.
-	  The HSV space works differently than the RGB color space we talked about before. Instead of specifying the exact amounts of primary colors (Red, Green, Blue), the color is represented as a combination of <strong>Hue</strong>, <strong>Saturation</strong> and <strong>Value</strong>.<br><br>
-	  <ul>
-	  <li><strong>Hue</strong> is an angle (expressed in <u>degrees</u>, miraculously not radians!) between 0 and 360, representing a color wheel smoothly blending between hues of red, orange, yellow, green, blue, magenta/purple and back to red again. Conventionally, Hue 0 is red and begins the color wheel.
-	  <li><strong>Saturation</strong> describes how saturated the color is. At Saturation 0, the color is white, black or some shade of grey, with no identifiable hue (the Hue value can be anything, since it has no effect at Sat = 0). Conversely, all values of Saturation above 0 have an identifiable hue. Conventionally, the full saturation is at 1, which indicates no greyness in the color (full saturation).
-	  <li><strong>Value</strong> describes how dark or bright the color is. Like saturation, the conventional range for Value is between 0 and 1. At 0, the color is pitch black, RGB(0, 0, 0). Neither Hue nor Saturation influence the color at Value = 0. At Value = 1, the color has no "darkness". What this means depends further on the Saturation value. At Saturation = 1 and Value = 1, the color is fully saturated. However at Saturation = 0 and Value = 1, the color becomes fully white, RGB(255, 255, 255). At saturation around 0.5 and Value = 1 the color becomes a pastel shade, so more biased towards white.
-	  </ul><br>
-	  This HSV model of colors has some interesting implications. The Hue value, seen as an angle from 0 to 360 degrees, represents a continuous loop through the color spectrum. This suggests that it should be possible to cycle through it seamlessly.<br>
-	  That’s exactly what we will be doing, in the following example involving <span class="var">part.colCust</span>:
-		<div class="code">
-			local hue = getGameTick() <span class="com">-- game tick value is interpreted as angle for hue</span><br>
-			local sat = 1.0<br>
-			local val = 1.0<br>
-			part.colCust = colorHSV(hue, sat, val)<br>
-		</div>
-		The particles will oscillate between different hues as the game tick counter increases. They are oscillating uniformly, though, all at the same time. We delay this by including <span class="var">tParam</span> in the picture. We rework the formula for <span class="var">t</span>, first multiplying <span class="var">tParam</span> by 180, then adding <span class="var">getGameTick()</span> on top of it:
-		<div class="code">
-			local hue = part.tParam * 180 + getGameTick() <span class="com">-- introduce delay via tParam</span><br>
-			local sat = 1.0<br>
-			local val = 1.0<br>
-			part.colCust = colorHSV(hue, sat, val)<br>
-		</div>
-		<img class="fig" src="ch2/ch2_g8.gif"/><br>
-		By how much we multiply <span class="var">part.t</span>, we control the delay between the starting hue and ending hue. Have some fun with it and try out different combinations!<br><br><br>
-		In the above example, we were assigning colors directly to <span class="var">part.colCust</span>. Nothing is preventing us from accessing the RGB color components of <span class="var">colCust</span> individually. We can then control the value for each color channel with a separate formula. I just want to remind that the color fields accept only integers from the 0 - 255 range to each channel. Thus, we must remap whatever result we get, e.g. from a function like <span class="var">sin()</span>, to <span class="var">&lt;0, 255&gt;</span>.
-		<div class="code">
-			local t = part.t * 3 * PI<br>
-			local d = PI * 2 / 3<br><br>
-			local sinr = sin(t)<br>
-			local sing = sin(t + d)<br>
-			local sinb = sin(t + 2*d)<br><br>
-			part.colCust.r = remap(sinr, -1, 1, 0, 255)<br>
-			part.colCust.g = remap(sing, -1, 1, 0, 255)<br>
-			part.colCust.b = remap(sinb, -1, 1, 0, 255)
-		</div>
-		<img class="fig" src="ch2/ch2_g9.gif"/><br>
-		<hr>
-		As this chapter is quite long, Ive decided to split it in half. The next half continues with topics such as particle function, particles that spawn other particles.<br><br>
-		<hr>
-		<a name="id5"><h3>Bonus: parametric expressions for velocity</h3></a>
-		So, you’re curious to know why in the last section, the formula for velocity needed <span class="var">cos()</span> instead of <span class="var">sin()</span> to achieve a curve like <span class="var">sin(x)</span>?<br>
-		To explain why this is, I must go on a tangent about the exact mathematical relation between velocity and position. I know, there is a lot of maths as of late, but I told you this section is optional, if maths is not your cup of tea.<br><br>
-		<h4>To find a derivative…</h4>
-		When we think of velocity, what is the first thing that comes to mind? We can say it specifies the number of spatial units an object travels at an exact moment in time. Another way of phrasing this is by stating that velocity is the rate of change of position at a given point in time. It means that at that exact moment, the object travels this amount of spatial units (meters, kilometers, feet, miles) per unit of time (second, minute, hour) on the X, Y and Z axis.<br><br>
-		Notice that the phrase: “<i>rate of change at an exact point in time</i>”, though intuitively makes sense to us, is a bit nonsensical, after giving it some thought. After all, to calculate a rate of <i>change</i> to position, we need to measure the position coordinates at two different points in time, then get the difference between these two positions (i.e. the <i>change</i>) and divide it by the difference in time between the measurements. If we narrow it down to a single spatial dimension, we can imagine the object traveling along the X axis. If we have a current measurment <span class="var">(xNow, timeNow)</span> and a previous measurement <span class="var">(xPrev, timePrev)</span>, the formula to get the approximate velocity should look like this:<br><br>
-		<span class="var">
-		xVel = (xNow - xPrev) / (timeNow - timePrev)
-		</span><br><br>
-		If we are literal about the meaning of “an exact point in time”, this would imply that <span class="var">timePrev</span> is the same as <span class="var">timeNow</span>. Since&nbsp;&nbsp;<span class="var">(timeNow - timeNow)</span>&nbsp;&nbsp;will always result in 0, we end up dividing the difference in position by zero!<br><br>
-		<img class="fig" src="ch2/divisionby0.jpg"><br>
-		So it seems like there is no way to make sense of a “<i>rate of change at a given point in time</i>”… or is there?<br><br>
-		Mathematicians in the late 17th century (Newton and Leibniz) cleverly came up with something called <i>calculus</i>. It is a branch of mathematics dedicated to studying the rates of change (derivatives) and how numerous tiny changes add up to something (integrals). In calculus, to answer the above “paradox” of the immediate rate of change at an exact point in time, we don’t look at the rate when the time difference is exactly 0, but rather examine what the average given by the above formula tends to as the time difference gets closer and closer to 0. For example, a difference of 0.000001 seconds, rather than <i>exactly</i> 0 seconds. The smaller this difference is, the better approximation of the “<i>rate of change at a given point in time</i>” you end up with. However, even with this approach, it is ultimately just an approximation, thus we can’t obtain the precise value for a  “difference” of 0… or can we?<br><br>
-		Turns out, if the position is described as a function of time (function being used here in the mathematical sense) with a known mathematical formula behind it, you can almost certainly <u>derive</u> a correct formula for its <i>exact</i> rate of change at a given point in time. Notice the underlined <u>derive</u> word, because the process of finding this special function which gives the rate of change is called <i>deriving</i> the function, or alternatively, finding the function’s <i>derivative</i>. And it is this <i>derivative</i> that gives the formula for the <i>exact</i> rate of change (in our specific case, velocity). However, the process of deriving the function can get a bit tricky.<br><br>
-		Say you have the following function <span class="var">f(t)</span>, which gives an output based on the input of time, <span class="var">t</span>. The definition for <span class="var">f(t)</span> can be something like:<br><br>
-		<span class="var">
-		  f(t) = t³ + sin(t)<br><br>
-		</span>
-		This function can describe the position on an axis (e.g. X) in regards to time <span class="var">t</span>, so <span class="var">f(t)</span> can be seen as <span class="var">x(t)</span>:<br><br>
-		<span class="var">
-			x(t) = t³ + sin(t)<br><br>
-		</span>
-		The derivative function is the function denoted as <span class="var">x'(t)</span> (notice the apostrophe, which is pronounced “<i>prime</i>”). This derivative function will give the “instantaneous” velocity based on <span class="var">t</span> (as if we got it from a time difference of exactly 0). What would such a derivative function even look like? Once we work it out, we learn it will take the form of:<br><br>
-		<span class="var">
-		x'(t) = 3t² + cos(t)<br><br>
-		</span>
-		Even at a quick glance, the are some slight similarities between <span class="var">x(t)</span> and <span class="var">x'(t)</span>, right? In particular, the term <span class="var">sin(t)</span> turned into <span class="var">cos(t)</span>, which is what we have seen happen in the case of our wave particles.<br><br>
-		Trust me, I didn’t just pull this out of… thin air. I obtained the <span class="var">x'(t)</span> formula by applying something known as <i>differentiation rules</i> (also called <i>derivative rules</i>) to the function <span class="var">x(t)</span>. Specifically, I applied the <i>addition rule</i> to the whole expression, the <i>power rule</i> to <span class="var">t³</span> and the trigonometric rule to <span class="var">sin(t)</span>.<br><br>
-		I consider the topic of differentiation to be far outside the scope of a tutorial focused on particle scripting, so I will not venture into it. Nonetheless, I am signalling it for those readers who are inquisitive about this topic for further research. Online tools like <a href="https://www.wolframalpha.com/"><strong>WolframAlpha</strong></a> allow you to enter nearly any mathematical function, no matter how complex, and get its derivative function with respect to some variable, like x or t, with prompts of the form:<br>
-		<div class="code">
-		  [function formula] derivative<br>
-			[function formula] derivative with respect to [variable]
-	  </div>
-		We live in the era of AI chatbots, so ChatGPT might be tempting to use for this purpose. I wouldn’t count on it giving correct solutions, though, as LLM (Large Language Model) chatbots like ChatGPT are infamous for answering mathematical queries blatantly wrong. WolframAlpha is more reliable, gives more accurate answers tailored specifically to mathematical prompts and has been around for longer than LLM bots like ChatGPT.<br><br>
-		<h4>Math lesson over. Bring your homework assignments on Monday!</h4>
-		This very long tangent about calculus is over. I brought it up simply to point out that getting formula for velocity from a formula for position is not as straightforward as one would think. Unfortunately, when we want to formulate mathematically defined trails for particles by using velocity and not position, we must transform the formula for a curve with derivative functions.<br><br>
-		This begs the question: with all this trouble, why even bother with changing the velocity, when we can change the position of the particle directly without getting involved with calculus in the first place?<br><br>
-		Great question.<br><br>
-		Well, you can directly set positions of particles in update, nothing is stopping you. But keep in mind that, unless particles are attached to moveable, particle positions are absolute. When you do something like this in update:
-		<div class="code">
-			local t = getGameTick() * 0.1<br>
-			part.pos.x = sin(t) * 100
-		</div>
-		What does <span class="var">part.pos.x</span> become? Something in the range of <span class="var">&lt;-100, 100&gt;</span>, as <span class="var">sin(t)</span> returns a value in the range <span class="var">&lt;-1, 1&gt;</span> and we multiply it by 100. But <span class="var">X = -100</span class="var"> is outside of the editor’s map grid bounds and <span class="var">X = 100</span> just barely within them. We are placing our particles outside of the level map! We could find a value of X where we know it to be somewhere in our level map, but that be some weird number like <span class="var">78321</span>, hardly convenient and difficult to work with (remember getting the <a href="Chapter1.html#id6">absolute position</a> values for our dust effect? Eugh…)<br><br>
-		<i>Aha</i>, but we have the <span class="var">emitterIndex</span> which attaches particles to moveables, right? Unfortunately, I have not told you the full story of how <span class="var">emitterIndex</span> really works. There is a feature in the plugin I have not touched on yet, called the <strong>Tethering System</strong>. I will explain it properly at some point, but suffice to say, it controls how particles can be attached to an object and how long they stay attached. When you use the <span class="var">emitterIndex</span>, particles are indeed attached to the moveable, but by default, the moment the particles exit the init function, the relative coordinates get converted to absolute world coordinates and the particle loses its relation to the moveable. This behavior can be changed, of course, but that isn’t something I intended to cover yet, considering there will be a dedicated section to the Tethering System in a future chapter. For now, let’s assume this approach is a no-go.<br><br>
-		Also, consider that you may have particles spawned in with slightly random offsets in the init function. If we overwrite the position directly in update, we lose information of what this random offset was. But velocity will preserve this offset, as it adds itself on top of what was already stored in the position vector. This is what makes setting velocity preferrable to setting position in the overwhelming majority of cases, as the original starting point of the particle remains untouched. Look at these diagrams to see the difference between setting position and setting velocity in update:<br>
-		<div style="display: block; text-align: center">
-			<img src="ch2/parts_pos.png">&nbsp;<img src="ch2/parts_vel.png">
-		</div><br>
-		The arrows point to where the particles will end up in the next frame. You see that the offset is preserved in case of changing the velocity, but no longer the case if we overwrite the position.<br><br><br>
-		So, what do we do if we want particles to travel along a helical path? In the previous mini-chapter we set up an “animated” <a href="Chapter1_5.html#helix">helix of particles</a>, but while the helix itself was animated, the particles were really only moving in a straight line. Now we want to flip it around, the helix will be static, but the particles themselves will travel along the helix. It’s also possible to do so, but in this case we need to calculate velocities for two axes, like X and Y.<br><br>
-		If you followed through that section, you know that the <i>parametric equations</i> for a circle look like this:<br><br>
-		<span class="var">
-		x = cos(a) * r<br>
-		y = sin(a) * r
-		</span><br><br>
-		These equations take a radius <span class="var">r</span> and an angle <span class="var">a</span>. As the values of the angle <span class="var">a</span> sweep through the range 0 to 2 pi, the <span class="var">x</span> and <span class="var">y</span> coordinates will draw out a circle of the given radius <span class="var">r</span>.<br><br>
-		Since we want the circle to “sweep” over time, we swap out the variable <span class="var">a</span> with time <span class="var">t</span>:<br><br>
-		<span class="var">
-		x = cos(t) * r<br>
-		y = sin(t) * r
-		</span><br><br>
-		Of course, <span class="var">t</span> will most likely come from <span class="var">getGameTick()</span>, but most likely, we will not use the raw value, but rather scale it by a constant scale factor<br><br>
-		<span class="var">s</span>:
-		<span class="var">
-		x = cos(t*s) * r<br>
-		y = sin(t*s) * r
-		</span><br><br>
-		These formulae will give us the <u>position</u> on the circle. To get the velocity formulae, we need to
-		If we leave this as is, we indeed obtain just a regular circle. But we are dealing with 3D space, not 2D space, our velocity also has Z-axis component. Right now we are not assigning anythin to it, so we have:
-		These formulae will give us the velocity components <span class="var">vx</span>, <span class="var">vy</span> for the X and Y axis, respectively. However, this is only true when we don’t change scale (through multiplication or division) of the angle <span class="var">a</span>.<br>
-		If any changes are made to the scale of a, it needs to be reflected by the formula for velocity. This is where the trickiness of obtaining correct formulas for velocity becomes apparant, as this is another one of the rules you must apply when working out a derivative function. We obtain the following:<br><br>
-		<span class="var">
-		vx = m * -sin(m * a) * r<br>
-		vy = m * cos(m * a) * r
-		</span><br><br>
-		Where <span class="var">m</span> represents some multiplication constant. Again, this only applies to the above specific case, the transformations between the normal position function and derivative function need to be worked out case-by-case.<br>
-		<hr>
-	</body>
+      Plugin= 1, Plugin_ParticleSystem, MPS_LOGGER_CONSOLE
+    </div>
+    or
+    <div class="code">
+      Plugin= 1, Plugin_ParticleSystem, MPS_LOGGER_FILE
+    </div>
+    You can have <u>only one</u> logger mode active at once. You are not allowed to enable both, e.g. the following <u>does not</u> work: <span class="var">MPS_LOGGER_CONSOLE + MPS_LOGGER_FILE</span>. Of course, for the chosen <span class="var">MPS_</span> flag to take effect, you must rebuild the script before booting the game.<br><br>
+    <h4>Disabling the logger</h4>
+    Once you no longer want to use the logger, you can switch it off by restoring the plugin command in <span class="var">[Options]</span> to its initial state, without any <span class="var">MPS_</span> flags:
+    <div class="code">
+      Plugin= 1, Plugin_ParticleSystem, IGNORE
+    </div>
+    If you are also a level builder, preparing a TRLE release, you should <u>always turn off</u> the logger for the release version of the TRLE project, as it is a tool for coders and possibly builders. The players, on the other hand, should not (and likely do not want to) see it. The console is rather distracting and tends to make the game engine less stable, while the log files add unnecessary trash to the game folder.
+    <hr>
+    <a name="id3"><h3>Filtering out log messages</h3></a>
+    As mentioned before, the plugin provides a total of 4 log message categories: <span class="var">INFO, DEBUG, WARN, ERROR</span>. However, some categories of messages are more important than others. For instance, <span class="var">INFO</span> mainly provides extra context of what the plugin was doing, before a warning or error occured. But you may decide to ignore this message category altogether and focus on just the <span class="var">WARN</span> and <span class="var">ERROR</span> messages. If you want to filter out which messages are allowed to appear in the logger, you can do so with a special API function, <span class="var">setLogLevel()</span>.<br><br>
+    The <span class="var">setLogLevel()</span> function accepts special <span class="var">LOG_</span> constants, which filter out certain categories of messages. Log message categories are ordered by importance rank, according to the table below (higher number means higher importance):<br><br>
+    <table cellpadding = "15" cellspacing = "15" class="tab">
+      <tr>
+        <th>Message Type</th>
+        <th>Importance Rank</th>
+        <th>LOG_ constant</th>
+      </tr>
+      <tr>
+        <td><span class="var">INFO</span></td>
+        <td><span class="var">1</span></td>
+        <td><span class="var">LOG_INFO</span></td>
+      </tr>
+      <tr>
+        <td><span class="var">DEBUG</span></td>
+        <td><span class="var">2</span></td>
+        <td><span class="var">LOG_DEBUG</span></td>
+      </tr>
+      <tr>
+        <td><span class="var">WARN</span></td>
+        <td><span class="var">3</span></td>
+        <td><span class="var">LOG_WARN</span></td>
+      </tr>
+      <tr>
+        <td><span class="var">ERROR</span></td>
+        <td><span class="var">4</span></td>
+        <td><span class="var">LOG_ERROR</span></td>
+      </tr>
+    </table><br><br>
+    The way <span class="var">LOG_</span> constants work is that they permit categories of importance <u>higher or equal to</u> the message category they specify. E.g. <span class="var">LOG_TRACE</span> permits all message categories (1-4), <span class="var">LOG_WARN</span> permits only messages of importance 3 or higher (3-4), while <span class="var">LOG_ERROR</span> will only permit <span class="var">ERROR</span> messages (4).<br><br>
+    By default, when a game is newly booted, the message filtering level is set to <span class="var">LOG_INFO</span> (i.e. no filtering). To set a different level, you call <span class="var">setLogLevel()</span> with the appropriate <span class="var">LOG_</span> constant in Lua:
+    <div class="code">
+      setLogLevel(LOG_DEBUG) <span class="com">-- sets the filtering to permit DEBUG, WARN and ERROR messages</span>
+    </div>
+    Most often, you will set the log level at the topmost line of a level script. The log level setting is never changed as long as the game is booted, until you change it again, somewhere else. This means that log level settings persist across different levels and in the title menu, from since when they were last modified.<br><br>
+    My personally recommended log level setting, if you do not care to receive <span class="var">INFO</span> messages, is <span class="var">LOG_DEBUG</span>. <span class="var">DEBUG</span> messages are only generated due to <span class="var">print()</span> function calls and do not occur otherwise. Meanwhile, <span class="var">WARN</span> and <span class="var">ERROR</span> messages are also permitted by this level, and these messages should not be dismissed, in my opinion. They give important alerts to issues or syntax problems with your Lua code, hence disabling them is not a good idea (you cannot even disable <span class="var">ERROR</span> messages, since the underlying issue makes the Lua environment halt, indicating something that needs immediate addressing).<br>
+    <hr>
+    <a name="id4"><h3>Error handling in the plugin</h3></a>
+    Because you have much freedom to do as you please in script files, there is also plenty of opportunities to make mistakes that Lua will not like. Not all of these mistakes are equal, though, as some are more severe than others. Whichever message category you receive, reading and comprehending the logger output is always the key first step in fixing them. The most important messages to pay attention to in the logger are <span class="var">WARN</span> and <span class="var">ERROR</span> messages. They signal that something is off in the Lua scripts, which needs to be checked and fixed by the coder. When the plugin sends one of these two messages categories to the logger, we say that it <strong>throws</strong> a message (e.g. throws a <span class="var">WARN</span>, throws an <span class="var">ERROR</span>).<br><br>
+    These types of messages will usually (but not always!) specify the name of the  <span class="var">.lua</span> file (could be a level script or module script) in which the problem was encountered. It may also specify the particular line of the script file where the problem occurred (counting from the top – starting from line 1). However, the messages can be a bit confusing if you don’t know what you’re supposed to look for in the message. This section will teach you how you should interpret these messages and understand what the plugin is trying to tell you in the process.<br><br>
+    There is a general structure to <span class="var">WARN</span> and <span class="var">ERROR</span> message types:
+    <div class="code">
+      [TAG]: [filepath]:[line number]: [message]<br>
+      stack traceback:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;[traceback 1]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;[traceback 2]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;.<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;.<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;.<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;[traceback N]<br>
+    </div>
+    Here is a concrete example, an <span class="var">ERROR</span> message that occured on line 8 of <span class="var">karnak.lua</span> level script:
+    <div class="code" style="color: red">
+      ERROR: levelscripts\karnak.lua:8: attempt to access inexistent field 'damage'<br>
+      stack traceback:<br>
+	    &nbsp;&nbsp;&nbsp;&nbsp;[C]: in metamethod 'newindex'<br>
+	    &nbsp;&nbsp;&nbsp;&nbsp;levelscripts\karnak.lua:8: in main chunk<br>
+    </div>
+    The <span class="var">[TAG]</span>, e.g. <span class="var">ERROR</span>, tells the message category. The <span class="var">[filepath]</span> describes in which file the issue was encountered, e.g. <span class="var">levelscripts\karnak.lua</span> indicates this happened in the <span class="var">karnak.lua</span> file in the <span class="var">levelscripts</span> folder. After the colon comes the <span class="var">[line&nbsp;number]</span>, in this case line number <span class="var">8</span> (the first line in a file is line 1 and you count downwards, but if you use Nodepad++, by default it displays the line numbers on the left gutter). These are the most important parts of the log message to pay attention to.<br><br>
+    The next part of the message, below the tag line, is something called a <strong>stack traceback</strong> – it is a list of all functions called before the faulty line was reached, in reverse order (top is most recent, bottom is oldest). How many of these traceback lines are in a message will vary depending on the complexity of the script, but generally 1 to 3 lines is what you will encounter most often. Such traceback lines provide additional context, but in practice will be mostly useful to people with prior programming experience (since tracebacks are frequently examined in the process of debugging code). For a casual particle coder though, the most important information is already stated in the first line, above the traceback (i.e. the message category, the file path, the line number and the message contents).<br><br>
+    After receiving a <span class="var">WARN</span> or <span class="var">ERROR</span> message, what should we do? First of all, we shouldn’t panic. We start by opening the file indicated in the tag line of the message, if not already opened. We navigate to the line number specified after the file name and examine the code on that line, to see if we can connect the dots and infer what went wrong in our code. The next section gets into the specifics of how to continue from there.<br>
+    <hr>
+    <a name="id5"><h3>Fixing warning and error messages</h3></a>
+    Although receiving a warning or error in the logger may seem intimidating at first, the plugin is actually just trying to help you here. Interpreting the message correctly is important for understanding how to resolve any problems which resulted in the warning or error. This section will discuss <span class="var">WARN</span> and <span class="var">ERROR</span> message types, detailing in which circumstances you may encounter these messages and what you can do to fix or remove the issue that made the message appear.<br><br>
+    <h4>WARN messages</h4>
+    As a reminder, <span class="var">WARN</span> messages have the least concerning implications of the two. They signal that something is somewhat incorrect, but not in a way which would stop the plugin in its tracks. After the plugin throws a <span class="var">WARN</span> message, it can usually make some quick adjustment by itself, to work around the faulty value or otherwise minor issue. However, it cannot step in and fix the already written code on its own, so it will often keep churning out these warnings, each time the faulty piece of code is executed. This can lead to a spammed logger, with hundreds of <span class="var">WARN</span> messages:
+    <img class="fig" src="ch2/warning1.png"><br>
+    Of course, throwing a message and side-stepping the issue comes at a cost, it’s extra work the plugin has to do. It takes computing resources away from what would otherwise be flawless execution of Lua code, and this may make the script’s performance worse. Hence, it is strongly recommended to fix warnings whenever possible, instead of relying on the plugin to step in. We’re responsible adults, aren’t we? The good news is fixing warnings is usually trivial.<br><br>
+    There are two common reasons for which you’ll receive <span class="var">WARN</span> messages in the logger:
+    <ul>
+      <li>if a value was assigned to a field: it is not in the appropriate range of expected values, but still matches the expected type (e.g. a number outside of range <span class="var">[0, 255]</span> accepted for the field)</li>
+      <li>if a value was given to a function argument: it is not in the appropriate range of expected values, but still matches the expected type (e.g. a number outside of range <span class="var">[-32768, 32767]</span> accepted for the argument)</li>
+    </ul>
+    In these cases, after sending the <span class="var">WARN</span> message, the plugin will fall back on some appropriate default value and proceed with execution, which makes the consequences less damning. But according to our agreement, we should still fix these issues, right? Good, so let’s examine each of the above <span class="var">WARN</span> scenarios and learn how to avoid it or fix it, if it occurs.<br><br>
+    <h4>Assigning an out-of-range value to a field</h4>
+    If there is an assignment of a value to a field, check what you are actually assigning to it. If you are aware of the range of acceptable values for a field and you are explicitly assigning a value outside that range, it’s quite easy to catch. A good example for restricted field values are the <span class="var">r, g, b</span> color components of <span class="var">ColorRGB</span>, which allow values only from <span class="var">0</span> to <span class="var">255</span>. If you have something like the following:
+    <div class="code">
+      part.colStart.r = 355
+    </div>
+    Then it’s very obvious that such an assignment is invalid, exceeding the maximum. The plugin will complain, via a <span class="var">WARN</span> message (likely several times over):<br>
+    <img class="fig" src="ch2/warning2.png"><br>
+    And then, reduce the value by itself to <span class="var">255</span>.<br><br>
+    However, sometimes it is not immediately clear by just reading the script, whether the assigned value is out of range or not (e.g. because it was obtained from a variable, expression or function). To illustrate this, let’s assume we have a mysterious function <span class="var">func(x)</span>, of which we know nothing, except that it returns number values. We are not sure of the minimum or maximum possible value this function can give (there may be no maximum, if the function keeps rising towards infinity, for example). Perhaps against our better judgement, we decide to assign the result of calling <span class="var">func(x)</span> for <span class="var">x = 10</span>, to the <span class="var">part.colStart.r</span> field:
+    <div class="code">
+      local x = 10 <span class="com">-- some arbitrary argument value x</span><br>
+      part.colStart.r = func(x) <span class="com">-- calling func(x) and assigning the returned value to colStart.r</span>
+    </div>
+    But in this hypothetical situation we are entertaining, it turns out that at <span class="var">x = 10</span>, the return value of <span class="var">func(x)</span> will be <span class="var">1000</span>, not good! We later may discover that <span class="var">func(x)</span> has a more suitable value at <span class="var">x = 8</span>, giving <span class="var">200</span>, so we change the value of <span class="var">x</span> to <span class="var">8</span> instead:
+    <div class="code">
+      local x = 8<br>
+      part.colStart.r = func(x)
+    </div>
+    This would fix the warning if <span class="var">x</span> never changes. However, what if <span class="var">x</span> is not a constant value? As an example:
+    <div class="code">
+      local x = getGameTick()<br>
+      part.colStart.r = func(x)
+    </div>
+    Here, <span class="var">x</span> takes the current game tick value, so in a sequence of several frames, it will be: <span class="var">0, 1, 2, …, 8, 9, <u>10</u>, 11, …</span> and we don’t know how <span class="var">func(x)</span> behaves as the value of <span class="var">x</span> keeps changing – it may keep rising, but it may start falling down again, who knows (unless you understand the mathematics done by the function, you will not have the foresight to tell). All we know is that for  <span class="var">x = 10</span>, the mystery function <span class="var">func(x)</span> goes out of range for the <span class="var">part.colStart.r</span> field. How do we make the code invulnerable to values out of range? Well, we need to check if the value returned by <span class="var">func(x)</span> is suitable, and then decide to assign it or not:
+    <div class="code">
+      local x = getGameTick()<br>
+      local red = func(x)<br>
+      if red <= 255 then <span class="com">-- if red is smaller or equal to upper bound (255) of colStart.r</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = red<br>
+      end
+    </div>
+    This will protect us from assigning a value larger than <span class="var">255</span> to <span class="var">part.colStart.r</span>, if <span class="var">func(x)</span> returned something bigger. However, we may also proceed to assign the upper bound value, in the case that it was indeed bigger. We can use an else branch on the if statement to achieve that:
+    <div class="code">
+      local x = getGameTick()<br>
+      local red = func(x)<br>
+      if red <= 255 then <span class="com">-- if res is smaller or equal to upper bound (255) of colStart.r</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = red<br>
+      else <span class="com">-- otherwise if it is bigger</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = 255<br>
+      end
+    </div>
+    We have covered the situation where the function surpasses the maximum accepted value. But we later discover another thing about the behavior of <span class="var">func(x)</span>. At <span class="var">x = 5</span>, the returned value is <span class="var">-100</span>. We have a very similar problem as before, except now the value goes beyond the lower bound of <span class="var">0</span>. To remedy it, we could expand the if condition, like so:
+    <div class="code">
+      local x = getGameTick()<br>
+      local red = func(x)<br>
+      if red >= 0 and red <= 255 then <span class="com">-- if red is between 0 and 255</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = red<br>
+      elseif red > 255 then <span class="com">-- otherwise if red is above 255</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = 255<br>
+      else <span class="com">-- otherwise if red is below 0</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = 0<br>
+      end<br>
+    </div>
+    This covers all bases: if the value of <span class="var">red</span> is below the minimum (<span class="var">0</span>), if it’s in range (<span class="var">[0, 255]</span>) or if it’s above the maximum (<span class="var">255</span>) for <span class="var">part.colStart.r</span>. But let’s be honest, this whole ordeal every time we want the assigned value to be restricted to some range is very tedious. Not to mention making our code bloated and more difficult to read. Surely, there should be an easier way to achieve the same thing. Luckily, it exists in the form of the built-in <span class="var">clamp()</span> function.<br><br>
+    <a name="clamp"><h4>The clamp() function</h4></a>
+    The <span class="var">clamp()</span> function takes three arguments:
+    <div class="code">
+      clamp(x, min, max)
+    </div>
+    these arguments are:
+    <ol>
+      <li><span class="var">x</span> – the input value to be clamped (number)</li>
+      <li><span class="var">min</span> – the minimum value to clamp to (number)</li>
+      <li><span class="var">max</span> – the maximum value to clamp to (number)</li>
+    </ol><br>
+    The function will return the value of <span class="var">x</span> if it is within the <span class="var">[min, max]</span> range, otherwise it returns either the <span class="var">min</span> or <span class="var">max</span> value, if the range is exceeded.<br><br>
+    The idea of the <span class="var">clamp()</span> function is to replace the multiline if-elseif-else code we have seen above with a single function call:
+    <div class="code">
+      local x = getGameTick()<br>
+      local red = func(x)<br>
+      part.colStart.r = clamp(red, 0, 255) <span class="com">-- clamp red to range [0, 255]</span>
+    </div>
+    thus replacing that multi-branched conditional statement with just one line of code. Really convenient!<br><br>
+    <h4>Avoiding out-of-range function arguments</h4>
+    We can also use <span class="var">clamp()</span> when a function argument accepts numeric values restricted only to a certain range. Passing arguments that are out of range is another common source of <span class="var">WARN</span> or <span class="var">ERROR</span> messages.<br><br>
+    Continuing the theme, we will examine the <span class="var">createColor(r, g, b)</span> function, which creates a ColorRGB data object (that can then be assigned to <span class="var">part.colStart</span>, for example). Similarly to assigning values to the individual RGB color components, the <span class="var">r,&nbsp;g,&nbsp;b</span> arguments of <span class="var">createColor()</span> are restricted to the <span class="var">[0, 255]</span> range.<br><br>
+    If we suspect the value we give to an argument may exceed the range, it is safer to clamp it:
+    <div class="code">
+      local x = getGameTick()<br><br>
+      local red = clamp(func(x), 0, 255)<br>
+      local green = clamp(func(x + 1), 0, 255)<br>
+      local blue = clamp(func(x + 2), 0, 255)<br><br>
+      part.colStart = createColor(red, green, blue)
+    </div>
+    The duty of providing appropriate values falls on us, but this is exactly what a responsible coder would do!<br><br>
+    Avoiding script issues is not the only usage for <span class="var">clamp()</span>, of course. It’s a quite useful utility function to have in your toolset, whenever you need to restrict some number value to a predetermined range, for any kind of reason.<br><br><br>
+    <h4>ERROR messages</h4>
+    Higher on the severity scale are <span class="var">ERROR</span> messages. They indicate a more serious issue than just a mere warning would. Due to the very high importance, <span class="var">ERROR</span> messages are always reported and you cannot turn them off, because they indicate a bigger problem with the code or the scripts in general. When an <span class="var">ERROR</span> message is thrown, the plugin halts all further execution of Lua code, beyond the line in which it occured. Furthermore, it will not load any more level scripts or modules, until the underlying issue is fixed or remedied.<br><br>
+    Reasons for <span class="var">ERROR</span> messages are plentiful can arise due to the following circumstances:
+    <ul>
+      <li>not following general rules of Lua syntax:<br><br>
+        <ul style="list-style-type: circle">
+          <li>using a <a href="LuaManual.html#keywords">reserved keyword</a> as a variable (or function) name</li>
+          <li>not matching up parentheses <span class="var">()</span> (in an expression, a function definition or function call) or <span class="var">[]</span> (indexing brackets) or <span class="var">{}</span> (table brackets)</li>
+          <li>not following an if conditional statement with <span class="var">then</span> keyword, i.e. <span class="var">if (condition) then</span></li>
+          <li>not following correct for loop statement structure, i.e. <span class="var">for var = start, stop do</span></li>
+          <li>not terminating a code block (if-block, for-block, function definition block) with <span class="var">end</span> keyword</li>
+          <li>having an expression that cannot be correctly parsed by Lua, e.g. <span class="var">local myvar = ()</span>&nbsp;&nbsp;→&nbsp;&nbsp;no parsable value inside the parentheses (different from <span class="var">{}</span>, indicating an empty table value)</li>
+          <li>attempting an arithmetic operation on <a href="LuaManual.html#types">data types</a> that do not support it, e.g. <span class="var">false + "text"</span></li>
+          <li>indexing a value that cannot be indexed, e.g. <span class="var">true[5]</span></li>
+          <li>calling a value that cannot be called, e.g. <span class="var">"text"()</span></li>
+        </ul>
+      </li><br>
+      <li>using a variable that wasn’t declared as <span class="var">local</span> prior to use (such variables are <a href="LuaManual.html#locals">treated as globals</a>, which are forbidden in the plugin’s Lua environment)</li>
+      <li>incorrectly indexing a plugin data entity, e.g. <span class="var">part[10]</span></li>
+      <li>attempting to call a plugin data entity as a function, e.g. <span class="var">part()</span></li>
+      <li>accessing a non-existing field of a plugin data entity, e.g. <span class="var">part.hitPoints</span></li>
+      <li>assigning to a read-only field of a plugin data entity, e.g. <span class="var">part.t = 0.5</span></li>
+      <li>assigning a value of incorrect <a href="LuaManual.html#types">data type</a> to a plugin data field, e.g. <span class="var">part.lifeSpan = "text"</span></li>
+      <li>passing a value of incorrect data type to a function argument, e.g. <span class="var">randomNegate("text")</span></li>
+      <li>passing an otherwise unacceptable argument value to a built-in function</li>
+      <li>not passing all necessary arguments to a function, e.g. <span class="var">createColor(192, 128)</span></li>
+      <li>indexing a built-in function in any way, e.g. <span class="var">createSpritePart[3]</span> or <span class="var">createGroup.x</span>
+      <li>attempting to reassign a built-in function, e.g. <span class="var">degToRad = myfunction</span></li>
+    </ul><br>
+    Furthermore, there are two additional sources of <span class="var">ERROR</span> messages. They are not caused by something inherently wrong in the Lua files themselves, but arise due to missing files:
+    <ul>
+      <li>a level script file referenced by the <span class="var">CUST_LEVEL_SCRIPTS</span> command is missing from <span class="var">levelscripts</span> folder</li>
+      <li>a module script file referenced by the <span class="var">require()</span> function is missing from <span class="var">modulescripts</span> folder</li>
+    </ul><br>
+    As you see yourself, there is a lot that can go wrong in scripts which would result in an <span class="var">ERROR</span> message. Fortunately, none of these issues are unfixable.<br><br>
+    <h4>Fixing script errors</h4>
+    When you receive such an <span class="var">ERROR</span> message, you should follow the same approach as with <span class="var">WARN</span> messages (going to the faulty line in the script and inspecting the code there). The main difference is that while a <span class="var">WARN</span> permits continued operation, a single <span class="var">ERROR</span> occurence will terminate all further execution of code. If there are multiple faulty lines of code, which would result in an <span class="var">ERROR</span>, the plugin only reports the first one it encountered. This means that the next <span class="var">ERROR</span> report will occur only after the previous one is fixed, requiring you to retest the execution of the script and pay close attention to the logged messages. The line number of the encountered <span class="var">ERROR</span> message will be changing as you successively fix them, until no more errors are reported.<br><br>
+    Let’s analyze an example of a bug-ridden module script, <span class="var">buggy.lua</span>, in which we will identify each problem and fix it:
+    <div class="code">
+      <button class="btn" onclick="copyCode(this)"><span class="tooltip">Copy to clipboard</span><img src="clipboard.png"></button>
+      local buggy<br><br>
+      local buggyInit()<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart()<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getTombIndex(3)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 60<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = true<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = 80<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart * 8<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart = createColor(0, 255, 255)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colEnd = createColor(255, 0, 255)<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.vel.z = 40<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.vel.y = -60<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.accel.y = 2<br><br>
+      buggy = createGroup(buggyInit, nil)
+    </div>
+    This is the first <span class="var">ERROR</span> reported, if we try to run this script with no alterations:
+    <div class="code" style="color: red">
+      ERROR: levelscripts\tut1.lua:1: modulescripts\buggy.lua:3: unexpected symbol near ')'<br>
+      stack traceback:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;levelscripts\tut1.lua:1: in main chunk
+    </div>
+    We go to the 3rd line in <span class="var">buggy.lua</span>, as indicated by the message.
+    <div class="code">
+      local buggyInit()
+    </div>
+    We are missing something here. What is it? Well, we’re defining a function, <span class="var">buggyInit()</span>, but we have forgotten about the crucial <span class="var">function</span> keyword. The message: <span class="var">unexpected symbol near ')'</span> perhaps does not tell us this upfront. But whenever we have an ambiguous message, we should take a look at the faulty line and make an educated guess about what is wrong with it. Anyway, we fix this specific issue by adding the necessary keyword:
+    <div class="code">
+      local function buggyInit()
+    </div>
+    We run the level again and see the next <span class="var">ERROR</span> message show up:
+    <div class="code" style="color: red">
+      ERROR: levelscripts\tut1.lua:1: modulescripts\buggy.lua:24: 'end' expected (to close 'function' at line 3) near &lt;eof&gt;<br>
+      stack traceback:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;levelscripts\tut1.lua:1: in main chunk
+    </div>
+    We now see the message points to line 24 of the script:
+    <div class="code">
+      buggy = createGroup(buggyInit, nil)
+    </div>
+    Is there something wrong there? It doesn’t seem like it, looks rather correct at first glance. But let’s re-read the message: <span class="var">'end' expected (to close 'function' at line 3) near &lt;eof&gt;</span>. Did you catch it? The plugin is telling us that the <span class="var">end</span> keyword, to close the function beginning at line 3, was not found. So, we add that missing <span class="var">end</span> keyword:
+    <div class="code">
+      local buggyInit()<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart()<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getTombIndex(3)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 60<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = true<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = 80<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart * 8<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart = createColor(0, 255, 255)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colEnd = createColor(255, 0, 255)<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.vel.z = 40<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.vel.y = -60<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.accel.y = 2<br>
+      end
+    </div>
+    After running the script once more, we see yet another message:
+    <div class="code" style="color: red">
+      ERROR: modulescripts\buggy.lua:4: ParticleGroup expected<br>
+      stack traceback:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;[C]: in global 'createSpritePart'<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;modulescripts\buggy.lua:4: in function &lt;modulescripts\buggy.lua:3&gt;
+    </div>
+    This message points to something on line 4:
+    <div class="code">
+      local part = createSpritePart()
+    </div>
+    I think this one is very easy to identify. We are not passing any argument to <span class="var">createSpritePart()</span>! The message even tells us: <span class="var">ParticleGroup expected</span>. We have called the group variable <span class="var">buggy</span>, so we pass it to the function:
+    <div class="code">
+      local part = createSpritePart(buggy)
+    </div>
+    We repeat the drill of re-running the script, receiving yet another message:
+    <div class="code" style="color: red">
+      ERROR: modulescripts\buggy.lua:8: number expected<br>
+      stack traceback:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;[C]: in metamethod 'newindex'<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;modulescripts\buggy.lua:8: in function &lt;modulescripts\buggy.lua:3&gt;
+    </div>
+    We go to line 8, where we see:
+    <div class="code">
+      part.fadeOut = true
+    </div>
+    Reading the message, it tells us: <span class="var">number expected</span>. To the field <span class="var">part.fadeOut</span> we assigned the boolean value <span class="var">true</span>. A boolean is not a number. So, I think the solution really speaks for itself:
+    <div class="code">
+      part.fadeOut = 30
+    </div>
+    We run the level one last time and… no more errors! We have successfully fixed every issue lurking in the <span class="var">buggy.lua</span> script, hurrah!<br>
+    <img class="fig" src="ch2/buggy_fixed.gif"><br>
+    <h4>Fixing missing file errors</h4>
+    You will get these <span class="var">ERROR</span> messages if the plugin is unable to locate a level script file with the name given by the ExtraNG string in <span class="var">CUST_LEVEL_SCRIPTS</span>, or if the plugin cannot find a module matching the string given to <span class="var">require()</span> inside a level script. The plugin cannot do anything about these missing script files, other than to throw an <span class="var">ERROR</span> message and abort importing them.<br>
+    <img class="fig" src="ch2/levelscript_error.png">
+    <img class="fig" src="ch2/module_error.png"><br>
+    There are two probable reasons for missing Lua scripts. The first is that the file was misplaced in some other directory (e.g. you accidentally added a level script to the <span class="var">modulescripts</span> folder, or vice-versa). The other is that you typed the name of the level script or module script incorrectly (e.g. with a typo). As a reminder, level script file names are always added <u>without</u> the <span class="var">.lua</span> extension to the <strong>ExtraNG strings</strong> section in <span class="var">english.txt</span>. The module script names are typed in string quotes in <span class="var">require()</span> function, again without the <span class="var">.lua</span> extension. Adding the extension is not only unnecessary, it’s invalid!<br><br>
+    <hr>
+    <a name="id6"><h3>Using the print() function for debugging</h3></a>
+    The built-in function <span class="var">print()</span> is a really useful debugging function. It is able to print certain Lua values (mainly strings, numbers and booleans) as a <span class="var">DEBUG</span> message in the log. This functionality allows for two things:
+    <ol>
+      <li>Checking if the <span class="var">print()</span> instruction and the code surrounding it is reachable (i.e. whether the flow logic can progress to the code block containing <span class="var">print()</span>, e.g. under some if-condition)</li>
+      <li>Checking if the printed value of a variable, data field or some expression is indeed the one we expected to get (mostly applies to numeric/boolean values).</li>
+    </ol><br>
+    <h4>Checking if a block of code is reachable</h4>
+    The first aspect of <span class="var">print()</span> allows us to verify if the code in question is even executed in the first place, or if it is somehow skipped. For example, in the following code snippet:
+    <div class="code">
+
+      local part = createSpritePart(dustgroup)<br>
+      print("created dustgroup particle!")
+    </div>
+    We are verifying the plugin is actually creating particles of the <span class="var">dustgroup</span> particle group. Seeing <span class="var">DEBUG</span> messages with the contents <span class="var">created dustgroup particle!</span> confirms that such particles are indeed created:
+    <img class="fig" src="ch2/debug0.png"><br>
+    Naturally, if the code section hosting the <span class="var">print()</span> is entered on each tick or even several times per tick (e.g. in a for loop), we will see a long litany of these messages being spammed in the logger.<br><br>
+    We can also use this technique to evaluate whether if conditions are performing as we expect them to:
+    <div class="code">
+      part.spriteIndex = 11<br>
+      part.lifeSpan = randomInt(50, 100)<br>
+      if part.lifeSpan % 2 == 0 then<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;print("inside if condition block")<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 14<br>
+      end
+    </div>
+    we first assign <span class="var">11</span> to <span class="var">part.spriteIndex</span>. Then we generate a randomized life span for the particle. Afterwards, in an if condition, we check if the <span class="var">part.lifeSpan</span> value is divisible by 2 via the <span class="var">%</span> modulo operator. If true, we re-assign <span class="var">14</span> to the <span class="var">part.spriteIndex</span>. What if we want a confirmation that the code inside the if-block can be reached? I mean, it seems rather likely that some of the particles will end up with <span class="var">spriteIndex = 14</span>, but how can we verify this directly in the code, instead of closely examining the particles in game? Easy, somewhere inside the if-block, we add a <span class="var">print()</span> function call with some arbitrary string message (e.g. <span class="var">"inside if condition block"</span>). For every time the if-block was entered, we should see a <span class="var">DEBUG</span> message pop up in the logger, printing our string:
+    <img class="fig" src="ch2/debug1.png"><br>
+    Perhaps we could also tell that some particles indeed use sprite 14 instead of 11, which would serve as visual confirmation that the above code snippet works. Unfortunately, not in all cases will there be obvious signs if the code was executed or not. For example, say that instead of assigning a different sprite, we played a certain sound effect. The function for playing specified sound effects, <span class="var">soundEffect()</span>, will be explained eventually in these tutorials, but for now you only have to know that in the following example, it will play the sound effect with ID 285, <strong>OBJ_GEM_SMASH</strong> (the flare sound effect in TR4):
+    <div class="code">
+      if part.lifeSpan % 2 == 0 then<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;soundEffect(285, part.pos, 0) <span class="com">-- play sound effect 285 at particle position</span><br>
+      end
+    </div>
+    Now, imagine in this hypothetical situation, that you play the game, but you do not hear the sound effect at all, despite clearly seeing particles. What’s even weirder, we see no error messages in the logger that would indicate some obvious problem with our code. What gives? Well, there are two possibilities: either the code block containing the <span class="var">soundEffect()</span> call is never entered (indicating an issue with the code logic), or there is something not right about the sound effect (an issue outside the Lua script, perhaps due to missing sound samples in the outputted level). To outrule the lack of sound effect being a problem with the Lua script, we can add a <span class="var">print()</span> call immediately after the <span class="var">soundEffect()</span> function call, to confirm that the script does in fact enter the if-block (if the <span class="var">print()</span> is executed, so was the <span class="var">soundEffect()</span> right before it):
+    <div class="code">
+      if part.lifeSpan % 2 == 0 then<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;soundEffect(285, part.pos, 0) <span class="com">-- play sound effect 285 (OBJ_GEM_SMASH) at part position</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;print("after soundEffect() call") <span class="com">-- confirm that the script executes this code block</span><br>
+      end
+    </div>
+    If the logger shows a <span class="var">DEBUG</span> message with the message text: <span class="var">after soundEffect() call</span>, we can confidently determine that the script is working as expected, thus the sound effect issue must have a different root cause (maybe it is a missing sound sample in the outputted level, after all). Disambiguating and narrowing down the source of issues in this way is quite helpful and saves you precious time spent looking in the wrong places.<br><br>
+    <h4>Checking the value of a variable / expression / data field</h4>
+    While sending string messages to console allows us to test if the code is reachable, or test correct execution order, sometimes we want to further verify if the executed code gave us the exact result we were anticipating. This is a secondary application of the <span class="var">print()</span> function. Instead of providing (only) a string argument, we specify a variable, data field or expression that will evaluate to a number or boolean <span class="var">true</span> / <span class="var">false</span> value.<br><br>
+    As an example, we can use this to check if the mathematical expression gives us the value we are expecting to get:
+    <div class="code">
+     local angle = degToRad(30)<br>
+     local num = sin(angle)<br>
+     print("the value of 'num' is", num)
+    </div>
+    We are assigning to <span class="var">local angle</span> the value of <span class="var">degToRad(30)</span>, which gives us the angle value 30°, but expressed in <a href="Chapter1.html#radians">radians</a>, the expected input for <span class="var">sin()</span>. Then, for <span class="var">local num</span>, we assign the result of <span class="var">sin(angle)</span>. Interestingly, the <span class="var">print()</span> function can take several arguments. If you pass more than one value, it will print out all of them in a row, separated by horizontal tabs. Here, we have decided to add a string prefix that will apear in front of the number value. Before the actual <span class="var">num</span> value, we have passed a string:<br><br><span class="var">&nbsp;&nbsp;&nbsp;&nbsp;"the&nbsp;value&nbsp;of&nbsp;'num'&nbsp;is"</span><br><br>
+    In Lua, it is possible to use a different type of quote character within a string than the one used for marking the string. Since we used <span class="var">""</span> for the outer quotes, we are able to put <span class="var">'num'</span> inside of the string and have it appear as part of the message.<br><br>
+    According to mathematics, the value of sine for 30 degrees (&pi;/6 radians) should be equal to ½ (0.5). If the <span class="var">sin()</span> function works as expected, we should receive the following message in the logger:
+    <img class="fig" src="ch2/debug2.png"><br>
+    We can use such string and number pairings in <span class="var">print()</span> to add annotations to <span class="var">DEBUG</span> messages, explaining what the printed number or boolean represents (quite helpful when printing several number values, to know which is which).<br><br>
+    Another situation where we can print out numeric values is to learn what value a certain data field is currently holding, or checking whether it’s holding the value we are expecting of it. This may be a silly example, but let’s say we want to know the default value of some unassigned particle field in the init function, before we make the assignment:
+    <div class="code">
+      local part = createSpritePart(group)<br><br>
+      print("part.emitterIndex is", part.emitterIndex)<br>
+      part.emitterIndex = getTombIndex(25)
+    </div>
+    From <a href="Chapter1_5.html#emitters">what we know</a> of the <span class="var">part.emitterIndex</span> field, we are expecting it to hold the value <span class="var">-1</span>, before it gets assigned a valid Tomb4 item index. We should see the following output:
+    <img class="fig" src="ch2/debug3.png"><br>
+    A small limitation of <span class="var">print()</span> is that you cannot directly print out the contents of structured value types, like tables or plugin data:
+    <div class="code">
+      local table = {1, 2, 3}<br>
+      print("table is ", table)
+    </div>
+    In this situation, <span class="var">print()</span> will give the memory address of the table or plugin data object, which is not particularly useful for our purposes:
+    <img class="fig" src="ch2/debug_table.png"><br>
+    Fortunately, you can list any number of values in one print call. Here is an example for printing RGB values of <span class="var">part.colStart</span>:
+    <div class="code">
+      part.colStart.r = randomInt(60, 90)<br>
+      part.colStart.g = randomInt(120, 160)<br>
+      part.colStart.b = randomInt(200, 250)<br><br>
+      print("part.colStart is (", part.colStart.r, part.colStart.g, part.colStart.b, ")")
+    </div>
+    The formatting on such an output is perhaps not ideal, but nicely formatted outputs are not really what <span class="var">print()</span> is designed for. It’s merely a tool for obtaining direct feedback from the code we have written and interrogating its execution in real time.<br>
+    <img class="fig" src="ch2/debug4.png"><br>
+    Once we are done testing the code we were working on, we may comment out or remove all the <span class="var">print()</span> calls (in fact, it is recommended for best performance).<br><br>
+    <hr>
+    Even though this chapter was a slight change of pace and may have slowed your momentum due to its technicality, it was a very necessary pitstop to make before the road ahead. Using the logger features, knowing how to manage script errors and debugging with the <span class="var">print()</span> function is invaluable for more advanced particle scripting. The chapters ahead will frequently bring up checking for warning or error messages in the console and fixing them when our code misbehaves. Hopefully, the time invested into getting through this chapter was time well spent and you will not be confused when you encounter references to the logger, <span class="var">WARN</span> / <span class="var">ERROR</span> messages and <span class="var">print()</span> from this point onwards.<br><br>
+    See you in <strong>Chapter 3</strong> – update functions!<br><br>
+    <table width=100%>
+      <tr>
+      <td><a href="Chapter1_5.html"><strong>&lt;&lt;&lt;&nbsp;PREV</strong></a></td>
+      <td style="text-align: right"><a href="Chapter3.html" ><strong>NEXT&nbsp;&gt;&gt;&gt;</strong></a></td>
+      </tr>
+    </table>
+  </body>
 </html>
