@@ -17,25 +17,22 @@
     We are continuing the topic of update functions. After whetting our appetite in the first half of the chapter, we’re about get into the truly wild territory, which shows what update functions are <i><strong>really</strong></i> capable of.<br><br>
 		The first section dives into the topic of <strong>particle functions</strong>, which are specialized, built-in API functions that operate directly on particles. These mighty functions allow to achieve incredible feats, resulting in intricate particle behavior. By leveraging these particle functions, you can make particles interact with their surroundings or otherwise exhibit unique behavior that is either impossible, very difficult or cumbersome to achieve conventionally. Using the right combination of such functions, you can make particles bounce off walls and floors/ceilings, make them target and home on specific moveables, detect when they collide the moveable and trigger an explosion and deal damage to the enemy (or Lara!) or perhaps make them follow an object around but keep their distance and emit a custom dynamic light which illuminates dark areas (acting more as a companion to the protagonist, maybe). The opportunities are truly countless, as you see.<br><br>
 		Next up, we will embark on the very interesting topic of making particles spawn (or birth) <strong>other particles</strong>, to form trails, auras and other composite, multi-particle effects! This is a direct consequence of update functions permitting nearly anything that is programmable in Lua, including calling other user-defined functions (like the init function of a particle). However, especially with this feature, you can shoot yourself in the foot and make the game crash or severely lag if you aren’t handling it with care. For this reason, the section dedicated to it first starts out with heavy warnings to be very cautious with this spectacular, but potentially dangerous aspect of particle scripts.<br><br>
-		Towards the end, we explore more specific topics related to performance of your particle scripts and the strategies involved in making them more optimized.<br>
     <hr>
     <h2>Sections</h2>
     <strong>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id1">1. Introducing particle functions</a><br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id2">2. Animating particles</a><br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id3">3. Colliding particles</a><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id4">4. Homing and following particles</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id4">4. Homing particles</a><br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id5">5. Particles that spawn other particles</a><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id6">6. On immortal particles</a><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#id7">7. Remarks about performance</a><br>
     </strong><br>
     <hr>
     <a name="id1"><h3>Introducing particle functions</h3></a>
     As we have seen in the previous half of the chapter, we can already do plenty of different things with our particles in update functions. Manipulating their fields, frame by frame, is certainly a lot of fun. However, the usefulness of this feature would not be as groundbreaking, if that’s all you could do with it. After all, I promised that thanks to update functions, particles can not only be manipulated in real time, but can also be instructed to interact with their environment. How do we make the particles interactible, though? None of the particle properties described to us seem like can help in achieving that.<br><br>
-    Indeed, particle fields alone will not help in this task. What will help is <strong>particle functions</strong>.<br><br>
+    Indeed, particle properties alone will not help in this task. What will help is <strong>particle functions</strong>.<br><br>
     <h4>What are particle functions?</h4>
     Simply put, they are built-in functions defined in the plugin API, which operate on <u>particle instances</u>.<br><br>
-    You may be thinking we have already seen “particle functions” in action before. Init and update are functions that work with particles, aren’t they? Indeed, these are functions through which we manage particles. But these functions are written by ourselves (they’re user-defined functions). Init is meant to establish when and how to bring a new particle into the world, so it’s more of a particle spawn instruction. Update is conceptually much closer to a particle function, since it operates on already existing particles, through the <span class="var">part</span> argument. Regardless, init and update are user-defined functions, that are written by the coders of the effect, not built into the API itself.<br><br>
+    You may be thinking we have already seen “particle functions” in action before. Init and update are functions that work with particles, aren’t they? Indeed, these are functions through which we manage particles. But these functions are written by ourselves (they’re user-defined functions). Init functions are meant to establish when and how to bring a new particle into the world, so they’re more like particle spawn instructions. Update functions are conceptually much closer to particle functions, since they operate on already existing particle instances, through the <span class="var">part</span> argument. Regardless, init and update are user-defined functions, that are written by the coders of the effect, rather than being built into the API itself.<br><br>
     Particle functions, on the other hand, are built-in functions in the plugin, available through the particle scripting API. They can be called by the user, inside init and (most commonly) update functions.<br><br>
     <h4>What do particle functions do?</h4>
     They perform specific operations on particle instances.<br><br>
@@ -48,11 +45,11 @@
     <h4>What do particle functions look like?</h4>
     A particle function name always begins with <span class="var">part... </span>, followed by some verb or a compact description of the task the particle is meant to perform. For example, <span class="var">partAnimate()</span> animates a particle, <span class="var">partLimitSpeed()</span> limits the speed of a particle to a given maximum, <span class="var">partCollidedItem()</span> checks if a particle collided with an item and returns a corresponding boolean value. As was mentioned above, a particle instance is always the first argument to a particle function, and may be followed by other arguments:
 		<div class="code">
-			partFunction(part, ...) <span class="com">-- particle instance, followed by other arguments</span>
+			partFunction(part, ...) <span class="com">-- particle instance, optionally followed by other arguments</span>
 		</div>
     We will see examples of actual particle functions in action soon.<br><br>
     <h4>How to use particle functions?</h4>
-    Particle functions are just like other kinds of built-in API functions, meaning they take a varying amount of arguments and may or may not return values. What distinguishes them among ordinary built-in functions is that they <u>always</u> take a single particle instance as the first argument – the particle instructed to peform the desired task (otherwise it wouldn’t be any different from an ordinary function).<br><br>
+    Particle functions are just like other kinds of built-in API functions, meaning they take a varying amount of arguments and may or may not return values. What distinguishes them from ordinary built-in functions is that they <u>always</u> take a single particle instance as the first argument – the particle instructed to peform the desired task (otherwise it wouldn’t be any different from an ordinary function).<br><br>
     Everything else depends on what additional information must be provided to the function for performing its task, and what is the return value of the task, if there even is such a result. Particle functions are mainly to be used within our update functions, driving the behavior of the particle groups, but some of them can also be called inside init functions, in specific cases.<br><br>
     We will explore a few examples of particle functions and their usage in the next few sections.
     <hr>
@@ -129,40 +126,46 @@
     <ul>
       <li><span class="var">part</span> – the particle instance
       <li><span class="var">rebound</span> – a float number between <span class="var">0.0</span> and <span class="var">1.0</span>
-      <li><span class="var">margin</span> – a float number &ge; 0 specifying a collision margin (how many units away from the floor/ceiling the particle should detect a collision)
+      <li><span class="var">margin</span> – an integer &ge; 0 specifying a collision margin (how many units away from the floor/ceiling the particle should detect a collision)
       <li><span class="var">accurate</span> – a boolean that informs whether the collisions should respect floor slopes (<span class="var">true</span>) or ignore them (<span class="var">false</span>)
     </ul>
     These additional arguments allow to fine-tune the behavior of the floor/ceiling collisions, depending on the use case. Just as with <span class="var">partCollideWalls()</span>, this <span class="var">partCollideFloors()</span> function also returns a boolean, informing if a collision with a floor or ceiling occured on a given game tick.<br><br>
-    Let’s put these two functions to use and create some colourful, bouncy particles that will bounce around the room, like plastic balls from a ball pit! To simulate some colorful bouncy balls, we will use the following init function that spawns colorful particles from Lara’s head mesh:
+    Let’s put the two room collision functions to use and create some colorful, bouncy particles, that will bounce around the room! We will use the following script, that spawns colorful particles from Lara’s head mesh:
     <div class="code">
       <button class="btn" onclick="copyCode(this)"><span class="tooltip">Copy to clipboard</span><img src="clipboard.png"></button>
-      local function bounceInit()<br>
+			local bounce<br><br>
+			local function bounceInit()<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(bounce)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- spawn from Lara's head</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getLaraIndex()<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;part.emitterNode = 14<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.emitterNode = 14<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local px = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local py = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local pz = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos = createVector(px, py, pz)<br><br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 180<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randomInt(50, 250)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randomInt(75, 250)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart<br><br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 14<br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.fadeIn = 10<br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = 10<br><br>
       &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- we use createColorHSV() to get a random color</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;local hue = randomFloat(0, 360)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local hue = randomInt(0, 359)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.colStart = createColorHSV(hue, 1.0, 1.0)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.colEnd = part.colStart<br><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;local px = randomFloat(-64, 64)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;local py = randomFloat(-64, 64)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;local pz = randomFloat(-64, 64)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;part.pos = createVector(px, py, pz)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- give particle a random upwards velocity</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp;local vx = randomFloat(-64, 64)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local vy = randomFloat(-128, -64)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local vz = randomFloat(-64, 64)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.vel = createVector(vx, vy, vz)<br><br>
       &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- finally, we set a positive Y accel for our "gravity"</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.accel.y = 6<br>
-      end
+      end<br><br>
+			local function bounceUpdate(part)<br>
+			end<br><br>
+			bounce = createGroup(bounceInit, bounceUpdate)
     </div>
-		Okay, we have created an init function, so it would seem we are set to move on to the update function. But before we get to it, I have to go on another technical tangent, so bear with me…<br><br>
+		It would seem we are all set to begin discussing the update function. But before we get to it, I have to go on another technical tangent, so bear with me…<br><br>
 		If you remember <a href="CoderIntro.html#id3">way back in the introduction</a>, we mentioned a room index as being one of the properties of a particle. However, we did not bring it up anywhere in the whole of Chapter 1. The reason was simple, if our particles were not doing any collision detection, there was no point to setting a room index for a particle. This room index is not used for any other purpose, it does not determine if a particle appears from one room when viewed from another, for instance. We can thus ignore setting it, the room index can easily remain at the default of 0.<br><br>
 		This matter changes completely if we have particles that actively test for collision (especially collision with room geometry) in the update function. Why does the room index suddenly become important? I mean, aren’t the particle’s XYZ coordinates sufficient for telling the game engine where it is? Suprisingly, they are not!<br><br>
 		<h4>Classic Tomb Raider’s peculiar coordinate system</h4>
@@ -177,144 +180,454 @@
 		How do you acquire the correct room index, then? Well, I assume that by now you are spawning your particles relative to some <span class="var">part.emitterIndex</span>, and not using the clunky copy-pasted-level-coordinates approach from the beginning of <strong>Chapter 1</strong>! When a (valid) <span class="var">emitterIndex</span> is given, the plugin automatically grabs the room index associated with the emitter item and assigns it to the particle implictly, for convenience. However, there are complex scenarios, where particles may be spawned without an <span class="var">emitterIndex</span>, thus no implicit <span class="var">roomIndex</span>, either. For such cases, there are separate strategies, but we will not be focusing on them now.<br><br>
 		Anyway, since setting an <span class="var">emitterIndex</span> already sets the <span class="var">roomIndex</span>, we can proceed with writing the update function.<br><br>
 		<h4>Update function for room collision</h4>
-    Now, in the update function, we call the particle collision functions with the particle instance:
+    Now, in the update function, we will call the <span class="var">partCollideWalls()</span> and <span class="var">partCollideFloors()</span> functions, to make <span class="var">bounce</span> particle instances bounce off walls and floors. Something to note, when you use both functions like this, for some niche technical reasons, you should call <span class="var">partCollideWalls()</span> first, and <span class="var">partCollideFloors()</span> second, to ensure correct resolution of collision order. Anyway, here is an example:
     <div class="code">
       local function bounceUpdate(part)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local rebound = 0.75 <span class="com">-- for added realism, want each bounce to retain 75% of the velocity</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;local margin = part.sizeCust * 0.5 <span class="com">-- set margin to half the current part size</span><br><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;partCollideWalls(part, rebound) <span class="com">-- we need to call the wall function first</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;partCollideFloors(part, rebound, minBounce, margin, true) <span class="com">-- and then the floor function</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local margin = part.sizeCust / 2 <span class="com">-- set margin to half the current part size</span><br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partCollideWalls(part, rebound) <span class="com">-- we call the wall function first</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partCollideFloors(part, rebound, margin, true) <span class="com">-- and then the floor function</span><br>
     end
     </div>
-    I leave the task creating the particle group and init function up to you now. Don’t give me that look! You’re experienced enough to do it yourself.<br><br>
-    You have the freedom to create any init function you want, but perhaps we shall do one thing in particular: we will set a <span class="var">part.accel.y</span> acceleration on the particle. If we set the Y acceleration to a positive value, it will simulate the pull of gravity on the particles, which will pair very well with floor collisions. To have a point of reference, <span class="var">6</span> is the TR engine's constant for gravity acceleration (used for falling objects like flares, grenades, rolling balls, even Lara herself). You can also set some initial negative Y velocity, to give our particles an upward arc.<br><br>
-    The update function is where it gets interesting. We see that we first created helper variables that hold some of the argument values for the particle functions we will use. Not necessary, but it makes the code easier to read. Especially curious is the line:
+    We see that we first created helper variables that hold some of the argument values for the particle functions we will use. Not strictly necessary, but it makes the code easier to follow. Of note is a very interesting line:
     <div class="code">
-      local margin = part.sizeCust * 0.5
+      local margin = part.sizeCust / 2
     </div>
-    Here, we are not overriding <span class="var">part.sizeCust</span> as we would usually do in update, but reading from it. Recall that if we don’t overwrite <span class="var">part.sizeCust</span>, it will hold the blended value between <span class="var">part.sizeStart</span> and <span class="var">part.sizeEnd</span>! We are using half of <span class="var">part.sizeCust</span> to determine the collision margin. This means the floor collision will respect the size (radius) of the particle. You can verify this claim by changing the <span class="var">sizeStart</span> in init or making the particle change its size during its lifetime (hint: set <span class="var">sizeStart</span> and <span class="var">sizeEnd</span> to different values).<br>
-    Otherwise, if we set the margin to 0, the particles will end up visibly clipping into the floor, which becomes more noticeable the bigger the particle size is.<br><br>
-    For the <span class="var">accurate</span> argument of the <span class="var">partCollideFloors()</span> function, we used the literal <span class="var">true</span> value directly when calling the function, meaning the helper variables are entirely optional.<br>
-    Afterwards, we make the function calls: first to <span class="var">partCollideWalls()</span>, then <span class="var">partCollideFloors()</span>.<br><br>
-    Check out the in-game result of this update function! After launching our level, we see that we have many colorful marble-like particles spawning from around Lara’s head. They fall towards the ground and as they hit the floor, they bounce up gain! We have just implemented rudimentary physics for our particles and it took only calling two particle functions to accomplish!<br><br>
-    This is what I meant with the particle functions performing arduous tasks for us. The functions take care of whatever logic there is behind detecting collision with room geometry and calculating the new velocity after the particle bounces off. We do not bother with intricate details like these, we can focus on the “big picture” of what we want the particles to do.<br><br>
+    Here, we are not overriding <span class="var">part.sizeCust</span> as we would usually do in update, but <u>reading</u> from it. Recall that if we don’t overwrite <span class="var">part.sizeCust</span>, it will <a href="Chapter3.html#id6">hold the current blended value</a> between <span class="var">part.sizeStart</span> and <span class="var">part.sizeEnd</span>. We are taking this blended value and dividing it by <span class="var">2</span>, saving the result in <span class="var">local margin</span>. Later, we are passing this value to the function:
+		<div class="code">
+			partCollideFloors(part, rebound, margin, true)
+		</div>
+		This means that floor collision will respect the size (radius) of the particle. You can verify this claim by making the particles change their size during lifetime (e.g. set in the init function <span class="var">part.sizeEnd = part.sizeStart * 4</span>). If we would set the margin to 0, the particles will end up visibly clipping into the floor once they settle out, which becomes more noticeable the bigger the particle size is. Hence, taking the current size value for the margin makes the particles have some “dimensionality”.<br><br>
+    For the <span class="var">accurate</span> argument of the <span class="var">partCollideFloors()</span> function, we used the <span class="var">true</span> boolean value. This means that the particles will react more realistically to sloped surfaces (otherwise, they would see all floors as flat, taking only the height into account).<br><br>
+  	Check out the in-game result of this update function!<br>
+		<img class="fig" src="ch3_5/ch35_bounce.gif">
+		After launching our level, we see that we have many colorful particles (reminiscent of plastic balls from children’s ballpits), spawning from Lara’s head. They fall towards the ground and as they hit the floor, they bounce off repeatedly! We have just implemented some simple physics for our particles, and it took only calling two particle functions to accomplish!<br><br>
+    This is what I meant with particle functions doing arduous tasks for us. These collision functions take care of whatever logic there is behind detecting collision with room geometry and calculating the new velocity after the particle bounces off. We do not bother with intricate mathematical details of how this is done, we can simply focus on the “big picture” of what we want the particles to do.<br><br>
+		Colliding particles are super cool and we will definitely be coming back to this idea for future effects. Meanwhile, let’s learn about other interesting particle functions.
     <hr>
-    <a name="id4"><h3>Homing and following particles</h3></a>
-    Many times already, I advertised particles behaving like missiles that target a specific moveable, adjusting their trajectory to reach the object. Or for something more organic, particles that behave like fishes or insects, following a moveable, including but not limited to Lara. You can implement such particles with (relative) ease. This is thanks to yet another set of particle functions, <span class="var">ParticleHoming()</span> and <span class="var">ParticleFollow()</span>.<br><br>
-    Here is the first of them, <span class="var">partHoming()</span>:
+    <a name="id4"><h3>Homing particles</h3></a>
+    Many times already, I advertised particles behaving like missiles that target a specific moveable, adjusting their trajectory to reach the object. This is made possible thanks to yet another particle function, <span class="var">partHoming()</span>.<br><br>
+    Let’s take a look at the <span class="var">partHoming()</span> function and its arguments:
     <div class="code">
       partHoming(part, moveableIndex, targetMesh, turnRate, speedUp, predict)
     </div>
-    As you can see, quite more robust. Here is the list of arguments:
+    As you can see, it has a quite robust set of arguments. Here their meanings:
     <ul>
       <li><span class="var">part</span> – the particle instance
-      <li><span class="var">moveableIndex</span> – tomb4 index of the targetted moveable item<br>
-      <li><span class="var">targetMesh</span> – can further specify a concrete mesh of a moveable to target. Can also be <span class="var">-1</span> or <span class="var">nil</span>
-      <li><span class="var">turnRate</span> – informs how quickly the particle will curve its direction towards the target, value expressed as a percentage of difference. Float in the range [0, 1]<br>
-      <li><span class="var">speedUp</span> – informs how much the particle will accelerate (or decelerate) towards the target on each frame. Unrestricted float. 0 indicates no acceleration.
-      <li><span class="var">predict</span> – boolean, informs whether the particle should take into account the motion of the moveable to predict the target’s destination (<span class="var">true</span>) or not (<span class="var">false</span>). No prediction is more efficient but may cause homing particles to lag behind.
+      <li><span class="var">targetIndex</span> – tomb4 index of the targetted moveable item<br>
+      <li><span class="var">targetMesh</span> – integer, can further specify a concrete mesh of a moveable to target. Can also be <span class="var">-1</span> (no mesh).
+      <li><span class="var">turnRate</span> – informs how quickly the particle will curve its direction towards the target, value expressed as a percentage of difference. Float in the range <span class="var">[0.0, 1.0]</span><br>
+      <li><span class="var">speedUp</span> – informs how much the particle will accelerate towards the target, on each frame. The value <span class="var">0.0</span> indicates no acceleration.
+      <li><span class="var">predict</span> – boolean, informs whether the particle should take into account the motion of the moveable to predict the target’s destination (<span class="var">true</span>) or not (<span class="var">false</span>). No prediction is less computationally heavy, but may cause homing particles to lag behind quickly moving targets.
     </ul>
-    As you see, the function requires <span class="var">moveableIndex</span>, the tomb4 index of the moveable item. These tomb4 indices are not identical to the NGLE script indices, but if you remember us talking about <a href="Chapter1.html#id13">spawning particles from emitters</a> in chapter one, there is a function to convert the NGLE index to a Tomb4 index. It is <span class="var">getTombIndex()</span>, of course.<br>
-    The next argument, <span class="var">targetMesh</span>, can either take an mesh index, or alternatively have <span class="var">-1</span> or <span class="var">nil</span> in its place. If we specify a mesh, the target position is adjusted to be at the center of this mesh, otherwise, the moveables item pivot position is used instead. Bear in mind that with many enemies, this origin point is at the feet level (as with Lara, for that matter), so you may want to specify a <span class="var">targetMesh</span>.<br>
-    The <span class="var">turnRate</span> is a bit tricky to understand at first. It is a percentage (rather, a decimal fraction) of the difference between the current facing of the particle and the ideal facing for the particle to be oriented head-first towards the moveable. This may not be clear, so I made a graph that illustrates it:
-    With a higher <span class="var">turnRate</span>, the particle will reach the ideal facing faster than with lower values, which will make the partile seem more sluggish. It is one of those values that needs to be trial-and-errored until you develop an intuition for it. Interestingly, the <span class="var">turnRate</span> can be negative, but I’ll leave it to you to figure out what that does to the particle.<br>
-    The <span class="var">speedUp</span> describes the by how much to speed up or slow down the particle on every frame while it is homing onto the moveable. This may or may not fit your use case for the homing particle, so you can opt out of changes to the speed of the particle by passing 0 to this argument.<br>
-    Finally, we have the <span class="var">predict</span> boolean. When true, the particle gains somewhat of an “intelligence”, in the sense that when homing to a moveable position, it factors in the direction and speed of where the moveable is travelling. There is no difference in behavior if the moveable is motionless or moving slowly. If the moveable moves quickly, try setting <span class="var">predict</span> to <span class="var">true</span> and <span class="var">false</span> and see what difference it will make, if any.<br><br>
-    Here is an example of using the <span class="var">particleHoming()</span> function on Lara herself, but you may of course choose a different moveable:
+    Aside from the obvious particle instance <span class="var">part</span>, the function requires the <span class="var">targetIndex</span>, the Tomb4 item index of the moveable item which will be targeted by the particle. Remembering <a href="Chapter1.html#id13">spawning particles from emitters</a> in Chapter 1, there is a function to convert the NGLE index to a Tomb4 index, <span class="var">getTombIndex()</span>. We can convert an NGLE index taken from the level map with this function.<br><br>
+    The next argument, <span class="var">targetMesh</span>, can either take an mesh index, or alternatively take <span class="var">-1</span>, for no mesh. If we do specify a mesh, the target position is adjusted to this mesh. With <span class="var">targetMesh = -1</span> the moveables item pivot position is used instead. Bear in mind that with many enemies (also Lara, for that matter), the point point is often at the ground level, you may want to actually specify some <span class="var">targetMesh</span>, so some other point is the target.<br><br>
+    The <span class="var">turnRate</span> is a bit tricky to understand at first. It is a percentage (more specifically, a decimal fraction) of the difference between the current facing of the particle and the ideal facing for the particle to be oriented head-first towards the moveable. For example, with <span class="var">turnRate = 0.1</span>, the particle will move to face the target by 10% of the current difference. On the next frame, it will turn by another 10% of the current difference, and so on, until it reaches the target facing. Since this value acts like a percentage, only values in the range <span class="var">0.0</span> to <span class="var">1.0</span> are accepted.
+    With a higher <span class="var">turnRate</span>, the particle will reach the ideal facing faster than with lower values, which will make the particle seem more sluggish. It is one of those values that needs to be trial-and-errored until you develop an intuition for it.<br><br>
+    The <span class="var">speedUp</span> argument describes the by how much to speed up or slow down the particle on every frame while it is homing onto the moveable. You can also not alter the speed of the particle by passing <span class="var">0.0</span> to this argument.<br><br>
+    Finally, we have the <span class="var">predict</span> boolean. When <span class="var">predict = true</span>, the particle gains some “intelligence”, in the sense that when homing to a moveable position, it factors in the direction and speed of where the moveable is travelling. Naturally, this only makes a difference for targets that are moving.<br><br>
+		To test out this homing functionality, we can try setting up a trap of sorts: an emitter with NGLE index <span class="var">15</span> will spawn particles, that will target Lara:
+		<div class="code">
+      <button class="btn" onclick="copyCode(this)"><span class="tooltip">Copy to clipboard</span><img src="clipboard.png"></button>
+			local trap<br><br>
+			local function trapPartInit()<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(trap)<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getTombIndex(15)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local px = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local py = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local pz = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos = createVector(px, py, pz)<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 150<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randomInt(75, 100)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 14<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.fadeIn = 10<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = 20<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colStart = createColor(255, randomInt(128, 192), 0)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.colEnd = part.colStart<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- give particle a random spherical direction</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;part.vel = randomSpherePoint(10)<br>
+      end<br><br>
+			local function trapSpawn()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;if interval(3) then<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;trapPartInit()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+			end<br><br>
+			local function trapUpdate(part)<br>
+			end<br><br>
+			trap = createGroup(trapSpawn, trapUpdate)
+    </div>
+    Here is an example of using the <span class="var">partHoming()</span> function on Lara as a <span class="var">targetIndex</span>, but you could certainly have chosen a different moveable to target. We will also set the <span class="var">targetMesh</span> to <span class="var">7</span> (her torso), the <span class="var">turnRate</span> to <span class="var">0.1</span>, the <span class="var">speedUp</span> to <span class="var">1.0</span> and <span class="var">predict</span> to <span class="var">false</span>.
     <div class="code">
-      local function updateFunc(part)<br>
+      local function trapUpdate(part)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local index = getLaraIndex() <span class="com">-- get Lara's index</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;particleHoming(part, index, 0, 0.05, 0.1, false) <span class="com">-- particle will target Lara</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partHoming(part, index, 7, 0.1, 1.0, false) <span class="com">-- particle will target Lara</span><br>
       end
     </div>
-    Once in game, you will notice the particles speeding up towards the Lara and possibly curving to reach her as she moves around. The only true way to get a feel for how the parameters affect the particle is to play around with them (increase one value, decrease the other value and see what happens).
-    Obviously, the particles do not actually do anything once finally reaching Lara. But the <span class="var">particleHoming()</span> only does what it says on the tin, it homes the particle to the desired moveable object. Is not responsible for anything else. To make the particles actually do something once they touch Lara, we must employ another particle function, <span class="var">ParticleCollidedItem()</span>. This function tests for collision with a moveable by checking if it is within the bounding box of the specified moveable item. Here is what it looks like:
+    Once in game, you will notice the particles speeding up towards the Lara and possibly curving to reach her as she moves around. The only true way to get a feel for how the parameters affect the particle is to play around with them (increase one argument, decrease another other argument and see what happens).
+    Obviously, the particles do not actually do anything once finally reaching Lara, because that is not the job <span class="var">partHoming()</span>. It only does what it says on the tin, it homes the particle to the desired moveable object and that’s it.<br><br>
+		To make the particles actually do something once they touch Lara, we must employ another particle function, <span class="var">partCollidedItem()</span>. This function verifies if the particle is within collision bounds of the moveable, and returns the boolean <span class="var">true</span> if it is (otherwise, <span class="var">false</span> gets returned).
     <div class="code">
-      ParticleCollidedItem(part, moveableIndex, radius)
+      partCollidedItem(part, moveableIndex, radius)
     </div>
-    And the arguments :
+    The arguments are as follows:
     <ul>
       <li><span class="var">part</span> – the particle instance
       <li><span class="var">moveableIndex</span> – tomb4 index of the moveable item to test collision against
-      <li><span class="var">radius</span> – how far away the particle can be from the bounding box for the collision to test <span class="var">true</span>. Unrestricted float (can be negative!)
+      <li><span class="var">radius</span> – the spherical radius of the particle for testing the collision bounds of the moveable. Can be any float number &ge; 0
     </ul>
-    Just like the wall and floor collision function, this function also returns a boolean which tells if a particle is colliding with an item (<span class="var">true</span>) or it is not (<span class="var">false</span>). Note that colliding here means that the particle’s position vector is within the item’s bounding box.<br>
-    Furthermore, the <span class="var">radius</span> spherically expands the collision range for the particle. At 0, the exact position of the particle is tested against the bounding box. A positive value, like 128, means that a sphere of radius of 128 units with a center at the particle's <span class="var">pos</span> vector is tested with the bounding box. A value in the negatives, however, is also interesting - it describes how much the particle must <i>embed</i> in the bounding box before a collision is detected. Note however, that very negative values can potentially cause collision to not be detected at all (imagine if the <span class="var">radius</span> is set to -512, but the bounding box of the tested moveable is less than 256 units in thickness, the particle will have no shot at ever detecting a collision)! Thus, if using negative values for <span class="var">radius</span>, keep them reasonable.<br><br>
-    Testing against bounding box collision is quite fast and can be done repeatedly by thousands of particles per frame with ease. We can thus use the function to test if the particles made a collision with Lara:
+    Similarly to the wall and floor collision functions, this function also returns a boolean which tells if a particle is colliding with an item (<span class="var">true</span>) or it is not (<span class="var">false</span>). Note: colliding means the particle’s position vector crossed into the item’s bounding box.<br><br>
+  	The <span class="var">radius</span> parameter spherically expands the collision range for the particle. At 0, the exact position of the particle is tested against the bounding box. A positive value, like 128, means that a sphere of radius of 128 units with a center at the particle's <span class="var">pos</span> vector is tested with the bounding box.<br><br>
+    Testing against bounding box collision is quite fast and can be done repeatedly by hundreds of particles per frame, with ease. We can thus use the function to test if the particles made a collision with Lara:
     <div class="code">
-      local function updateFunc(part)<br>
+      local function trapUpdate(part)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local index = getLaraIndex() <span class="com">-- get Lara's index</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;particleHoming(part, index, 0, 0.05, 0.1, false) <span class="com">-- particle will target Lara</span><br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partHoming(part, index, 7, 0.1, 1.0, false) <span class="com">-- particle will target Lara</span><br><br>
       &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- next we test if part collided with her</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;local collided = ParticleCollidedItem(part, index, 0) <span class="com">-- placing result in var is optional</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local collided = partCollidedItem(part, index, 0) <span class="com">-- placing the result in variable is optional</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp;if collided then <span class="com">-- did part collide?</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- do something here</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp;end<br>
       end
     </div>
-    Of course, we are missing a <i>something</i> to put inside the if condition, which would occur when the particle collides. Hmm, it would be super cool if Lara lost health if the particle touches her, right? But how could we do that? The plugin does allow to trigger TRNG TriggerGroups from Lua (via the function <span class="var">performTriggerGroup()</span>), we could go down that route. But there is an even simpler way!<br><br>
-    For now, assume what you are about to see is arcane knowledge revealed only to the worthy. As you have made it this far into the tutorials, I consider you worthy of it, hence I am revealing it to you.<br>
-    You can access Lara’s current amount of hit points (health) by writing <span class="var">Lara.hitPoints</span> in the Lua script. Knowing this, how can we decrease her health by 1 hp? Very simple, by performing an assigment of the form:
-    <div class="code">
-    local hp = Lara.hitPoints <span class="com">-- copy Lara's hitPoints to var</span><br>
-    Lara.hitPoints = hp - 1 <span class="com">-- subtract 1 and assign it back to hitPoints</span>
+    Now, we are missing a <i>something</i> to put inside the if condition block, which would occur when the particle collides. Hmm, such homing particles kind of look like they are some projectile that will harm Lara. It would be neat if Lara lost health when the particles touch her, right? How could we achieve that? Well, one way that comes to mind is using TRNG triggers.<br><br>
+		The plugin allows to trigger TRNG TriggerGroups from Lua, via the function <span class="var">performTriggerGroup()</span>. We could export the FlipEffect 89 TRNG trigger, that harms Lara by X amount of health, e.g. 5 hitpoints:
+		<div class="code"><span class="com">
+			; Trigger for FlipEffect<br>
+			; &lt;#&gt; Lara. (Health) Damage Lara, decreasing life by &lt;&amp;&gt percentage of full vitality in (E) way (F89)<br>
+			; &lt;&amp;&gt 0.5 Percentage<br>
+			; &lt;E&gt; Immediatly, one-shot<br>
+			; Copy following values to your script:<br>
+			; $2000,89,$0004
+		</span></div>
+		And put it in some <span class="var">TriggerGroup</span> script, say, with ID 71:
+		<div class="code">
+    	TriggerGroup= 71, $2000,89,$0004
     </div>
-    We can also write it in a single-line equivalent:
-    <div class="code">
-    Lara.hitPoints = Lara.hitPoints - 1 <span class="com">-- subtract 1 hp from Lara</span>
+		We can then execute <span class="var">TG71</span> from <u>inside</u> our Lua script, with the <span class="var">performTriggerGroup()</span> function:
+		<div class="code">
+			if collided then <span class="com">-- if part collided</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;performTriggerGroup(71) <span class="com">-- perform TG 71</span><br>
+      end<br>
     </div>
+		The <span class="var">performTriggerGroup()</span> function allows to temporarily jump from Lua into TRNG and execute the <span class="var">TriggerGroup</span> from the script for the current <span class="var">[Level]</span> section, then return back the script. In general, this is very useful to integrate Lua scripts with some TRNG features, so keep it in mind for future notice!<br><br>
+		But specifically for hurting poor Lara, there’s an even easier way to achieve this, directly in our code! You can access Lara’s current amount of hit points (health) by writing <span class="var">Lara.hitPoints</span> in the Lua script. How can we decrease her health by 5 hp? Very simple, by performing a two step assignment, of the form:
+    <div class="code">
+    local health = Lara.hitPoints <span class="com">-- copy Lara's hitPoints to 'health' var</span><br>
+    Lara.hitPoints = health - 5 <span class="com">-- subtract 5 from health and assign it back to Lara.hitPoints</span>
+    </div>
+    We can also do without the <span class="var">health</span> helper variable, in a single line:
+    <div class="code">
+    Lara.hitPoints = Lara.hitPoints - 5 <span class="com">-- subtract 5 hp from Lara</span>
+    </div>
+		Either of the above snippets will harm Lara with 5 hitpoints of damage.<br><br>
     Let’s see this in action by putting this line inside the if block checking for collision between Lara and a particle:
     <div class="code">
-      local function updateFunc(part)<br>
+      local function trapUpdate(part)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local index = getLaraIndex() <span class="com">-- get Lara's index</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;particleHoming(part, index, 0, 0.05, 0.1, false) <span class="com">-- particle will target Lara</span><br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partHoming(part, index, 7, 0.1, 1.0, false) <span class="com">-- particle will target Lara</span><br><br>
       &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- next we test if part collided with her</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;local collided = ParticleCollidedItem(part, index, 0) <span class="com">-- placing result in var is optional</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;if collided then <span class="com">-- did part collide?</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lara.hitPoints = Lara.hitPoints - 1 <span class="com">-- subtract 1 hp from Lara</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local collided = partCollidedItem(part, index, 0)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;if collided then <span class="com">-- if part collided</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lara.hitPoints = Lara.hitPoints - 5 <span class="com">-- subtract 5 hp from Lara</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp;end<br>
       end
     </div>
-    Give it a run in game! The particles now have the ability to kill Lara! No longer just a harmless particle effect anymore, huh?<br><br>
-    I know, you want me to tell more about this magic piece of code that referenced Lara’s health directly in Lua. But this topic will need its own chapter to cover it sufficiently, by first introducing <strong>built-in globals</strong> in the plugin API. Just be patient, I promise we will get there eventually!<br>
-    The particles have perhaps become a bit TOO deadly now, though. This is because all of the particles in direct contact with Lara are each applying 1 hp of damage, over several frames. That means that if there are 20 particles touching Lara, she will bleed out health at a staggering rate of 20 hp per frame (for reference, fire makes her lose health at 7 hp per frame).<br><br>
-    We can do something to reduce the damage dealt by the particles. What if the particles disappeared when hitting Lara? Meaning that the particles would deal damage of 1 hp a single time and die immediately afterwards. We know particles die the moment their <span class="var">lifeCounter</span> goes to 0. So we can directly set <span class="var">part.lifeCounter = 0</span> in the update function, right after doing damage to Lara, correct? Well, this is sound reasoning. But I do not recommend tampering with the <span class="var">lifeCounter</span> and <span class="var">lifeSpan</span> values outside of the init function. There are technical reasons for this that I prefer not to get into right now. Instead, the optimal solution is to call a particle function that kills the particle. I’ve mentioned it before, it’s none other than <span class="var">ParticleKill()</span>. It takes just one argument, <span class="var">part</span>. It immediately destroys the particle instance, but does it in a manner that is considered “safe” to the plugin internals. Just take my word for it for now – when you need to kill a particle, don't set <span class="var">part.lifeCounter</span> to 0, do it with <span class="var">ParticleKill()</span> instead.<br><br>
-    Okay, so lets add the call to <span class="var">ParticleKill()</span> after subtracting a hitpoint away from Lara:
+		I know, you really want me to tell more about this magic piece of code that referenced Lara’s health directly in Lua. But this topic will need its own chapter to cover it sufficiently, by introducing <strong>built-in globals</strong> in the plugin API. Just be patient, I promise we will get there eventually!<br><br>
+    After giving it a run in game, we see these particles now have the ability to kill Lara! No longer harmless, ambient effects, huh?<br>
+		<img class="fig" src="ch3_5/ch35_trap1.gif"><br>
+    The particles have perhaps become a bit TOO deadly now, eating through her health very rapidly. This is because all of the particles in direct contact with Lara are each applying 5 hp of damage, per each frame. That means that if there are 5 of these trap particles touching Lara at any given moment, she will lose health at a staggering rate of 25 hp per frame (for reference, fire makes her lose health at a constant 7 hp per frame).<br><br>
+    We can do something to reduce the damage dealt by the particles, though. What if the particles were killed off upon hitting Lara? Meaning that the particles would deal damage and die immediately afterwards. That should reduce the damage output significantly.<br><br>
+		We know particles die the moment their <span class="var">lifeCounter</span> goes down to 0. So, we could directly set <span class="var">part.lifeCounter = 0</span>, after doing damage to Lara in the update function, right? Well, it sounds reasonable, and it will probably work, if you try it. But I do not recommend tampering with the <span class="var">part.lifeCounter</span> and <span class="var">part.lifeSpan</span> values outside of the init function. There are specific technical reasons for this that I am yet to cover. Anyway, instead of setting the <span class="var">part.lifeCounter</span> to 0 explicitly, the preferred solution is to call a particle function that will kill the particle. I’ve mentioned it before actually, it’s <span class="var">partKill()</span>. It takes just one argument, the particle instance <span class="var">part</span>:
+		<div class="code">
+	    partKill(part) <span class="com">-- kill particle immediately</span>
+    </div>
+		It destroys the given particle instance, but does it in a manner that is considered “safe” and ensures that the particle will not be left in a broken state afterwards. Just take my word for it for now – don't set <span class="var">part.lifeCounter&nbsp;=&nbsp;0</span> when you need to kill a particle on the spot, utilizing the special <span class="var">partKill()</span> function is the proper way to do that.<br><br>
+    Okay, so lets add the call to <span class="var">partKill()</span> after subtracting a hitpoint away from Lara:
     <div class="code">
-      local function updateFunc(part)<br>
+      local function trapUpdate(part)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local index = getLaraIndex() <span class="com">-- get Lara's index</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;particleHoming(part, index, 0, 0.05, 0.1, false) <span class="com">-- particle will target Lara</span><br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partHoming(part, index, 7, 0.1, 1.0, false) <span class="com">-- particle will target Lara</span><br><br>
       &nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- next we test if part collided with her</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;local collided = ParticleCollidedItem(part, index, 0) <span class="com">-- placing result in var is optional</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;if collided then <span class="com">-- did part collide?</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lara.hitPoints = Lara.hitPoints - 1 <span class="com">-- subtract 1 hp from Lara</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ParticleKill(part) <span class="com">-- and kill the part</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local collided = partCollidedItem(part, index, 0)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;if collided then <span class="com">-- if part collided</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lara.hitPoints = Lara.hitPoints - 5 <span class="com">-- subtract 5 hp from Lara</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;partKill(part) <span class="com">-- and kill the part</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp;end<br>
       end
     </div>
-    The above update function started out simple if you remember, but already grew into something quite substantial - we have a script which makes particles lock onto Lara, deal 1 hitpoint of damage to her and disappear. To accomplish this, we used a total of 3 different particle functions: <span class="var">ParticleHoming()</span>, <span class="var">ParticleCollidedItem()</span> and <span class="var">ParticleKill()</span>. This is how we can create complex behavior of particles, by assembling various particle functions together in Lua code. The above update function can be a basis for other cases where particles must deal damage Lara. Note it down somewhere, it’s a great template!<br><br>
-    I think we’ve had enough examples of particle functions for now. Of course, there are plenty more of them in the API. I will not go through every single particle function here, there are far too many and I would be wasting both my time and yours. If you want to learn what other particle functions there are and what they do, please check out the scripting reference section that deals with particle functions. In the tutorials, I would rather focus my energy on demonstrating practical examples that show <i>how</i> these functions can be used, all the while exploring other topics, many of which still remain. Let’s therefore carry on to the next topic at hand!<br>
+		Now, the damage appears more reasonable, and the particles disappear once they successfully hit Lara:<br>
+		<img class="fig" src="ch3_5/ch35_trap2.gif"><br>
+    The above update function started out simple if you remember, but already grew into something quite substantial – we have a script which makes particles lock onto Lara, deal 5 hitpoints of damage to her and disappear. To accomplish this, we used a total of 3 different particle functions: <span class="var">partHoming()</span>, <span class="var">partCollidedItem()</span> and <span class="var">partKill()</span>. This is how we can create complex behavior of particles, by assembling various particle functions together in the Lua code. The above update function can be a basis for other situations where particles must deal damage Lara, without a doubt!<br><br>
+    I think we’ve had enough examples of particle functions at the moment. By now, you probably understand why they exist and why they are so convenient. Of course, there are plenty more of them in the API. I don’t intend to go through every single particle function, there are far too many and I would be wasting both my time and yours. In these tutorials, I would rather focus my energy on demonstrating practical examples that show <i>how</i> these functions can be used, all the while exploring other topics, many of which still remain. I promise we will see more particle functions further in the tutorials. That being said, we’ll carry on to the next topic.<br>
     <hr>
     <a name="id5"><h3>Particles that spawn other particles</h4></a>
-    You’ve been eagerly awaiting this one, probably. Yes, update functions have the power of making particles spawn other particles! There are numerous use cases for this. Maybe we want a particle to leave a flame or smoke trail? Maybe the particle will spawn ricochet sparks when it hits a wall? A homing missile might cause an explosion when it hits its target? The possibilities are endless.<br><br>
+    Likely, you’ve been eagerly awaiting until we get to this feature. Indeed, update functions have the power of making particles spawn other particles! There are numerous use cases for this. Maybe we want a particle to leave a flame or smoke trail? Maybe the particle will spawn ricochet sparks when it hits a wall? A homing missile might cause an explosion when it hits its target? The possibilities are endless.<br><br>
     <h4>However…</h4>
 		This feature is a double-edged sword. You see, the ability of a particle to spawn another particle can potentially cause particles to spawn at an uncontrollable rate, if you aren’t cautious with it.<br><br>
-    What can lead to this scenario? Well, imagine that you have a particle. In its update function, it spawns 10 new particles each tick. 10 particles does not sound like much. But remember, update functions are executed on every frame, for each active particle. What if the parent particle (which spawns particles) has a long lifetime, like 10 seconds? 10 seconds is 300 frames. That means the update function for just that one particle is executed 300 times. Assuming the birthed particles live just as long as the parent particle, that lone parent particle will birth 300 more particles. Okay, that still sounds reasonable. But what if there were several parent particles? Say, 20. Since each parent particle spawns 300 particles over the course of its life, 20 parent particles will spawn <strong>20 * 300 = 6000 particles</strong>! We’re already well into the thousands!<br><br>
+    What can lead to this scenario? Well, imagine that you have a particle. In its update function, it spawns 10 new particles each tick. 10 particles does not sound like much. But remember, update functions are executed on every frame, for each active particle. What if the parent particle (which spawns particles) has a long lifetime, like 10 seconds? 10 seconds is 300 frames. That means the update function for just that one particle is executed 300 times. Assuming the birthed particles live just as long as the parent particle, that lone parent particle will birth 300 more particles. Okay, that still sounds somewhat reasonable. But what if there were several parent particles? Say, 20. Since each parent particle spawns 300 particles over the course of its life, 20 parent particles will spawn <strong>20 * 300 = 6000 particles</strong>! We’re already well into the thousands!<br><br>
     Nevertheless, this is still the more “optimistic” scenario, as we made the assumption that the birthed particles will not be bringing more particles along with them. What happens if these birthed particles end up spawning particles themselves? Let me tell you:<br><br>
     <div style="display: block; text-align: center; color: red; font-size:200%"><strong>ALL HELL BREAKS LOOSE!!!</strong></div><br>
-    Let’s go back to one parent particle with a lifetime of 10 seconds. It will now spawn just a single child particle per frame. On the first frame, it spawns a child. We now have 2 particles. On the second frame, the parent particle spawns another child. But the (former) child particle spawns its own child particle. Now there’s 4 particles. On the 3rd frame, the 4 particles will each spawn their own child, giving 8 particles. You see where we are heading, right? On the 5th frame, we end up with 16 particles, on the 6th – 32, 7th – 64, so on each frame the number of particles doubles. This type of situation, where something doubles (or triples, or quadruples) in each successive iteration, is known as <i>exponential growth</i>. Take a guess, assuming the pattern continues, how many particles do you think we will end up with after just 1 second (30 frames) elapsed?<br><br>
+    Let’s go back to one parent particle with a lifetime of 10 seconds. It will now spawn just a single child particle per frame. On the first frame, it spawns a child. We now have 2 particles. On the second frame, the parent particle spawns another child. But the (former) child particle spawns its own child particle. Now there’s 4 particles. On the 3rd frame, the 4 particles will each spawn their own child, giving 8 particles. You see where we are heading, right? On the 5th frame, we end up with 16 particles, on the 6th – 32, 7th – 64, so on each frame the number of particles doubles. This type of situation, where something doubles (or triples, or quadruples) in each successive iteration, is known as <i>exponential growth</i>. Take a guess, assuming the doubling pattern continues, how many particles do you think we will end up with after just 1 second (30 frames)?<br><br>
     <div style="display: block; text-align: center"><span style="color: red; font-size:250%;"><strong>1 073 741 824</strong></span> (that’s right, over 1 billion!)</div><br>
-    Are you shocked? Try doing the math yourself, if you don’t believe this is the case! This unexpectedly large inflation of the number, after a few dozen iterations, has been known since ancient times as the famous <a href="https://en.wikipedia.org/wiki/Wheat_and_chessboard_problem" target="_blank">wheat and chessboard problem</a>. <br><br>
+    Are you shocked? Try doing the math yourself, if you don’t believe this is the case! This unexpectedly gigantic inflation of the amount, after a few dozen iterations of doubling something, has been known since ancient times as the famous <a href="https://en.wikipedia.org/wiki/Wheat_and_chessboard_problem" target="_blank">wheat and chessboard problem</a>. <br><br>
     I will inform you right away – the particle system plugin cannot handle that many particles, not by a long shot. You can expect to achieve somewhere around at most 8000 active particles with this plugin, before hitting a hard limit, due to the technical limitations of the old TRLE engine. But even the peak of what modern, state-of-the-art game engines can reasonably achieve these days with no lag, is around 50-100 million particles, if a high-end GPU is used. That’s considerably more than our plugin, but let’s put things into perspective: the TRLE engine is nearly 30 years old at this point. It cannot utilize fancy, expensive GPU cards, it would have to be rewritten from the ground up to do so.<br><br>
     When spawning particles in update functions, you must employ some preventive strategies to restrict the growth of particles in an exponential way. You do this by not getting too carried away with the number of new particles you are spawning, as well as keeping the lifetime of the birth-<strong>ing</strong> (and birth-<strong>ed</strong>) particles within reason. And most certainly, you must avoid situations when particles spawn new particles of the same group, as that is precisely the situation that will lead to out-of-control exponential growth.<br><br>
     Now, with all of the warnings and cautions out of the way, I’ll stop being a stick-in-the-mud. Let’s have a bit of fun with the particle-spawned-by-particle feature!<br><br>
     <h4>Spawning particles in update functions</h4>
-		First of all, we have to lay out some ground work, to understand how to make one particle type spawn another particle type. For this to work properly, we need two particle groups, one for the parent particles, one for the child particles.
-    Let’s go back to the snippet from just a minute ago. We are deliberately calling <span class="var">createSpritePart()</span> outside of an init function. This outer scope corresponds to the level-loading phase. The error message tells us calling this function was forbidden in this phase. What the plugin is telling us is that it does not want particles created during the level-loading phase, period.<br><br>
-    Okay, so we’ve established so far that the plugin allows creating particles in the init phase (in some init function), not during the level-loading phase (in the outer portions of the script). What about the update phase?<br><br>
-    Well, it doesn’t hurt to try, but remember the warning I gave about spawning the same particle type in an update function?<br><br>
-    For this reason, we need to make a separate particle group. This way, the parent particles and child particles will have different update functions, which prevents an exponential growth scenario.
-    <div class="code">
+		First of all, we have to lay out some fundamentals, to understand how to make one particle type spawn another particle type. For this to work properly, we need two particle groups:
+		<ul>
+			<li>one group for the <strong>parent</strong> (birth-<strong>ing</strong>) particles</li>
+			<li>another group for the <strong>child</strong> (birth-<strong>ed</strong>) particles</li>
+		</ul>
+		These groups have to be distinct for the parent and child particles. The parent particle will, in its update function, birth the child particles. By no means should the child particle group ever share its update function with the parent group, because, as we discussed already, we will have exponential particle growth! If the particle behavior is decoupled (meaning that the update functions are separate) it makes the particle spawning very controlled. Think about this logic and make sure it makes sense to you, as understanding this parent-child relationship in context of the particle groups is the key to mastering hierarchical particle spawning.<br><br>
+		The next realization should be about how the relationship between the init function and its group is more loose than the relationship between an update function and its group. Let’s say we have a group we name <span class="var">parentGroup</span>, and another group we name <span class="var">childGroup</span>, respectively for the parent particles and child particles. The parent group can have an init function, e.g. <span class="var">parentInit()</span>, and the update function, <span class="var">parentUpdate()</span>. Finally, we create the parent group with the line:
+		<div class="code">
+	    parentGroup = createGroup(parentInit, parentUpdate)
     </div>
+		When we are providing the <span class="var">parentInit</span> function in the <span class="var">createGroup()</span> call, what we are really telling the plugin is: <q>take this <span class="var">parentInit()</span> function and automatically call it once per game tick</q>. That’s really all that the plugin does with the init function passed to <span class="var">createGroup()</span> (it is not as intimately tied with the group as one would think). We can surely make the init function spawn a particle from the group, which is indeed the most common course of action, but we don’t have to.<br><br>
+		We will momentarily have yet another throwback to Chapter 1, when we were <a href="Chapter1_5.html#id1">modifying the particle spawnrates</a>. The actual, “master” init function, <span class="var">dustInit_chance()</span>, created new particles only occasionally. But we could just as well have put:
+		<div class="code">
+	    local function dustInit_chance()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;print("I'm doing nothing!")<br>
+			end
+    </div>
+		instead of a conditional call to <span class="var">dustInit()</span>. <span class="var">dustInit_chance()</span> would then do nothing, apart from printing the message in the logger. Why am I saying this, though? What I’m getting at is: if the init function does nothing significant, we can just as well replace it with <span class="var">nil</span>. This will mean there will be no function called, per each game tick, for the given group.<br><br>
+		Naturally, we actually want this autonomous spawning of particles for the <span class="var">parentGroup</span> group, so we keep <span class="var">parentInit</span> in <span class="var">createGroup()</span>. We’ll ponder for a moment, what will happen if we used <span class="var">createGroup(nil, nil)</span> for the <span class="var">childGroup</span>:
+		<div class="code">
+	    childGroup = createGroup(nil, nil)
+    </div>
+		Due to not having an intrinsic init function, this <span class="var">childGroup</span> group is not able to spawn particles on its own. Whenever we accidentally caused this situation before, I was up in arms about how this is terrible and it <a href="Chapter1.html#order">breaks our particle script</a>. Yet, we are doing this deliberately now, for some reason?<br><br>
+		Yes, the <span class="var">childGroup</span> will not be able to spawn particles autonomously anymore. However, notice that is exactly what we want in this case! This is because we want to shift the responsibility of creating <span class="var">childGroup</span> particles to the <span class="var">parentGroup</span>!
+		We should certainly still have a <span class="var">childInit()</span> function of sorts, for initializing these <span class="var">childGroup</span> particles:
+		<div class="code">
+			local function childInit()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(childGroup)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- initialize child particle</span><br><br>
+			end
+		</div>
+		but this <span class="var">childInit()</span> function will not be given to the <span class="var">createGroup()</span> call. Rather, we will call it directly by ourselves, inside the <span class="var">parentUpdate()</span> function:
+		<div class="code">
+      local function parentUpdate(part)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;childInit() <span class="com">-- call childInit() in parent's update</span><br>
+      end
+    </div>
+		Is this even allowed? Yes, because the update function can call any function we have written in our script, including the <span class="var">childInit()</span>. Remember, Lua sees it as just another instruction to execute. It’s no different to calling <span class="var">childInit()</span> in a “master” init function, which controls the spawn rate and conditions. Notice also, this call is done in the update function of a different group, <span class="var">parentGroup</span>, not of <span class="var">childGroup</span> itself, which has a <span class="var">nil</span> update function – thus preventing exponential growth from happening.<br><br>
+		Again, let’s go through the whole thought process here: we disabled the autonomous generation of <span class="var">childGroup</span> particles and we made the <span class="var">parentGroup</span> particles generate them instead, by calling <span class="var">childInit()</span> in the <span class="var">parentUpdate()</span>. This means that the <span class="var">childGroup</span> particles exclusively spawn through <span class="var">parentGroup</span> particles, in their update function.<br><br>
+		Alright, now the child particles can again generate thanks to <span class="var">parentUpdate()</span>, but currently, we have no way to make them relate to their parent during spawn. This can be a problem, for instance, if the child particle should spawn near the parent (because the parent is leaving behind a trail of child particles), or when the child should inherit some properties from the parent. How do we solve this?<br><br>
+		For the child particle to have access to the parent that spawns it, we will send the parent particle instance to the <span class="var">childInit()</span> function! This means giving <span class="var">childInit()</span> an alias argument for receiving a particle instance. Here is an example:
+		<div class="code">
+			local function childInit(parent)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(childGroup)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- initialize child particle</span><br><br>
+			end
+		</div>
+		And then, inside the <span class="var">parentUpdate()</span> function, we can send the current <span class="var">part</span> instance to <span class="var">childInit()</span>:
+		<div class="code">
+      local function parentUpdate(part)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;childInit(part) <span class="com">-- call childInit(), sending part instance as the parent</span><br>
+      end
+    </div>
+		There is a lot of jumping between one function and another, so I want to make sure everything is clear about the reasoning behind sending the parent particle to <span class="var">childInit()</span>. Let’s recap:<br><br>
+		The <span class="var">parentGroup</span> particles are spawned autonomously through <span class="var">parentInit()</span> and are updated by their dedicated <span class="var">parentUpdate()</span> function, which receives subsequent <span class="var">parentGroup</span> particles via the <span class="var">part</span> alias:
+		<div class="code">
+      local function parentUpdate(part)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;childInit(part) <span class="com">-- call childInit(), sending part instance as the parent</span><br>
+      end
+    </div>
+		This <span class="var">part</span> alias carries some specific particle instance from the <span class="var">parentGroup</span>. In the <span class="var">parentUpdate()</span> function, <span class="var">childInit(part)</span> is called, which results in sending that <span class="var">parentGroup</span> instance to the <span class="var">childInit()</span> function.<br><br>
+		<div class="code">
+			local function childInit(parent) <span class="com">-- whichever particle was sent to this function, receives the 'parent' alias!</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(childGroup)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- initialize child particle</span><br><br>
+			end
+		</div>
+		Here is the significant, crucial detail, which can be confusing, so pay close attention now: inside <span class="var">childInit()</span>, the sent <span class="var">parentGroup</span> instance <u>receives a new alias</u>, <span class="var">parent</span>! Inside of this function, <span class="var">parent</span> is carrying the original <span class="var">parentGroup</span> instance, which was sent from <span class="var">parentUpdate()</span>. Meanwhile, the new <span class="var">local part</span> now refers to the <span class="var">childGroup</span> instance that is created and initialized inside <span class="var">childInit()</span>.<br><br>
+		Why do we have these different aliases? It is simply to differentiate between the already existing <span class="var">parentGroup</span> particle, sent through <span class="var">parentUpdate()</span>, and the newly created <span class="var">part</span> child particle. Importantly though, we have gained something very valuable: giving the child <span class="var">part</span> direct access to the <span class="var">parent</span>! Thanks to this, we are now able to set properties of the child <span class="var">part</span> in reference to <span class="var">parent</span>:
+		<div class="code">
+			local function childInit(parent) <span class="com">-- whichever particle was sent to this function, receives the 'parent' alias!</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(childGroup)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos = parent.pos <span class="com">-- copy position from parent to child</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel = parent.vel * 0.5 <span class="com">-- take half of parent velocity and give it to child</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart = parent.colCust <span class="com">-- take current parent's color and give it to child's starting color</span><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- other part initializing, which may or may not reference parent</span><br><br>
+			end
+		</div>
+		What was demonstrated above is a standard idiom when spawning particles from other particles: allowing parent particles to <u>pass some of their properties</u> to child particles, like their position, or color, or size.<br><br>
+		Maybe such theoretical musing did not fully convince you of how powerful this is. It’s about time we see an example of parent and child particles in action, then!<br><br>
+		<h4>Creating particles with a particle trail</h4>
+		We will recreate one of the module template scripts, <span class="var">bounce.lua</span>. However, for our purposes, we will simplify it a bit (e.g. we will omit attaching a dynamic light effect to the particles).<br><br>
+		The module script will consist of two groups, one for the main particles, the other for the trail particles. We’ll need to define 2 groups in the same script. If two or more groups are intertwined with each other, it is perfectly reasonable for them to be in a single module script, we do not need separate Lua files for them.<br><br>
+		We can start with some generic particle scripting setups. To keep things straightforward, we will name the parent group <span class="var">parentGroup</span>, and the child group <span class="var">childGroup</span>. The <span class="var">parentGroup</span> will be autonomous, hence we will need to specify an init function. And since it will be spawning the <span class="var">childGroup</span> particles, we will also need an update function:
+		<div class="code">
+			<button class="btn" onclick="copyCode(this)"><span class="tooltip">Copy to clipboard</span><img src="clipboard.png"></button>
+			local parentGroup<br>
+			local childGroup<br><br>
+			local function parentInit()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(parentGroup)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getLaraIndex() <span class="com">-- set Lara as emitter</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.emitterNode = 14 <span class="com">-- spawn from head mesh</span><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 120<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.fadeIn = part.lifeSpan / 6<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = part.lifeSpan / 3<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randomInt(96, 128)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 14<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = 0<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.g = randomInt(224, 255)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.b = randomInt(224, 255)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.r = randomInt(224, 255)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.g = 0<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.b = randomInt(224, 255)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.x = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.y = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.z = randomFloat(-64, 64)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel.x = randomFloat(-48, 48)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel.y = randomFloat(-110, -90)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel.z = randomFloat(-48, 48)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.accel.y = 6<br>
+			end<br><br>
+			local function parentSpawn()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;if interval(10) then<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parentInit()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+			end<br><br>
+			local function parentUpdate(part)<br>
+			end<br><br>
+			parentGroup = createGroup(parentSpawn, parentUpdate)<br>
+			childGroup = createGroup(nil, nil)
+		</div>
+		We see we have created two group variables, <span class="var">local parentGroup</span> and <span class="var">local childGroup</span> underneath. We also create these two groups at the bottom of the script. Because the parent particles will be more performance-heavy, spawning other particles, we will limit their spawn rate through the <span class="var">parentSpawn()</span> function. The <span class="var">parentGroup</span> will use an init function and update function, while the <span class="var">childGroup</span> will use neither, since we want to manage its spawning manually (hence no init), nor do we intend special update behavior (hence no update).<br><br>
+		We are not done yet obviously, because we now should create an “init” function for the <span class="var">childGroup</span>. I put “init” in quotes, because it will not be used for autonomous spawning, but for spawning by proxy of existing <span class="var">parentGroup</span> particles. For that reason, the <span class="var">childInit(parent)</span> function will take the <span class="var">parent</span> particle instance, to aid in initializing the child particle.<br><br>
+		To respect the correct parsing order, we must write the <span class="var">childInit(parent)</span> function somewhere above the <span class="var">parentUpdate(part)</span> function, where it will be called. We will use the <span class="var">parent</span> proxy to aid in initializing some of the child particle properties:
+		<div class="code">
+			<button class="btn" onclick="copyCode(this)"><span class="tooltip">Copy to clipboard</span><img src="clipboard.png"></button>
+			local function childInit(parent)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(childGroup)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- initialize some properties independently of parent</span><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = randomInt(18, 26)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.fadeIn = 8<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = 8<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randomInt(96, 128)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart * 2<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 0<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.rot = randomFloat(0, PI)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.rotVel = randomNegate(randomFloat(0.08, 0.12))<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- initialize some properties in reference to parent</span><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- take parent.colCust and mellow it out</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = 127 + parent.colCust.r / 2<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.g = 127 + parent.colCust.g / 2<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.b = 127 + parent.colCust.b / 2<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd = part.colStart<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- take parent.pos and add some randomness on top</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.x = parent.pos.x + randomFloat(-32, 32)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.y = parent.pos.y + randomFloat(-32, 32)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.z = parent.pos.z + randomFloat(-32, 32)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- take parent.vel, multiply it by 0.5</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel = parent.vel * 0.5<br>
+			end
+		</div>
+		The final step left is to call the above <span class="var">childInit(parent)</span> function inside of the <span class="var">parentUpdate(part)</span>, which will make the <span class="var">parentGroup</span> particles spawn the <span class="var">childGroup</span> particles, as per the instructions given in <span class="var">childInit(parent)</span>. To make the particle trails less over-the-top, we can reduce their spawn interval, so they are spawned e.g. every other frame:
+		<div class="code">
+			local function parentUpdate(part)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;if interval(2) then<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;childInit(part) <span class="com">-- sent the current parent instance to childInit(parent)</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+			end
+		</div>
+		Because leaving a trail of particle would be a tad boring on its own, we can also make the particles bounce off room geometry, with the known <span class="var">partCollideWalls()</span> and <span class="var">partCollideFloors()</span> functions:
+		<div class="code">
+			local function parentUpdate(part)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;if interval(2) then<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;childInit(part) <span class="com">-- sent the current parent instance to childInit(parent)</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;end<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local rebound = 0.75<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local margin = part.sizeCust / 2<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partCollideWalls(part, rebound)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partCollideFloors(part, rebound, margin, true)<br>
+			end
+		</div>
+		To recap everything, here is what the entire module script should look like (careful now, it’s a big one!):
+		<div class="code">
+			<button class="btn" onclick="copyCode(this)"><span class="tooltip">Copy to clipboard</span><img src="clipboard.png"></button>
+			local parentGroup<br>
+			local childGroup<br><br>
+			local function parentInit()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(parentGroup)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getLaraIndex() <span class="com">-- set Lara as emitter</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.emitterNode = 14 <span class="com">-- spawn from head mesh</span><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 120<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.fadeIn = part.lifeSpan / 6<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = part.lifeSpan / 3<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randomInt(96, 128)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 14<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = 0<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.g = randomInt(224, 255)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.b = randomInt(224, 255)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.r = randomInt(224, 255)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.g = 0<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd.b = randomInt(224, 255)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.x = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.y = randomFloat(-64, 64)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.z = randomFloat(-64, 64)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel.x = randomFloat(-48, 48)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel.y = randomFloat(-110, -90)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel.z = randomFloat(-48, 48)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.accel.y = 6<br>
+			end<br><br>
+			local function parentSpawn()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;if interval(10) then<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parentInit()<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;end<br>
+			end<br><br>
+			local function childInit(parent)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart(childGroup)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- initialize some properties independently of parent</span><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = randomInt(18, 26)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.fadeIn = 8<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = 8<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.sizeStart = randomInt(96, 128)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.sizeEnd = part.sizeStart * 2<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.spriteIndex = 0<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.rot = randomFloat(0, PI)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.rotVel = randomNegate(randomFloat(0.08, 0.12))<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- initialize some properties in reference to parent</span><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- take parent.colCust and mellow it out</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.r = 127 + parent.colCust.r / 2<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.g = 127 + parent.colCust.g / 2<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colStart.b = 127 + parent.colCust.b / 2<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.colEnd = part.colStart<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- take parent.pos and add some randomness on top</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.x = parent.pos.x + randomFloat(-32, 32)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.y = parent.pos.y + randomFloat(-32, 32)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.pos.z = parent.pos.z + randomFloat(-32, 32)<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span class="com">-- take parent.vel, multiply it by 0.5</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;part.vel = parent.vel * 0.5<br>
+			end<br><br>
+			local function parentUpdate(part)<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;if interval(2) then<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;childInit(part) <span class="com">-- sent the current parent instance to childInit(parent)</span><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;end<br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;local rebound = 0.75<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;local margin = part.sizeCust / 2<br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partCollideWalls(part, rebound)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;partCollideFloors(part, rebound, margin, true)<br>
+			end<br><br>
+			parentGroup = createGroup(parentSpawn, parentUpdate)<br>
+			childGroup = createGroup(nil, nil)
+		</div>
+		No doubt, this is the most complex effect script so far. It involves init functions, update functions, using particle functions inside said update functions, and finally, making one type of particle spawn another group of particle! Absolute insanity, if you ask me, but I told you already: update functions are truly amazing!<br><br>
+		<img class="fig" src="ch3_5/ch35_spawn.gif"><br>
+		And with that final script, this second half of the chapter on update functions comes to a wrap!<br>
+		<hr>
+		Whew! We did a lot of hard work over the course of this chapter, but hopefully, it paid off. Both you and I deserve a break after this one. You have witnessed the power the particle plugin gives, in designing very unique particles, with special behavior. Something that was well beyond the realm of imagination with FLEP. As I stated before, you should be mindful of what you use such power for, but I believe you shall use it wisely!<br><br>
+		In the next chapter, we will finally take a look at the mysterious <strong>mesh particles</strong>, learning how they are different, but not so different, from sprite particles. I’ll await you there!<br><br><br>
+		<table width=100%>
+      <tr>
+      <td><a href="Chapter3.html"><strong>&lt;&lt;&lt;&nbsp;PREV</strong></a></td>
+      <td style="text-align: right"><a href="Chapter4.html" ><strong>NEXT&nbsp;&gt;&gt;&gt;</strong></a></td>
+      </tr>
+    </table>
   </body>
 </html>

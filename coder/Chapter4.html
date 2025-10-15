@@ -229,7 +229,7 @@
     <h4>Function meshLookAtTarget()</h4>
     The <span class="var">meshLookAtTarget()</span> function aligns the facing (X and Y rotation) of the mesh particle to the <span class="var">target</span> 3D vector given as one of the arguments. The function takes 4 arguments in total:
     <div class="code">
-      meshAlignVelocity(part, target, alignFactor, invert)
+      meshLookAtTarget(part, target, alignFactor, invert)
     </div>
     The arguments are as follows:
     <ul>
@@ -238,11 +238,26 @@
       <li><span class="var">alignFactor</span> – float between <span class="var">0.0</span> and <span class="var">1.0</span> determining how quickly the alignment to the direction occurs. It works as a percentage, where 1.0 means 100%, i.e. instantaneous alignment. Smaller values smooth out the aligment to the target facing over several frames.<br>
       <li><span class="var">invert</span> – boolean, if set to <span class="var">true</span>, it flips the target rotation so the mesh faces the opposite direction. Certain meshes for unknown reasons have the opposite facing in the level wad, this argument allows to obtain the correct mesh facing in those cases.<br>
     </ul>
-    Differently to <span class="var">meshAlignVelocity()</span>, which orients the mesh towards the velocity vector of the particle, <span class="var">meshLookAtTarget()</span> allows you to specify an arbitrary position vector to which the particle will turn to. An example could be something like:
+    Differently to <span class="var">meshAlignVelocity()</span>, which orients the mesh to face the velocity vector of the particle, <span class="var">meshLookAtTarget()</span> allows you to specify an arbitrary position vector <span class="var">target</span>, to which the particle will turn to.<br><br>
+    There is a built-in function, that allows us to obtain the global XYZ coordinates of some mesh of a moveable, returning it as a vector. The function is called <span class="var">getItemJointPosition()</span> and it looks like this:
+    <div class="code">
+      getItemJointPosition(index, mesh, offsetX, offsetY, offsetZ)
+    </div>
+    Its arguments are:
+    <ul>
+      <li><span class="var">index</span> – the tomb4 index of the moveable<br>
+      <li><span class="var">mesh</span> – the mesh index of the moveable<br>
+      <li><span class="var">offsetX</span> – the relative X offset from the mesh joint<br>
+      <li><span class="var">offsetY</span> – the relative Y offset from the mesh joint<br>
+      <li><span class="var">offsetZ</span> – the relative Z offset from the mesh joint<br>
+    </ul>
+    As stated, this function returns a vector containing the global position of the specified mesh. The <span class="var">offsetX</span>, <span class="var">offsetY</span> and <span class="var">offsetZ</span> will offset the position by the specified amount from the joint. This respects the rotation of the mesh in various animations, using a similar principle as the <span class="var">part.emitterNode</span> in offsetting the particle position!<br><br>
+
+    Anyway, we can use this function to get the location of Lara’s head, then use that position as the <span class="var">target</span> to which the mesh particles can look. Here’s an example:
     <div class="code">
       local laraid = getLaraIndex()<br>
       local mesh = 14<br>
-      local target = getItemJointPosition(laraid, mesh, 0, 0, 0) <span class="com">-- get the position of Lara's head mesh 14</span><br><br>
+      local target = getItemJointPosition(laraid, mesh, 0, -64, 0) <span class="com">-- get the position of Lara's head mesh 14</span><br><br>
       meshLookAtTarget(part, target, 0.2, false) <span class="com">-- make the mesh particle "look at" Lara's head</span>
     </div>
     <hr>
