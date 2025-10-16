@@ -168,7 +168,7 @@
         <td><span class="var">LOG_ERROR</span></td>
       </tr>
     </table><br><br>
-    The way <span class="var">LOG_</span> constants work is that they permit categories of importance <u>higher or equal to</u> the message category they specify. E.g. <span class="var">LOG_TRACE</span> permits all message categories (1-4), <span class="var">LOG_WARN</span> permits only messages of importance 3 or higher (3-4), while <span class="var">LOG_ERROR</span> will only permit <span class="var">ERROR</span> messages (4).<br><br>
+    The way <span class="var">LOG_</span> constants work is that they permit categories of importance <u>higher or equal to</u> the message category they specify. E.g. <span class="var">LOG_INFO</span> permits all message categories (1-4), <span class="var">LOG_WARN</span> permits only messages of importance 3 or higher (3-4), while <span class="var">LOG_ERROR</span> will only permit <span class="var">ERROR</span> messages (4).<br><br>
     By default, when a game is newly booted, the message filtering level is set to <span class="var">LOG_INFO</span> (i.e. no filtering). To set a different level, you call <span class="var">setLogLevel()</span> with the appropriate <span class="var">LOG_</span> constant in Lua:
     <div class="code">
       setLogLevel(LOG_DEBUG) <span class="com">-- sets the filtering to permit DEBUG, WARN and ERROR messages</span>
@@ -381,7 +381,7 @@
     </div>
     Is there something wrong there? It doesn’t seem like it, looks rather correct at first glance. But let’s re-read the message: <span class="var">'end' expected (to close 'function' at line 3) near &lt;eof&gt;</span>. Did you catch it? The plugin is telling us that the <span class="var">end</span> keyword, to close the function beginning at line 3, was not found. So, we add that missing <span class="var">end</span> keyword:
     <div class="code">
-      local buggyInit()<br>
+      local function buggyInit()<br>
       &nbsp;&nbsp;&nbsp;&nbsp;local part = createSpritePart()<br><br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.emitterIndex = getTombIndex(3)<br>
       &nbsp;&nbsp;&nbsp;&nbsp;part.lifeSpan = 60<br>
