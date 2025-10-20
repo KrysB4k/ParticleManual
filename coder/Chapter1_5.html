@@ -899,7 +899,7 @@
       local r = randomFloat(0, 768) <span class="com">-- random radius</span><br>
     </div>
     If we test this, we again see there’s something not quite right… do you see it?
-     <img class="fig" src="ch1_5/ch15_sphere3.gif"><br>
+     <img class="fig" src="ch1_5/ch15_sphere4.gif"><br>
     Most of the points are “clumping” near the core of the sphere and get sparser towards the surface.<br><br>
     We’ve again fallen for yet another trap of mathematics, because this is not the correct way to evenly distribute points within the sphere’s volume. Instead, what we should do is make the point distribution depend on the cube root ∛ (root of degree 3) of the distance from the center. The cube root function in the API is named <span class="var">cbrt()</span>. If we were to apply this cubic root directly to the random radius value:
     <div class="code">
@@ -931,7 +931,7 @@
       &nbsp;&nbsp;&nbsp;&nbsp;part.fadeOut = 15<br>
       end
     </div>
-    <img class="fig" src="ch1_5/ch15_sphere4.gif"><br>
+    <img class="fig" src="ch1_5/ch15_sphere3.gif"><br>
     The particles now spawn evenly within the whole volume of the sphere (it is especially noticeable in game).<br><br>
     <h4>Particle spread/charge effect</h4>
     A sphere of motionless particles looks rather boring, but it does give me an idea of how to use it for something more fancy!<br><br>
