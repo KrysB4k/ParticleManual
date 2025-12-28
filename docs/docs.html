@@ -1,0 +1,798 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Particle API</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Particle API</h1>
+
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>functions</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>functions</code></h1>
+<p>Built-in Particle API functions</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#abs">abs (x)</a></td>
+	<td class="summary">Calculates the absolute value of x.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#acos">acos (x)</a></td>
+	<td class="summary">Calculates the inverse-cosine of x.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#activateTriggers">activateTriggers (x, y, z, room[, heavy[, flags]])</a></td>
+	<td class="summary">Activates in-level triggers of the sector at coordinates (x, y, z, room).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#asin">asin (x)</a></td>
+	<td class="summary">Calculates the inverse-sine of x.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#atan">atan (x)</a></td>
+	<td class="summary">Calculates the inverse-tangent of x.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#atan2">atan2 (y, x)</a></td>
+	<td class="summary">Calculates the two-component (y, x) inverse-tangent.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bindFunction">bindFunction (id, func)</a></td>
+	<td class="summary">Binds the function func to index ID.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bindGroup">bindGroup (id, func)</a></td>
+	<td class="summary">Binds the group init function to index ID.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#boidAlignment">boidAlignment (id, func)</a></td>
+	<td class="summary">Applies the <a href="https://en.wikipedia.org/wiki/Boids#Model_details">boid alignment</a> rule to particles.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#boidCohesion">boidCohesion (id, func)</a></td>
+	<td class="summary">Applies the <a href="https://en.wikipedia.org/wiki/Boids#Model_details">boid cohesion</a> rule to particles.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#boidSeparation">boidSeparation (id, func)</a></td>
+	<td class="summary">Applies the <a href="https://en.wikipedia.org/wiki/Boids#Model_details">boid separation</a> rule to particles.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cbrt">cbrt (x)</a></td>
+	<td class="summary">Calculates the cubic root of x (&#8731;x).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ceil">ceil (x)</a></td>
+	<td class="summary">Calculates the ceiling of x (&#8968;x&#8969;).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#clamp">clamp (x, min, max)</a></td>
+	<td class="summary">Clamps the value of x to the range [min, max].</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cos">cos (x)</a></td>
+	<td class="summary">Calculates the cosine of x.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#createColor">createColor (r, g, b)</a></td>
+	<td class="summary">Creates a new ColorRGB object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#createColorHSV">createColorHSV (hue, sat, val)</a></td>
+	<td class="summary">Creates a new ColorRGB object from Hue, Saturation and Value.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#createGroup">createGroup (init, update)</a></td>
+	<td class="summary">Creates a new ParticleGroup object with a given init and update function.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#createMeshPart">createMeshPart (group)</a></td>
+	<td class="summary">Creates a new MeshParticle object of given ParticleGroup.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#createModule">createModule ()</a></td>
+	<td class="summary">Creates a new Module context object in the module script.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#createPerlinNoise">createPerlinNoise ([seed])</a></td>
+	<td class="summary">Creates a new PerlinNoise generator object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#createSimplexNoise">createSimplexNoise ([seed])</a></td>
+	<td class="summary">Creates a new SimplexNoise generator object.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "abs"></a>
+    <strong>abs (x)</strong>
+    </dt>
+    <dd>
+    Calculates the absolute value of x.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input number
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the absolute value of x
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "acos"></a>
+    <strong>acos (x)</strong>
+    </dt>
+    <dd>
+    Calculates the inverse-cosine of x.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input cosine value; must be in the range [-1.0, 1.0]
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the angle (radians) for given cosine value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "activateTriggers"></a>
+    <strong>activateTriggers (x, y, z, room[, heavy[, flags]])</strong>
+    </dt>
+    <dd>
+    Activates in-level triggers of the sector at coordinates (x, y, z, room).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the 'room' coordinate
+        </li>
+        <li><span class="parameter">heavy</span>
+            <span class="types"><span class="type">bool</span></span>
+         activate heavy triggers (true/false)
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">flags</span>
+            <span class="types"><span class="type">int</span></span>
+         use trigger flags
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "asin"></a>
+    <strong>asin (x)</strong>
+    </dt>
+    <dd>
+    Calculates the inverse-sine of x.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input sine value; must be in the range [-1.0, 1.0]
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the angle (radians) for given sine value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "atan"></a>
+    <strong>atan (x)</strong>
+    </dt>
+    <dd>
+    Calculates the inverse-tangent of x.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input tangent value;
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the angle (radians) for given tangent value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "atan2"></a>
+    <strong>atan2 (y, x)</strong>
+    </dt>
+    <dd>
+    Calculates the two-component (y, x) inverse-tangent.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the y component
+        </li>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the x component
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the angle (radians) for given (y, x) components
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bindFunction"></a>
+    <strong>bindFunction (id, func)</strong>
+    </dt>
+    <dd>
+    Binds the function func to index ID.  This function can then be invoked via Flipeffect 1 from Plugin_ParticleSystem. Can only be called in module-loading phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the ID to bind to; constrained to [1, 1024]
+        </li>
+        <li><span class="parameter">func</span>
+            <span class="types"><span class="type">func</span></span>
+         the function to bind
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bindGroup"></a>
+    <strong>bindGroup (id, func)</strong>
+    </dt>
+    <dd>
+    Binds the group init function to index ID.  This init function then be invoked via Flipeffect 1 from Plugin_ParticleSystem. Can only be called in module-loading phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the ID to bind to; constrained to [1, 1024]
+        </li>
+        <li><span class="parameter">func</span>
+            <span class="types"><span class="type">func</span></span>
+         the ParticleGroup of which init will bind
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boidAlignment"></a>
+    <strong>boidAlignment (id, func)</strong>
+    </dt>
+    <dd>
+    Applies the <a href="https://en.wikipedia.org/wiki/Boids#Model_details">boid alignment</a> rule to particles.  Can only be called in init phase and update phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the ID to bind to; constrained to [1, 1024]
+        </li>
+        <li><span class="parameter">func</span>
+            <span class="types"><span class="type">func</span></span>
+         the function to bind
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boidCohesion"></a>
+    <strong>boidCohesion (id, func)</strong>
+    </dt>
+    <dd>
+    Applies the <a href="https://en.wikipedia.org/wiki/Boids#Model_details">boid cohesion</a> rule to particles.  Can only be called in init phase and update phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+
+<ul>
+    <li>the ID to bind to; constrained to [1, 1024]</li>
+</ul>
+
+        </li>
+        <li><span class="parameter">func</span>
+            <span class="types"><span class="type">func</span></span>
+
+<ul>
+    <li>the function to bind</li>
+</ul>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boidSeparation"></a>
+    <strong>boidSeparation (id, func)</strong>
+    </dt>
+    <dd>
+    Applies the <a href="https://en.wikipedia.org/wiki/Boids#Model_details">boid separation</a> rule to particles.  Can only be called in init phase and update phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the ID to bind to; constrained to [1, 1024]
+        </li>
+        <li><span class="parameter">func</span>
+            <span class="types"><span class="type">func</span></span>
+         the function to bind
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cbrt"></a>
+    <strong>cbrt (x)</strong>
+    </dt>
+    <dd>
+    Calculates the cubic root of x (&#8731;x).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input x
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the cubic root value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ceil"></a>
+    <strong>ceil (x)</strong>
+    </dt>
+    <dd>
+    Calculates the ceiling of x (&#8968;x&#8969;).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input x
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the ceiling value (rounding up to the nearest integer)
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "clamp"></a>
+    <strong>clamp (x, min, max)</strong>
+    </dt>
+    <dd>
+    Clamps the value of x to the range [min, max].
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input x
+        </li>
+        <li><span class="parameter">min</span>
+            <span class="types"><span class="type">number</span></span>
+         the lower bound
+        </li>
+        <li><span class="parameter">max</span>
+            <span class="types"><span class="type">number</span></span>
+         the upper bound
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the clamped value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cos"></a>
+    <strong>cos (x)</strong>
+    </dt>
+    <dd>
+    Calculates the cosine of x.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input x (radians)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the cosine value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "createColor"></a>
+    <strong>createColor (r, g, b)</strong>
+    </dt>
+    <dd>
+    Creates a new ColorRGB object.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">r</span>
+            <span class="types"><span class="type">int</span></span>
+         the Red value [0, 255]
+        </li>
+        <li><span class="parameter">g</span>
+            <span class="types"><span class="type">int</span></span>
+         the Green value [0, 255]
+        </li>
+        <li><span class="parameter">b</span>
+            <span class="types"><span class="type">int</span></span>
+         the Blue value [0, 255]
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">ColorRGB</span></span>
+        the ColorRGB object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "createColorHSV"></a>
+    <strong>createColorHSV (hue, sat, val)</strong>
+    </dt>
+    <dd>
+    Creates a new ColorRGB object from Hue, Saturation and Value.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">hue</span>
+            <span class="types"><span class="type">number</span></span>
+         the Hue value [0.0, 360.0]
+        </li>
+        <li><span class="parameter">sat</span>
+            <span class="types"><span class="type">number</span></span>
+         the Saturation value [0.0, 1.0]
+        </li>
+        <li><span class="parameter">val</span>
+            <span class="types"><span class="type">number</span></span>
+         the Value value [0.0, 1.0]
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">ColorRGB</span></span>
+        the ColorRGB object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "createGroup"></a>
+    <strong>createGroup (init, update)</strong>
+    </dt>
+    <dd>
+    Creates a new ParticleGroup object with a given init and update function.  Can only be called in the module-loading phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">init</span>
+            <span class="types">optional <span class="type">func</span></span>
+         the initialization function; pass nil if no init function desired
+        </li>
+        <li><span class="parameter">update</span>
+            <span class="types">optional <span class="type">func</span></span>
+         the update function; pass nil if no update function desired
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">ParticleGroup</span></span>
+        the ParticleGroup object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "createMeshPart"></a>
+    <strong>createMeshPart (group)</strong>
+    </dt>
+    <dd>
+    Creates a new MeshParticle object of given ParticleGroup.  Can only be called in the init phase or update phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">group</span>
+            <span class="types"><span class="type">ParticleGroup</span></span>
+         the ParticleGroup the new particle belongs to
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">MeshParticle</span></span>
+        the MeshParticle object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "createModule"></a>
+    <strong>createModule ()</strong>
+    </dt>
+    <dd>
+    Creates a new Module context object in the module script.  Can only be called in the module-loading phase. Only one Module context can exist in a single module.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">Module</span></span>
+        the Module context object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "createPerlinNoise"></a>
+    <strong>createPerlinNoise ([seed])</strong>
+    </dt>
+    <dd>
+    Creates a new PerlinNoise generator object.  Can only be called in the module-loading phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">seed</span>
+            <span class="types"><span class="type">int</span></span>
+         the seed to initialize the noise generator with
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">PerlinNoise</span></span>
+        the PerlinNoise generator object.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "createSimplexNoise"></a>
+    <strong>createSimplexNoise ([seed])</strong>
+    </dt>
+    <dd>
+    Creates a new SimplexNoise generator object.  Can only be called in the module-loading phase.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">seed</span>
+            <span class="types"><span class="type">int</span></span>
+         the seed to initialize the noise generator with
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">SimplexNoise</span></span>
+        the SimplexNoise generator object.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2025-12-28 17:47:50 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
