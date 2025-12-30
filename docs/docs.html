@@ -32,6 +32,7 @@
 <ul>
 <li><a href="#Plugin_interface">Plugin interface </a></li>
 <li><a href="#Randomizing_functions">Randomizing functions </a></li>
+<li><a href="#Procedural_noise_functions">Procedural noise functions </a></li>
 <li><a href="#Particle_functions">Particle functions </a></li>
 <li><a href="#Game_interactions">Game interactions </a></li>
 <li><a href="#TRNG_interactions">TRNG interactions </a></li>
@@ -43,12 +44,11 @@
 
 <div id="content">
 
-<h1>Script <code>Functions</code></h1>
+<h1>Module <code>Functions</code></h1>
 <p>Built-in Particle API functions.</p>
 <p>
 
 </p>
-
 
 <h2><a href="#Plugin_interface">Plugin interface </a></h2>
 <table class="function_list">
@@ -61,7 +61,7 @@
 	<td class="summary">Creates a new ColorRGB object.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#createColorHSV">createColorHSV (hue, sat, val)</a></td>
+	<td class="name" nowrap><a href="#createColorHSV">createColorHSV (hue <br>[, sat=1.0[, val=1.0]])</a></td>
 	<td class="summary">Creates a new ColorRGB object from Hue, Saturation and Value.</td>
 	</tr>
 	<tr>
@@ -110,7 +110,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#setLogLevel">setLogLevel (logLevel)</a></td>
-	<td class="summary">Sets the Logger level (lowest permitted rank of <a href="Chapter2.html#id3">Logger message</a>).</td>
+	<td class="summary">Sets the Logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">logger message</a>).</td>
 	</tr>
 </table>
 <h2><a href="#Randomizing_functions">Randomizing functions </a></h2>
@@ -130,6 +130,21 @@
 	<tr>
 	<td class="name" nowrap><a href="#randomSpherePoint">randomSpherePoint (radius)</a></td>
 	<td class="summary">Generates a random vector (point) on a 3D sphere of a given radius.</td>
+	</tr>
+</table>
+<h2><a href="#Procedural_noise_functions">Procedural noise functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#noise">noise (gen, scale, x[, y[, z[, w]]])</a></td>
+	<td class="summary">Takes a noise generator object and produces a pseudo-random scalar noise output.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#noiseCurl">noiseCurl (gen, scale, x, y[, z])</a></td>
+	<td class="summary">Takes a noise generator object and produces a pseudo-random curl vector.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#noiseCurlTime">noiseCurlTime (gen, scale, time, x, y[, z])</a></td>
+	<td class="summary">Takes a noise generator object and produces a pseudo-random curl vector that changes over time.</td>
 	</tr>
 </table>
 <h2><a href="#Particle_functions">Particle functions </a></h2>
@@ -159,7 +174,7 @@
 	<td class="summary">Tests if the particle collided with a specified moveable item.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#partCollideFloors">partCollideFloors (part, rebound[, margin=0.0<br>[, accurate=false]])</a></td>
+	<td class="name" nowrap><a href="#partCollideFloors">partCollideFloors (part, rebound <br>[, margin=0.0[, accurate=false]])</a></td>
 	<td class="summary">Tests if the particle collided with a floor or ceiling.</td>
 	</tr>
 	<tr>
@@ -180,15 +195,19 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partKill">partKill (part)</a></td>
-	<td class="summary">Immediately kills the particle instance.</td>
+	<td class="summary">Immediately kills (and deactivates) the particle instance.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partLimitSpeed">partLimitSpeed (part, maxSpeed)</a></td>
-	<td class="summary">Limits the maximum speed at which the particle travels at.</td>
+	<td class="summary">Limits the maximum speed at which the particle can travel.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partWind">partWind (part, strength)</a></td>
 	<td class="summary">Applies in-game wind speed cumulatively to particle's velocity.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#meshShatter">meshShatter (part)</a></td>
+	<td class="summary">Like partKill(), but additionally shatters the mesh of the mesh particle as the part is killed.</td>
 	</tr>
 </table>
 <h2><a href="#Game_interactions">Game interactions </a></h2>
@@ -231,7 +250,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#getItemJointPosRot">getItemJointPosRot (index, mesh, xOffset, <br>yOffset, zOffset)</a></td>
-	<td class="summary">Fused function that combines getItemJointPosition() and getItemJointRotation().</td>
+	<td class="summary">Fused function that combines <a href="docs.html#getItemJointPosition">getItemJointPosition</a> and <a href="docs.html#getItemJointRotation">getItemJointRotation</a>.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#getItemRoom">getItemRoom (index)</a></td>
@@ -294,7 +313,7 @@
 	<td class="summary">Tests if there is a wall at coordinates (x, y, z, room)</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#triggerDynamicLight">triggerDynamicLight (x, y, z, intensity, red, <br>green, blue)</a></td>
+	<td class="name" nowrap><a href="#triggerDynamicLight">triggerDynamicLight (x, y, z, intensity, <br>red, green, blue)</a></td>
 	<td class="summary">Triggers a dynamic light at the given (x, y, z) coordinates for one game tick.</td>
 	</tr>
 	<tr>
@@ -396,7 +415,7 @@
 	<td class="summary">Converts value expressed in radians to value expressed in degrees.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#remap">remap (x, oldMin, oldMax, newMin, newMax)</a></td>
+	<td class="name" nowrap><a href="#remap">remap (x, oldMin, oldMax, newMin, <br>newMax)</a></td>
 	<td class="summary">Linearly remaps the value x from the original range [oldMin, oldMax] to the new range [newMin, newMax].</td>
 	</tr>
 	<tr>
@@ -404,7 +423,7 @@
 	<td class="summary">Rotates a Vector3D object by a set of Euler angles (x, y, z).</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#rotateVectorByAxisAngle">rotateVectorByAxisAngle (vec, axis, theta)</a></td>
+	<td class="name" nowrap><a href="#rotateVectorByAxisAngle">rotateVectorByAxisAngle (vec, axis, <br>theta)</a></td>
 	<td class="summary">Rotates a Vector3D object by an axis vector and angle theta.</td>
 	</tr>
 	<tr>
@@ -425,7 +444,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#sphericalToCartesian">sphericalToCartesian (r, theta, phi)</a></td>
-	<td class="summary">Converts a set of spherical coordinates (r, &theta;, &phi;) to cartesian coordinates (x, y, z)</td>
+	<td class="summary">Converts a set of spherical coordinates (r, &theta;, &phi;) to cartesian coordinates (x, y, z).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#sqrt">sqrt (x)</a></td>
@@ -484,7 +503,7 @@
     <strong>checkPartLimit (group)</strong>
     </dt>
     <dd>
-    Checks if the particle group's partLimit (if set) was reached yet.
+    Checks if the particle group's partLimit (if set) was reached yet.  Used when managing particle effects with limited spawn counts.
 
 
     <h3>Parameters:</h3>
@@ -499,7 +518,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if limit not reached yet; false if limit reached
+        true if limit not reached yet (or partLimit not set for group); false if limit reached
     </ol>
 
 
@@ -543,7 +562,7 @@
 </dd>
     <dt>
     <a name = "createColorHSV"></a>
-    <strong>createColorHSV (hue, sat, val)</strong>
+    <strong>createColorHSV (hue[, sat=1.0[, val=1.0]])</strong>
     </dt>
     <dd>
     Creates a new ColorRGB object from Hue, Saturation and Value.
@@ -558,10 +577,12 @@
         <li><span class="parameter">sat</span>
             <span class="types"><span class="type">number</span></span>
          the Saturation value [0.0, 1.0]
+         (<em>default</em> 1.0)
         </li>
         <li><span class="parameter">val</span>
             <span class="types"><span class="type">number</span></span>
-         the Value value [0.0, 1.0]
+         the Value (intensity) value [0.0, 1.0]
+         (<em>default</em> 1.0)
         </li>
     </ul>
 
@@ -683,6 +704,12 @@
     </ol>
 
 
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="docs.html#noise">noise</a></li>
+         <li><a href="docs.html#noiseCurl">noiseCurl</a></li>
+         <li><a href="docs.html#noiseCurlTime">noiseCurlTime</a></li>
+    </ul>
 
 
 </dd>
@@ -711,6 +738,12 @@
     </ol>
 
 
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="docs.html#noise">noise</a></li>
+         <li><a href="docs.html#noiseCurl">noiseCurl</a></li>
+         <li><a href="docs.html#noiseCurlTime">noiseCurlTime</a></li>
+    </ul>
 
 
 </dd>
@@ -877,7 +910,7 @@
     <strong>setLogLevel (logLevel)</strong>
     </dt>
     <dd>
-    Sets the Logger level (lowest permitted rank of <a href="Chapter2.html#id3">Logger message</a>).  Can only be called in the level-loading phase (i.e. inside a level script).
+    Sets the Logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">Logger message</a>).  Can only be called in the level-loading phase (i.e. inside a level script).
 
 
     <h3>Parameters:</h3>
@@ -1007,6 +1040,152 @@
 
            <span class="types"><span class="type">Vector3D</span></span>
         the random vector
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Procedural_noise_functions"></a>Procedural noise functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "noise"></a>
+    <strong>noise (gen, scale, x[, y[, z[, w]]])</strong>
+    </dt>
+    <dd>
+    Takes a noise generator object and produces a pseudo-random scalar noise output.  Noise values can be generated from 1 up to 4 separate numerical inputs (x, y, z, w).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">gen</span>
+            <span class="types"><span class="type">PerlinNoise</span> or <span class="type">SimplexNoise</span></span>
+         the noise generator object
+        </li>
+        <li><span class="parameter">scale</span>
+            <span class="types"><span class="type">number</span></span>
+         the domain scale factor (larger means smaller oscillation frequency)
+        </li>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the first input
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the second input
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         the third input
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">w</span>
+            <span class="types"><span class="type">number</span></span>
+         the fourth input
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        scalar noise value in the approximate range [-1.0, 1.0]
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "noiseCurl"></a>
+    <strong>noiseCurl (gen, scale, x, y[, z])</strong>
+    </dt>
+    <dd>
+    Takes a noise generator object and produces a pseudo-random curl vector.  Useful for simulating fluid-like dynamics. Noise values can be generated from 2 up to 3 separate numerical inputs (x, y, z), generating a curl vector.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">gen</span>
+            <span class="types"><span class="type">PerlinNoise</span> or <span class="type">SimplexNoise</span></span>
+         the noise generator object
+        </li>
+        <li><span class="parameter">scale</span>
+            <span class="types"><span class="type">number</span></span>
+         the domain scale factor (larger means smaller oscillation frequency)
+        </li>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the first input
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the second input
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         the third input
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">Vector3D</span></span>
+        curl vector; if only x, y inputs are given, generates a vector with zero Z component (x, y, 0.0), otherwise generates a full 3D vector (x, y, z)
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "noiseCurlTime"></a>
+    <strong>noiseCurlTime (gen, scale, time, x, y[, z])</strong>
+    </dt>
+    <dd>
+    Takes a noise generator object and produces a pseudo-random curl vector that changes over time.  Useful for simulating fluid-like dynamics. Noise values can be generated from 2 up to 3 separate numerical inputs (x, y, z), generating a curl vector.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">gen</span>
+            <span class="types"><span class="type">PerlinNoise</span> or <span class="type">SimplexNoise</span></span>
+         the noise generator object
+        </li>
+        <li><span class="parameter">scale</span>
+            <span class="types"><span class="type">number</span></span>
+         the domain scale factor (larger means smaller oscillation frequency)
+        </li>
+        <li><span class="parameter">time</span>
+            <span class="types"><span class="type">number</span></span>
+         the time component (e.g. derived from getGameTick())
+        </li>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the first input
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the second input
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         the third input
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">Vector3D</span></span>
+        curl vector; if only x, y inputs are given, generates a vector with zero Z component (x, y, 0.0), otherwise generates a full 3D vector (x, y, z)
     </ol>
 
 
@@ -1183,7 +1362,7 @@
     <strong>partCollidedItem (part, index, radius)</strong>
     </dt>
     <dd>
-    Tests if the particle collided with a specified moveable item.  This is a simple, fast collision check against the item's bounding box, sufficient for most purposes. See testCollisionSpheres() for a more sophisticated collision mechanism. Not applicable to screen-space particles.
+    Tests if the particle collided with a specified moveable item.  This is a simple, fast collision check against the item's bounding box, sufficient for most purposes. See <a href="docs.html#testCollisionSpheres">testCollisionSpheres</a> for a more sophisticated collision detection. Not applicable to screen-space particles.
 
 
     <h3>Parameters:</h3>
@@ -1395,7 +1574,7 @@
     <strong>partKill (part)</strong>
     </dt>
     <dd>
-    Immediately kills the particle instance.  Use this function instead of manually setting part.lifeCounter to 0.
+    Immediately kills (and deactivates) the particle instance.  Use this function instead of manually setting part.lifeCounter to 0.
 
 
     <h3>Parameters:</h3>
@@ -1416,7 +1595,7 @@
     <strong>partLimitSpeed (part, maxSpeed)</strong>
     </dt>
     <dd>
-    Limits the maximum speed at which the particle travels at.  Prevents excessive particle speeding up (e.g. when velocity is accumulated via acceleration or otherwise).
+    Limits the maximum speed at which the particle can travel.  Useful to prevents excessive speeds (e.g. when velocity is accumulated via acceleration or otherwise).
 
 
     <h3>Parameters:</h3>
@@ -1457,6 +1636,29 @@
     </ul>
 
 
+
+
+
+</dd>
+    <dt>
+    <a name = "meshShatter"></a>
+    <strong>meshShatter (part)</strong>
+    </dt>
+    <dd>
+    Like partKill(), but additionally shatters the mesh of the mesh particle as the part is killed.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">MeshParticle</span></span>
+         the mesh particle instance
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if part is a SpriteParticle
 
 
 
@@ -1793,7 +1995,7 @@
     <strong>getItemJointPosRot (index, mesh, xOffset, yOffset, zOffset)</strong>
     </dt>
     <dd>
-    Fused function that combines getItemJointPosition() and getItemJointRotation().  Slightly faster than calling these separate functions individually. Returns the position and rotation (two values).
+    Fused function that combines <a href="docs.html#getItemJointPosition">getItemJointPosition</a> and <a href="docs.html#getItemJointRotation">getItemJointRotation</a>.  Slightly faster than calling these separate functions individually. Returns the position and rotation (two values).
 
 
     <h3>Parameters:</h3>
@@ -1952,7 +2154,7 @@
     <ol>
 
            <span class="types"><span class="type">int</span></span>
-        bit-flags of the room properties
+        bit-flags of the room properties (flags can be tested with <a href="docs.html#hasAllFlags">hasAllFlags</a> or <a href="docs.html#hasAnyFlag">hasAnyFlag</a>)
     </ol>
 
 
@@ -2204,7 +2406,7 @@
     <strong>testCollisionSpheres (index, pos, radius)</strong>
     </dt>
     <dd>
-    An advanced function for testing collision of a sphere against the mesh spheres of a moveable.
+    An advanced function for testing collision of a sphere against the mesh spheres of a moveable.  This function is more complex to use. See <a href="docs.html#partCollidedItem">partCollidedItem</a> for a simpler particle collision function.
 
 
     <h3>Parameters:</h3>
@@ -2227,7 +2429,7 @@
     <ol>
 
            <span class="types"><span class="type">int</span></span>
-        bit-flags of meshes with which the testing sphere has detected a collision
+        bit-flags of meshes with which the testing sphere has detected a collision (test with <a href="docs.html#hasAllFlags">hasAllFlags</a> or <a href="docs.html#hasAnyFlag">hasAnyFlag</a>)
     </ol>
 
     <h3>Raises:</h3>
@@ -2372,7 +2574,7 @@
         </li>
         <li><span class="parameter">xRot</span>
             <span class="types"><span class="type">number</span></span>
-         the X rotation of the effect
+         the X rotation of the effect (radians)
         </li>
         <li><span class="parameter">flags</span>
             <span class="types"><span class="type">int</span></span>
@@ -2441,7 +2643,7 @@
     <strong>setSelectedItem (index)</strong>
     </dt>
     <dd>
-    Sets the tomb4 moveable index as the current Selected Item / Found Item index.  Can be used to apply TRNG features to moveables obtained through Lua scripts (e.g. by redirecting with TGROUP&#95;USE&#95;FOUND&#95;ITEM&#95;INDEX in a TriggerGroup).
+    Sets the tomb4 moveable index as the current Selected Item / Found Item index.  Can be used to apply TRNG features to moveables obtained through Lua scripts (e.g. by redirecting with TGROUP&#95;USE&#95;FOUND&#95;ITEM&#95;INDEX in a TriggerGroup executed with <a href="docs.html#performTriggerGroup">performTriggerGroup</a>).
 
 
     <h3>Parameters:</h3>
@@ -2754,7 +2956,7 @@
     <strong>distance (vec1, vec2)</strong>
     </dt>
     <dd>
-    Calculates the Euclidean (shortest) distance between two Vector3D objects.
+    Calculates the Euclidean (shortest) distance between two Vector3D objects.  If you need to quickly compare the distance without its exact value, see <a href="docs.html#distCompare">distCompare</a>.
 
 
     <h3>Parameters:</h3>
@@ -2785,7 +2987,7 @@
     <strong>distCompare (vec1, vec2, dist)</strong>
     </dt>
     <dd>
-    Compares the Euclidean (shortest) distance between two Vector3D objects against a given distance threshold.  Faster than the distance() function, if you are not interested in the actual distance value, but need to check if it's within, equal to or beyond the threshold.
+    Compares the Euclidean (shortest) distance between two Vector3D objects against a given distance threshold.  Faster than the <a href="docs.html#distance">distance</a> function, if you are not interested in the actual distance value, but need to check if it's within, equal to or beyond the threshold.
 
 
     <h3>Parameters:</h3>
@@ -3258,7 +3460,7 @@
     <strong>sphericalToCartesian (r, theta, phi)</strong>
     </dt>
     <dd>
-    Converts a set of spherical coordinates (r, &theta;, &phi;) to cartesian coordinates (x, y, z)
+    Converts a set of spherical coordinates (r, &theta;, &phi;) to cartesian coordinates (x, y, z).  To quickly generate a random direction on a sphere of given radius, see <a href="docs.html#randomSpherePoint">randomSpherePoint</a>.
 
 
     <h3>Parameters:</h3>
@@ -3498,7 +3700,7 @@
     <strong>hasAllFlags (checkedValue, testFlags)</strong>
     </dt>
     <dd>
-    Tests for the occurence of all specified flags in a given integer value.  Can be used with getRoomFlags() and testCollisionSpheres().
+    Tests for the occurence of all specified flags in a given integer value.
 
 
     <h3>Parameters:</h3>
@@ -3509,7 +3711,7 @@
         </li>
         <li><span class="parameter">testFlags</span>
             <span class="types"><span class="type">int</span></span>
-         flags to test for; use the bitwise or operator to combine several flags e.g. FLAG1 | FLAG2 | FLAG3
+         flags to test for; use the 'plus' operator to combine several flags e.g. FLAG1 + FLAG2 + FLAG3
         </li>
     </ul>
 
@@ -3529,7 +3731,7 @@
     <strong>hasAnyFlag (checkedValue, testFlags)</strong>
     </dt>
     <dd>
-    Tests for the occurence of any specified flags in a given integer value.  Can be used with getRoomFlags() and testCollisionSpheres().
+    Tests for the occurence of any specified flags in a given integer value.
 
 
     <h3>Parameters:</h3>
@@ -3540,7 +3742,7 @@
         </li>
         <li><span class="parameter">testFlags</span>
             <span class="types"><span class="type">int</span></span>
-         flags to test for; use the bitwise or operator to combine several flags e.g. FLAG1 | FLAG2 | FLAG3
+         flags to test for; use the 'plus' operator to combine several flags e.g. FLAG1 + FLAG2 + FLAG3
         </li>
     </ul>
 
@@ -3560,7 +3762,7 @@
     <strong>interval (interval[, delay=0])</strong>
     </dt>
     <dd>
-    Tests for the occurence of a specific game tick interval.  Can be used as a shorthand for getGameTick() with modulo operator.
+    Tests for the occurence of a specific game tick interval.  Can be used as a shorthand for <a href="docs.html#getGameTick">getGameTick</a> with modulo operator.
 
 
     <h3>Parameters:</h3>
@@ -3596,7 +3798,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
-<i style="float:right;">Last updated 2025-12-30 03:29:08 </i>
+<i style="float:right;">Last updated 2025-12-30 16:13:26 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
