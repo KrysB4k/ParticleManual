@@ -31,14 +31,12 @@
 <h2>Contents</h2>
 <ul>
 <li><a href="#Plugin_interface">Plugin interface </a></li>
+<li><a href="#Randomizing_functions">Randomizing functions </a></li>
+<li><a href="#Particle_functions">Particle functions </a></li>
+<li><a href="#Game_interactions">Game interactions </a></li>
+<li><a href="#TRNG_interactions">TRNG interactions </a></li>
 <li><a href="#Math_related_functions">Math-related functions </a></li>
-<li><a href="#Tomb4_interactions">Tomb4 interactions </a></li>
-</ul>
-
-
-<h2>Programs</h2>
-<ul class="nowrap">
-  <li><strong>Functions</strong></li>
+<li><a href="#Miscellaneous_functions">Miscellaneous functions </a></li>
 </ul>
 
 </div>
@@ -72,7 +70,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#createMeshPart">createMeshPart (group)</a></td>
-	<td class="summary">Creates a new MeshParticle object of given ParticleGroup.</td>
+	<td class="summary">Creates a new MeshParticle object of given particle group.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#createModule">createModule ()</a></td>
@@ -88,11 +86,235 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#createSpritePart">createSpritePart (group)</a></td>
-	<td class="summary">Creates a new SpriteParticle object of given ParticleGroup.</td>
+	<td class="summary">Creates a new SpriteParticle object of given particle group.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#createVector">createVector (x, y, z)</a></td>
 	<td class="summary">Creates a new Vector3D object</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#invokeInit">invokeInit (group)</a></td>
+	<td class="summary">Invokes the init function of specified particle group.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#killParts">killParts (group)</a></td>
+	<td class="summary">Kills all currently active particles of the given particle group.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#print">print (value[, ...])</a></td>
+	<td class="summary">Outputs the listing of values to the <a href="../coder/Chapter2.html#id2">plugin logger</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#require">require (module)</a></td>
+	<td class="summary">Imports the requested module Lua script from modulescripts folder.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setLogLevel">setLogLevel (logLevel)</a></td>
+	<td class="summary">Sets the Logger level (lowest permitted rank of <a href="Chapter2.html#id3">Logger message</a>).</td>
+	</tr>
+</table>
+<h2><a href="#Randomizing_functions">Randomizing functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#randomFloat">randomFloat (min, max)</a></td>
+	<td class="summary">Generates a random floating-point number value between [min, max].</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#randomInt">randomInt (min, max)</a></td>
+	<td class="summary">Generates a random integer number value between [min, max].</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#randomNegate">randomNegate (x)</a></td>
+	<td class="summary">Returns the input x or its negative -x with a 50/50 chance.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#randomSpherePoint">randomSpherePoint (radius)</a></td>
+	<td class="summary">Generates a random vector (point) on a 3D sphere of a given radius.</td>
+	</tr>
+</table>
+<h2><a href="#Particle_functions">Particle functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#partAbsPos">partAbsPos (part)</a></td>
+	<td class="summary">Calculates the absolute position of the particle in world coordinates instead of relative coordinates.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partAnimate">partAnimate (part, start, end[, frameRate=1])</a></td>
+	<td class="summary">Animates the particle by cycling over part.spriteIndex (SpriteParticle) or part.meshIndex (meshParticle).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partAttach">partAttach (part, index[, mesh=-1])</a></td>
+	<td class="summary">Manually tethers the particle to a certain moveable and mesh (sets the part.emitterIndex and part.emitterNode).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partAttractToItem">partAttractToItem (part, index, radius, strength)</a></td>
+	<td class="summary">Attracts the particle towards a specified moveable.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partAvoidRoomGeometry">partAvoidRoomGeometry (part, wallMargin, <br>floorMargin, strength)</a></td>
+	<td class="summary">Makes the particle repel from room geometry (walls, floors and ceilings).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partCollidedItem">partCollidedItem (part, index, radius)</a></td>
+	<td class="summary">Tests if the particle collided with a specified moveable item.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partCollideFloors">partCollideFloors (part, rebound[, margin=0.0<br>[, accurate=false]])</a></td>
+	<td class="summary">Tests if the particle collided with a floor or ceiling.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partCollideWalls">partCollideWalls (part, rebound)</a></td>
+	<td class="summary">Tests if the particle collided with a wall.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partDetach">partDetach (part)</a></td>
+	<td class="summary">Manually detaches the particle to from its tethering moveable and mesh (resets the part.emitterIndex and part.emitterNode to default).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partFollow">partFollow (part, target, maxSpeed, <br>outerDist, minDist)</a></td>
+	<td class="summary">Makes the particle follow a Vector3D target, while maintaining a minimum spherical distance away from the target.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partHoming">partHoming (part, targetIndex, targetMesh, <br>turnSpeed[, accel=0.0[, predict=false]])</a></td>
+	<td class="summary">Makes the particle home onto a moveable target (similarly to a projectile).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partKill">partKill (part)</a></td>
+	<td class="summary">Immediately kills the particle instance.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partLimitSpeed">partLimitSpeed (part, maxSpeed)</a></td>
+	<td class="summary">Limits the maximum speed at which the particle travels at.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#partWind">partWind (part, strength)</a></td>
+	<td class="summary">Applies in-game wind speed cumulatively to particle's velocity.</td>
+	</tr>
+</table>
+<h2><a href="#Game_interactions">Game interactions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#activateTriggers">activateTriggers (x, y, z, room[, heavy=false<br>[, flags]])</a></td>
+	<td class="summary">Activates in-level triggers of the sector at coordinates (x, y, z, room).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findNearestItem">findNearestItem (pos, radius[, table])</a></td>
+	<td class="summary">Finds the closest moveable item to a position within a given radius, from an (optional) list of slots.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getCeilingHeight">getCeilingHeight (x, y, z, room)</a></td>
+	<td class="summary">Calculates the in-level ceiling height at coordinates (x, y, z, room).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getFloorHeight">getFloorHeight (x, y, z, room)</a></td>
+	<td class="summary">Calculates the in-level floor height at coordinates (x, y, z, room).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getFloorNormal">getFloorNormal (x, y, z, room)</a></td>
+	<td class="summary">Calculates the unit normal vector of the floor surface at coordinates (x, y, z, room).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getGameTick">getGameTick ()</a></td>
+	<td class="summary">Gets the current game tick value.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getItemInfo">getItemInfo (index)</a></td>
+	<td class="summary">Gets the ItemInfo object of the given moveable index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getItemJointPosition">getItemJointPosition (index, mesh, xOffset, <br>yOffset, zOffset)</a></td>
+	<td class="summary">Gets the joint position of a specified mesh of a moveable.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getItemJointRotation">getItemJointRotation (index, mesh)</a></td>
+	<td class="summary">Gets the joint rotation of a specified mesh of a moveable.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getItemJointPosRot">getItemJointPosRot (index, mesh, xOffset, <br>yOffset, zOffset)</a></td>
+	<td class="summary">Fused function that combines getItemJointPosition() and getItemJointRotation().</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getItemRoom">getItemRoom (index)</a></td>
+	<td class="summary">Gets the current room index of the given moveable.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getItemsBySlot">getItemsBySlot (slot)</a></td>
+	<td class="summary">Retrieves a table of moveable indices belonging to a specific slot in current level.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getLaraIndex">getLaraIndex ()</a></td>
+	<td class="summary">Gets Lara's moveable index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getLaraTargetIndex">getLaraTargetIndex ()</a></td>
+	<td class="summary">Gets the index of enemy currently aimed at by Lara.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getRoomFlags">getRoomFlags (room)</a></td>
+	<td class="summary">Gets the special room flags (properties) of a given room.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getRoomIndex">getRoomIndex (mapID)</a></td>
+	<td class="summary">Converts the levelmap room ID to the proper tomb4 room index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getRoomStatics">getRoomStatics (room[, table])</a></td>
+	<td class="summary">Retrieves a table of StaticInfo objects placed in a given room.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getStatic">getStatic (staticID)</a></td>
+	<td class="summary">Gets the StaticInfo object of a given NG static ID.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getTombIndex">getTombIndex (ngID)</a></td>
+	<td class="summary">Converts the NG script ID of a moveable to the proper tomb4 item index.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getWaterDepth">getWaterDepth (x, y, z, room)</a></td>
+	<td class="summary">Calculates the water depth at coordinates (x, y, z, room).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getWaterHeight">getWaterHeight (x, y, z, room)</a></td>
+	<td class="summary">Calculates the water surface height at coordinates (x, y, z, room).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#laraBurn">laraBurn ()</a></td>
+	<td class="summary">Sets Lara on fire.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#soundEffect">soundEffect (sfx[, pos=nil[, flags]])</a></td>
+	<td class="summary">Plays a specified sound effect.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#testCollisionSpheres">testCollisionSpheres (index, pos, radius)</a></td>
+	<td class="summary">An advanced function for testing collision of a sphere against the mesh spheres of a moveable.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#testWall">testWall (x, y, z, room)</a></td>
+	<td class="summary">Tests if there is a wall at coordinates (x, y, z, room)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#triggerDynamicLight">triggerDynamicLight (x, y, z, intensity, red, <br>green, blue)</a></td>
+	<td class="summary">Triggers a dynamic light at the given (x, y, z) coordinates for one game tick.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#triggerShockwave">triggerShockwave (x, y, z, innerRad, outerRad, <br>speed, life, red, green, blue, xRot, flags)</a></td>
+	<td class="summary">Triggers a shockwave effect at the given (x, y, z) coordinates.</td>
+	</tr>
+</table>
+<h2><a href="#TRNG_interactions">TRNG interactions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getSelectedItem">getSelectedItem ()</a></td>
+	<td class="summary">Gets the tomb4 moveable index of the current Selected Item.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#performTriggerGroup">performTriggerGroup (id)</a></td>
+	<td class="summary">Executes a TriggerGroup from the current level.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setSelectedItem">setSelectedItem (index)</a></td>
+	<td class="summary">Sets the tomb4 moveable index as the current Selected Item / Found Item index.</td>
 	</tr>
 </table>
 <h2><a href="#Math_related_functions">Math-related functions </a></h2>
@@ -174,16 +396,20 @@
 	<td class="summary">Converts value expressed in radians to value expressed in degrees.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#remap">remap (x, oldMin, oldMax, newMin, newMax)</a></td>
+	<td class="summary">Linearly remaps the value x from the original range [oldMin, oldMax] to the new range [newMin, newMax].</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#rotateVectorByAngles">rotateVectorByAngles (vec, x, y, z)</a></td>
 	<td class="summary">Rotates a Vector3D object by a set of Euler angles (x, y, z).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#rotateVectorByAxisAngle">rotateVectorByAxisAngle (vec, axis, theta)</a></td>
-	<td class="summary">Rotates a Vector3D object by an axis vector axis and angle theta.</td>
+	<td class="summary">Rotates a Vector3D object by an axis vector and angle theta.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#rotFromVector">rotFromVector (vec)</a></td>
-	<td class="summary">Creates a RotVector from a direction vector.</td>
+	<td class="summary">Creates a RotVector object from a direction vector.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#round">round (x)</a></td>
@@ -211,34 +437,38 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#vectorCross">vectorCross (u, v)</a></td>
-	<td class="summary">Calculates the vector cross product between the vectors u and v (u &#10799; v).</td>
+	<td class="summary">Calculates the vector cross product between the vectors <strong>u</strong> and <strong>v</strong> (<strong>u</strong> &#10799; <strong>v</strong>).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#vectorDot">vectorDot (u, v)</a></td>
-	<td class="summary">Calculates the vector dot product between the vectors u and v (u &#8901; v).</td>
+	<td class="summary">Calculates the vector dot product between the vectors <strong>u</strong> and <strong>v</strong> (<strong>u</strong> &#8901; <strong>v</strong>).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#vectorLength">vectorLength (v)</a></td>
-	<td class="summary">Calculates the length of vector v (|v|).</td>
+	<td class="summary">Calculates the length of vector <strong>v</strong> (<strong>|v|</strong>).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#vectorNormalize">vectorNormalize (v)</a></td>
-	<td class="summary">Calculates the normalized (unit) vector from vector v (v/|v|).</td>
+	<td class="summary">Calculates the normalized (unit) vector from vector <strong>v</strong> (<strong>v</strong>/<strong>|v|</strong>).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#wrapAngle">wrapAngle (x)</a></td>
-	<td class="summary">Wraps the angle x to the range [0, 2&pi;].</td>
+	<td class="summary">Wraps the angle x to the range [-&pi;, &pi;].</td>
 	</tr>
 </table>
-<h2><a href="#Tomb4_interactions">Tomb4 interactions </a></h2>
+<h2><a href="#Miscellaneous_functions">Miscellaneous functions </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#activateTriggers">activateTriggers (x, y, z, room[, heavy[, flags]])</a></td>
-	<td class="summary">Activates in-level triggers of the sector at coordinates (x, y, z, room).</td>
+	<td class="name" nowrap><a href="#hasAllFlags">hasAllFlags (checkedValue, testFlags)</a></td>
+	<td class="summary">Tests for the occurence of all specified flags in a given integer value.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#activateTriggers">activateTriggers (x, y, z, room[, heavy[, flags]])</a></td>
-	<td class="summary">Finds the closest item.</td>
+	<td class="name" nowrap><a href="#hasAnyFlag">hasAnyFlag (checkedValue, testFlags)</a></td>
+	<td class="summary">Tests for the occurence of any specified flags in a given integer value.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#interval">interval (interval[, delay=0])</a></td>
+	<td class="summary">Tests for the occurence of a specific game tick interval.</td>
 	</tr>
 </table>
 
@@ -269,7 +499,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if limit not reached yet, false if limit reached
+        true if limit not reached yet; false if limit reached
     </ol>
 
 
@@ -382,14 +612,14 @@
     <strong>createMeshPart (group)</strong>
     </dt>
     <dd>
-    Creates a new MeshParticle object of given ParticleGroup.  Can only be called in the init phase or update phase.
+    Creates a new MeshParticle object of given particle group.  Can only be called in the init phase or update phase.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">group</span>
             <span class="types"><span class="type">ParticleGroup</span></span>
-         the ParticleGroup the new particle belongs to
+         the group the new particle belongs to
         </li>
     </ul>
 
@@ -401,7 +631,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [WARN] if group.partLimit was set and limit was exceeded
+    [<strong>WARN</strong>] if group.partLimit was set and limit was exceeded
 
 
 
@@ -411,7 +641,7 @@
     <strong>createModule ()</strong>
     </dt>
     <dd>
-    Creates a new Module context object in the module script.  Can only be called in the module-loading phase. Only one Module context can exist in a single module.
+    Creates a new Module context object in the module script.  Can only be called in the module-loading phase. Only one Module context can exist in a single module file.
 
 
 
@@ -423,7 +653,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [ERROR] if Module object was already created
+    [<strong>ERROR</strong>] if Module object was already created
 
 
 
@@ -449,7 +679,7 @@
     <ol>
 
            <span class="types"><span class="type">PerlinNoise</span></span>
-        the PerlinNoise generator object.
+        the PerlinNoise generator object
     </ol>
 
 
@@ -477,7 +707,7 @@
     <ol>
 
            <span class="types"><span class="type">SimplexNoise</span></span>
-        the SimplexNoise generator object.
+        the SimplexNoise generator object
     </ol>
 
 
@@ -489,14 +719,14 @@
     <strong>createSpritePart (group)</strong>
     </dt>
     <dd>
-    Creates a new SpriteParticle object of given ParticleGroup.  Can only be called in the init phase or update phase.
+    Creates a new SpriteParticle object of given particle group.  Can only be called in the init phase or update phase.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">group</span>
             <span class="types"><span class="type">ParticleGroup</span></span>
-         the ParticleGroup the new particle belongs to
+         the group the new particle belongs to
         </li>
     </ul>
 
@@ -508,7 +738,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [WARN] if group.partLimit was set and limit was exceeded
+    [<strong>WARN</strong>] if group.partLimit was set and limit was exceeded
 
 
 
@@ -544,6 +774,1687 @@
         the Vector3D object
     </ol>
 
+
+
+
+</dd>
+    <dt>
+    <a name = "invokeInit"></a>
+    <strong>invokeInit (group)</strong>
+    </dt>
+    <dd>
+    Invokes the init function of specified particle group.  Can only be used for groups with autoTrigger set to false.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">group</span>
+            <span class="types"><span class="type">ParticleGroup</span></span>
+         the group of which to manually invoke (call) the init function
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if the group.autoTrigger is set to true
+
+
+
+</dd>
+    <dt>
+    <a name = "killParts"></a>
+    <strong>killParts (group)</strong>
+    </dt>
+    <dd>
+    Kills all currently active particles of the given particle group.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">group</span>
+            <span class="types"><span class="type">ParticleGroup</span></span>
+         the group of which to kill (clear) all active particles
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "print"></a>
+    <strong>print (value[, ...])</strong>
+    </dt>
+    <dd>
+    Outputs the listing of values to the <a href="../coder/Chapter2.html#id2">plugin logger</a>.  Will appear as a message with [<strong>DEBUG</strong>] tag.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">bool</span>, <span class="type">number</span> or <a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">...</span>
+         additional values
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "require"></a>
+    <strong>require (module)</strong>
+    </dt>
+    <dd>
+    Imports the requested module Lua script from modulescripts folder.  Can only be called in the level-loading phase (i.e. inside a level script). The modulescripts folder should be present in the working directory of the TRLE project.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">module</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.4">string</a></span>
+         the name of the module file to import (e.g. snow.lua &#8594; "snow")
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if the requested module is not found in the modulescripts folder (or the folder is missing).
+
+
+
+</dd>
+    <dt>
+    <a name = "setLogLevel"></a>
+    <strong>setLogLevel (logLevel)</strong>
+    </dt>
+    <dd>
+    Sets the Logger level (lowest permitted rank of <a href="Chapter2.html#id3">Logger message</a>).  Can only be called in the level-loading phase (i.e. inside a level script).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">logLevel</span>
+            <span class="types"><span class="type">int</span></span>
+         the desired LOG_ constant to set
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Randomizing_functions"></a>Randomizing functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "randomFloat"></a>
+    <strong>randomFloat (min, max)</strong>
+    </dt>
+    <dd>
+    Generates a random floating-point number value between [min, max].
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">min</span>
+            <span class="types"><span class="type">number</span></span>
+         the lower bound of the range
+        </li>
+        <li><span class="parameter">max</span>
+            <span class="types"><span class="type">number</span></span>
+         the upper bound of the range
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the random float number between [min, max]
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "randomInt"></a>
+    <strong>randomInt (min, max)</strong>
+    </dt>
+    <dd>
+    Generates a random integer number value between [min, max].
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">min</span>
+            <span class="types"><span class="type">int</span></span>
+         the lower bound of the range
+        </li>
+        <li><span class="parameter">max</span>
+            <span class="types"><span class="type">int</span></span>
+         the upper bound of the range (inclusive)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        the random integer between [min, max]
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "randomNegate"></a>
+    <strong>randomNegate (x)</strong>
+    </dt>
+    <dd>
+    Returns the input x or its negative -x with a 50/50 chance.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the input number
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the randomly negated output
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "randomSpherePoint"></a>
+    <strong>randomSpherePoint (radius)</strong>
+    </dt>
+    <dd>
+    Generates a random vector (point) on a 3D sphere of a given radius.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the sphere's radius
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">Vector3D</span></span>
+        the random vector
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Particle_functions"></a>Particle functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "partAbsPos"></a>
+    <strong>partAbsPos (part)</strong>
+    </dt>
+    <dd>
+    Calculates the absolute position of the particle in world coordinates instead of relative coordinates.  If the particle is not tethered to any moveable, returns vector identical to part.pos.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">Vector3D</span></span>
+        the absolute position of the particle
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partAnimate"></a>
+    <strong>partAnimate (part, start, end[, frameRate=1])</strong>
+    </dt>
+    <dd>
+    Animates the particle by cycling over part.spriteIndex (SpriteParticle) or part.meshIndex (meshParticle).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">start</span>
+            <span class="types"><span class="type">int</span></span>
+         the start of the animation range
+        </li>
+        <li><span class="parameter">end</span>
+            <span class="types"><span class="type">int</span></span>
+         the end of the animation range
+        </li>
+        <li><span class="parameter">frameRate</span>
+            <span class="types"><span class="type">int</span></span>
+         the framerate; if positive it means the number of ticks for the animation "frame", if negative, it means the number of animation cycles (loops) to complete
+         (<em>default</em> 1)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partAttach"></a>
+    <strong>partAttach (part, index[, mesh=-1])</strong>
+    </dt>
+    <dd>
+    Manually tethers the particle to a certain moveable and mesh (sets the part.emitterIndex and part.emitterNode).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index to attach to
+        </li>
+        <li><span class="parameter">mesh</span>
+            <span class="types"><span class="type">int</span></span>
+         the mesh to attach to
+         (<em>default</em> -1)
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "partAttractToItem"></a>
+    <strong>partAttractToItem (part, index, radius, strength)</strong>
+    </dt>
+    <dd>
+    Attracts the particle towards a specified moveable.  Not applicable to screen-space particles or tethered particles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index
+        </li>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the radius around the moveable where the attraction effect occurs
+        </li>
+        <li><span class="parameter">strength</span>
+            <span class="types"><span class="type">number</span></span>
+         the strength of the attraction (negative for repulsion)
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "partAvoidRoomGeometry"></a>
+    <strong>partAvoidRoomGeometry (part, wallMargin, floorMargin, strength)</strong>
+    </dt>
+    <dd>
+    Makes the particle repel from room geometry (walls, floors and ceilings).  Not applicable to screen-space particles or tethered particles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">wallMargin</span>
+            <span class="types"><span class="type">int</span></span>
+         the margin from which to repel from walls
+        </li>
+        <li><span class="parameter">floorMargin</span>
+            <span class="types"><span class="type">int</span></span>
+         the margin from which to repel from floors (and ceilings)
+        </li>
+        <li><span class="parameter">strength</span>
+            <span class="types"><span class="type">number</span></span>
+         the strength of the repulsion (positive for attraction)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partCollidedItem"></a>
+    <strong>partCollidedItem (part, index, radius)</strong>
+    </dt>
+    <dd>
+    Tests if the particle collided with a specified moveable item.  This is a simple, fast collision check against the item's bounding box, sufficient for most purposes. See testCollisionSpheres() for a more sophisticated collision mechanism. Not applicable to screen-space particles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index
+        </li>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the spherical radius around the particle test with bounding box
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        true if collision with moveable occured; false otherwise
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "partCollideFloors"></a>
+    <strong>partCollideFloors (part, rebound[, margin=0.0[, accurate=false]])</strong>
+    </dt>
+    <dd>
+    Tests if the particle collided with a floor or ceiling.  If a collision occured, will bounce the particle off the surface. Not applicable to screen-space particles or tethered particles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">rebound</span>
+            <span class="types"><span class="type">number</span></span>
+         the rebound factor (bounciness) [0.0, 1.0]
+        </li>
+        <li><span class="parameter">margin</span>
+            <span class="types"><span class="type">number</span></span>
+         the margin of collision, or the 'radius' of the particle
+         (<em>default</em> 0.0)
+        </li>
+        <li><span class="parameter">accurate</span>
+            <span class="types"><span class="type">bool</span></span>
+         controls if the collision is geometrically correct, respecting slopes
+         (<em>default</em> false)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        true if collision with surface occured (and particle is reflected); false otherwise
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partCollideWalls"></a>
+    <strong>partCollideWalls (part, rebound)</strong>
+    </dt>
+    <dd>
+    Tests if the particle collided with a wall.  If a collision occured, will bounce the particle off the wall (reflect the velocity). Not applicable to screen-space particles or tethered particles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">rebound</span>
+            <span class="types"><span class="type">number</span></span>
+         the rebound factor (bounciness) [0.0, 1.0]
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        true if collision with wall occured (and particle is reflected); false otherwise
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partDetach"></a>
+    <strong>partDetach (part)</strong>
+    </dt>
+    <dd>
+    Manually detaches the particle to from its tethering moveable and mesh (resets the part.emitterIndex and part.emitterNode to default).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partFollow"></a>
+    <strong>partFollow (part, target, maxSpeed, outerDist, minDist)</strong>
+    </dt>
+    <dd>
+    Makes the particle follow a Vector3D target, while maintaining a minimum spherical distance away from the target.  Not applicable to screen-space particles or tethered particles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">target</span>
+            <span class="types"><span class="type">Vector3D</span></span>
+         the target position to follow
+        </li>
+        <li><span class="parameter">maxSpeed</span>
+            <span class="types"><span class="type">number</span></span>
+         the maximum speed with which the particle will follow the target
+        </li>
+        <li><span class="parameter">outerDist</span>
+            <span class="types"><span class="type">number</span></span>
+         the first distance threshold (where particle starts to slow)
+        </li>
+        <li><span class="parameter">minDist</span>
+            <span class="types"><span class="type">number</span></span>
+         the minimum distance which the particle will not cross (by itself)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partHoming"></a>
+    <strong>partHoming (part, targetIndex, targetMesh, turnSpeed[, accel=0.0[, predict=false]])</strong>
+    </dt>
+    <dd>
+    Makes the particle home onto a moveable target (similarly to a projectile).  Not applicable to screen-space particles or tethered particles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">targetIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index of the target moveable
+        </li>
+        <li><span class="parameter">targetMesh</span>
+            <span class="types">optional <span class="type">int</span></span>
+         the targeted mesh or nil (no mesh)
+        </li>
+        <li><span class="parameter">turnSpeed</span>
+            <span class="types"><span class="type">number</span></span>
+         the turning speed of particle [0.0, 1.0]
+        </li>
+        <li><span class="parameter">accel</span>
+            <span class="types"><span class="type">number</span></span>
+         the speed up of particle per tick
+         (<em>default</em> 0.0)
+        </li>
+        <li><span class="parameter">predict</span>
+            <span class="types"><span class="type">bool</span></span>
+         if set to true, predicts the position of moving targets
+         (<em>default</em> false)
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "partKill"></a>
+    <strong>partKill (part)</strong>
+    </dt>
+    <dd>
+    Immediately kills the particle instance.  Use this function instead of manually setting part.lifeCounter to 0.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partLimitSpeed"></a>
+    <strong>partLimitSpeed (part, maxSpeed)</strong>
+    </dt>
+    <dd>
+    Limits the maximum speed at which the particle travels at.  Prevents excessive particle speeding up (e.g. when velocity is accumulated via acceleration or otherwise).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">maxSpeed</span>
+            <span class="types"><span class="type">number</span></span>
+         the maximum speed to set for the particle.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "partWind"></a>
+    <strong>partWind (part, strength)</strong>
+    </dt>
+    <dd>
+    Applies in-game wind speed cumulatively to particle's velocity.  Only works in outside rooms, where wind is active. Not applicable to screen-space particles or tethered particles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+         the particle instance
+        </li>
+        <li><span class="parameter">strength</span>
+            <span class="types"><span class="type">number</span></span>
+         the influence the wind has over the particle [0.0, 1.0]
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Game_interactions"></a>Game interactions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "activateTriggers"></a>
+    <strong>activateTriggers (x, y, z, room[, heavy=false[, flags]])</strong>
+    </dt>
+    <dd>
+    Activates in-level triggers of the sector at coordinates (x, y, z, room).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the 'room' coordinate (tomb4 room index)
+        </li>
+        <li><span class="parameter">heavy</span>
+            <span class="types"><span class="type">bool</span></span>
+         activate heavy triggers
+         (<em>default</em> false)
+        </li>
+        <li><span class="parameter">flags</span>
+            <span class="types"><span class="type">int</span></span>
+         use trigger flags
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "findNearestItem"></a>
+    <strong>findNearestItem (pos, radius[, table])</strong>
+    </dt>
+    <dd>
+    Finds the closest moveable item to a position within a given radius, from an (optional) list of slots.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pos</span>
+            <span class="types"><span class="type">Vector3D</span></span>
+         the position to start searching from
+        </li>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the maximum search radius (in units) away from pos
+        </li>
+        <li><span class="parameter">table</span>
+            <span class="types"><span class="type">{int,...}</span></span>
+         table of slot indices / SLOT_ constants
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <span class="type">int</span></span>
+        tomb4 index of nearest moveable item matching criteria; nil if no item found
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getCeilingHeight"></a>
+    <strong>getCeilingHeight (x, y, z, room)</strong>
+    </dt>
+    <dd>
+    Calculates the in-level ceiling height at coordinates (x, y, z, room).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the 'room' coordinate (tomb4 room index)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <span class="type">int</span></span>
+        the ceiling height at the given coordinates; nil if sector is a wall
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getFloorHeight"></a>
+    <strong>getFloorHeight (x, y, z, room)</strong>
+    </dt>
+    <dd>
+    Calculates the in-level floor height at coordinates (x, y, z, room).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the 'room' coordinate (tomb4 room index)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <span class="type">int</span></span>
+        the floor height at the given coordinates; nil if sector is a wall
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getFloorNormal"></a>
+    <strong>getFloorNormal (x, y, z, room)</strong>
+    </dt>
+    <dd>
+    Calculates the unit normal vector of the floor surface at coordinates (x, y, z, room).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the 'room' coordinate (tomb4 room index)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <span class="type">Vector3D</span></span>
+        the normal vector at the given coordinates; nil if sector is a wall
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getGameTick"></a>
+    <strong>getGameTick ()</strong>
+    </dt>
+    <dd>
+    Gets the current game tick value.  30 ticks = 1 second.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        the game tick value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getItemInfo"></a>
+    <strong>getItemInfo (index)</strong>
+    </dt>
+    <dd>
+    Gets the ItemInfo object of the given moveable index.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">ItemInfo</span></span>
+        the associated ItemInfo object
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "getItemJointPosition"></a>
+    <strong>getItemJointPosition (index, mesh, xOffset, yOffset, zOffset)</strong>
+    </dt>
+    <dd>
+    Gets the joint position of a specified mesh of a moveable.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index
+        </li>
+        <li><span class="parameter">mesh</span>
+            <span class="types"><span class="type">int</span></span>
+         the mesh/joint index
+        </li>
+        <li><span class="parameter">xOffset</span>
+            <span class="types">optional <span class="type">int</span></span>
+         the X positional offset
+        </li>
+        <li><span class="parameter">yOffset</span>
+            <span class="types">optional <span class="type">int</span></span>
+         the Y positional offset
+        </li>
+        <li><span class="parameter">zOffset</span>
+            <span class="types">optional <span class="type">int</span></span>
+         the Z positional offset
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">Vector3D</span></span>
+        the position vector of the joint
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "getItemJointRotation"></a>
+    <strong>getItemJointRotation (index, mesh)</strong>
+    </dt>
+    <dd>
+    Gets the joint rotation of a specified mesh of a moveable.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index
+        </li>
+        <li><span class="parameter">mesh</span>
+            <span class="types"><span class="type">int</span></span>
+         the mesh/joint index
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">RotVector</span></span>
+        the rotation vector of the joint
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "getItemJointPosRot"></a>
+    <strong>getItemJointPosRot (index, mesh, xOffset, yOffset, zOffset)</strong>
+    </dt>
+    <dd>
+    Fused function that combines getItemJointPosition() and getItemJointRotation().  Slightly faster than calling these separate functions individually. Returns the position and rotation (two values).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index
+        </li>
+        <li><span class="parameter">mesh</span>
+            <span class="types"><span class="type">int</span></span>
+         the mesh/joint index
+        </li>
+        <li><span class="parameter">xOffset</span>
+            <span class="types">optional <span class="type">int</span></span>
+         the X positional offset
+        </li>
+        <li><span class="parameter">yOffset</span>
+            <span class="types">optional <span class="type">int</span></span>
+         the Y positional offset
+        </li>
+        <li><span class="parameter">zOffset</span>
+            <span class="types">optional <span class="type">int</span></span>
+         the Z positional offset
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">Vector3D</span></span>
+        the position vector of the joint</li>
+        <li>
+           <span class="types"><span class="type">RotVector</span></span>
+        the rotation vector of the joint</li>
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "getItemRoom"></a>
+    <strong>getItemRoom (index)</strong>
+    </dt>
+    <dd>
+    Gets the current room index of the given moveable.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        the moveable's room index
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "getItemsBySlot"></a>
+    <strong>getItemsBySlot (slot)</strong>
+    </dt>
+    <dd>
+    Retrieves a table of moveable indices belonging to a specific slot in current level.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">slot</span>
+            <span class="types"><span class="type">int</span></span>
+         the slot index / SLOT_ constant
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">{int,...}</span></span>
+        table of tomb4 moveable indices
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getLaraIndex"></a>
+    <strong>getLaraIndex ()</strong>
+    </dt>
+    <dd>
+    Gets Lara's moveable index.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        tomb4 index of Lara
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getLaraTargetIndex"></a>
+    <strong>getLaraTargetIndex ()</strong>
+    </dt>
+    <dd>
+    Gets the index of enemy currently aimed at by Lara.  Only works with Aiming settings set to 'Automatic'.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <span class="type">int</span></span>
+        tomb4 index of aimed enemy; nil if no enemy is targeted
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getRoomFlags"></a>
+    <strong>getRoomFlags (room)</strong>
+    </dt>
+    <dd>
+    Gets the special room flags (properties) of a given room.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 room index
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        bit-flags of the room properties
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getRoomIndex"></a>
+    <strong>getRoomIndex (mapID)</strong>
+    </dt>
+    <dd>
+    Converts the levelmap room ID to the proper tomb4 room index.  Use this function to convert editor room IDs when a tomb4 room index is expected.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mapID</span>
+            <span class="types"><span class="type">int</span></span>
+         the levelmap room ID
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        tomb4 room index of room
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getRoomStatics"></a>
+    <strong>getRoomStatics (room[, table])</strong>
+    </dt>
+    <dd>
+    Retrieves a table of StaticInfo objects placed in a given room.  An optional table of specific static slots can be provided, otherwise all statics will be gathered.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 room index
+        </li>
+        <li><span class="parameter">table</span>
+            <span class="types"><span class="type">{int,...}</span></span>
+         table of static slots / SLOT_constants
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">{StaticInfo,...}</span></span>
+        table of StaticInfo objects
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getStatic"></a>
+    <strong>getStatic (staticID)</strong>
+    </dt>
+    <dd>
+    Gets the StaticInfo object of a given NG static ID.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">staticID</span>
+            <span class="types"><span class="type">int</span></span>
+         the NG static ID
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">StaticInfo</span></span>
+        the associated StaticInfo object
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if static with given NG ID is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "getTombIndex"></a>
+    <strong>getTombIndex (ngID)</strong>
+    </dt>
+    <dd>
+    Converts the NG script ID of a moveable to the proper tomb4 item index.  Use this function to convert editor moveable IDs when a tomb4 item index is expected.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ngID</span>
+            <span class="types"><span class="type">int</span></span>
+         the levelmap moveable ID
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        the tomb4 item index
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given NG ID is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "getWaterDepth"></a>
+    <strong>getWaterDepth (x, y, z, room)</strong>
+    </dt>
+    <dd>
+    Calculates the water depth at coordinates (x, y, z, room).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the 'room' coordinate (tomb4 room index)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <span class="type">int</span></span>
+        the water depth at the given coordinates; nil if sector is a wall
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getWaterHeight"></a>
+    <strong>getWaterHeight (x, y, z, room)</strong>
+    </dt>
+    <dd>
+    Calculates the water surface height at coordinates (x, y, z, room).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the 'room' coordinate (tomb4 room index)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <span class="type">int</span></span>
+        the water surface height at the given coordinates; nil if no water room or sector is a wall
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "laraBurn"></a>
+    <strong>laraBurn ()</strong>
+    </dt>
+    <dd>
+    Sets Lara on fire.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "soundEffect"></a>
+    <strong>soundEffect (sfx[, pos=nil[, flags]])</strong>
+    </dt>
+    <dd>
+    Plays a specified sound effect.  If nil is passed for pos, plays the sound globally.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sfx</span>
+            <span class="types"><span class="type">int</span></span>
+         sound effect ID number
+        </li>
+        <li><span class="parameter">pos</span>
+            <span class="types"><span class="type">Vector3D</span></span>
+         the coordinates for the sound location or nil
+         (<em>default</em> nil)
+        </li>
+        <li><span class="parameter">flags</span>
+            <span class="types"><span class="type">int</span></span>
+         the flags for the sound effect
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "testCollisionSpheres"></a>
+    <strong>testCollisionSpheres (index, pos, radius)</strong>
+    </dt>
+    <dd>
+    An advanced function for testing collision of a sphere against the mesh spheres of a moveable.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 item index
+        </li>
+        <li><span class="parameter">pos</span>
+            <span class="types"><span class="type">Vector3D</span></span>
+         the position of the testing sphere
+        </li>
+        <li><span class="parameter">radius</span>
+            <span class="types"><span class="type">number</span></span>
+         the radius of the testing sphere
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        bit-flags of meshes with which the testing sphere has detected a collision
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
+
+
+
+</dd>
+    <dt>
+    <a name = "testWall"></a>
+    <strong>testWall (x, y, z, room)</strong>
+    </dt>
+    <dd>
+    Tests if there is a wall at coordinates (x, y, z, room)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">room</span>
+            <span class="types"><span class="type">int</span></span>
+         the 'room' coordinate (tomb4 room index)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        true if there is a wall/block, false if there is free space (no wall)
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "triggerDynamicLight"></a>
+    <strong>triggerDynamicLight (x, y, z, intensity, red, green, blue)</strong>
+    </dt>
+    <dd>
+    Triggers a dynamic light at the given (x, y, z) coordinates for one game tick.  Needs continuous calling to produce a longer-lasting light effect. Contributes to dynamic light limits.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">intensity</span>
+            <span class="types"><span class="type">int</span></span>
+         the intensity / strength of light
+        </li>
+        <li><span class="parameter">red</span>
+            <span class="types"><span class="type">int</span></span>
+         the Red value [0, 255]
+        </li>
+        <li><span class="parameter">green</span>
+            <span class="types"><span class="type">int</span></span>
+         the Green value [0, 255]
+        </li>
+        <li><span class="parameter">blue</span>
+            <span class="types"><span class="type">int</span></span>
+         the Blue value [0, 255]
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "triggerShockwave"></a>
+    <strong>triggerShockwave (x, y, z, innerRad, outerRad, speed, life, red, green, blue, xRot, flags)</strong>
+    </dt>
+    <dd>
+    Triggers a shockwave effect at the given (x, y, z) coordinates.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">int</span></span>
+         the X coordinate
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">int</span></span>
+         the Y coordinate
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">int</span></span>
+         the Z coordinate
+        </li>
+        <li><span class="parameter">innerRad</span>
+            <span class="types"><span class="type">int</span></span>
+         the inner ring radius
+        </li>
+        <li><span class="parameter">outerRad</span>
+            <span class="types"><span class="type">int</span></span>
+         the outer ring radius
+        </li>
+        <li><span class="parameter">speed</span>
+            <span class="types"><span class="type">int</span></span>
+         the ring scaling speed (can be negative)
+        </li>
+        <li><span class="parameter">life</span>
+            <span class="types"><span class="type">int</span></span>
+         the duration of the effect (ticks)
+        </li>
+        <li><span class="parameter">red</span>
+            <span class="types"><span class="type">int</span></span>
+         the Red value [0, 255]
+        </li>
+        <li><span class="parameter">green</span>
+            <span class="types"><span class="type">int</span></span>
+         the Green value [0, 255]
+        </li>
+        <li><span class="parameter">blue</span>
+            <span class="types"><span class="type">int</span></span>
+         the Blue value [0, 255]
+        </li>
+        <li><span class="parameter">xRot</span>
+            <span class="types"><span class="type">number</span></span>
+         the X rotation of the effect
+        </li>
+        <li><span class="parameter">flags</span>
+            <span class="types"><span class="type">int</span></span>
+         the special shockwave flags (e.g. damage)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="TRNG_interactions"></a>TRNG interactions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "getSelectedItem"></a>
+    <strong>getSelectedItem ()</strong>
+    </dt>
+    <dd>
+    Gets the tomb4 moveable index of the current Selected Item.  Can be used to apply Lua effects to moveables obtained with some TRNG feature (e.g. set by TRNG Action 54).
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+        the tomb4 moveable index of Selected Item
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "performTriggerGroup"></a>
+    <strong>performTriggerGroup (id)</strong>
+    </dt>
+    <dd>
+    Executes a TriggerGroup from the current level.  If the TriggerGroup has any Condition triggers, it will return the boolean result of the conditions (all condition must pass for the final result to be true).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         the TriggerGroup ID number [1, 9999]
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        the execution status of the TG (always true if no Condition triggers)
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setSelectedItem"></a>
+    <strong>setSelectedItem (index)</strong>
+    </dt>
+    <dd>
+    Sets the tomb4 moveable index as the current Selected Item / Found Item index.  Can be used to apply TRNG features to moveables obtained through Lua scripts (e.g. by redirecting with TGROUP&#95;USE&#95;FOUND&#95;ITEM&#95;INDEX in a TriggerGroup).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">index</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 moveable index
+        </li>
+    </ul>
+
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if moveable with given index is not found
 
 
 
@@ -603,7 +2514,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [ERROR] undefined (NaN) for x outside of [-1.0, 1.0]
+    [<strong>ERROR</strong>] undefined (NaN) for x outside of [-1.0, 1.0]
 
 
 
@@ -632,7 +2543,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [ERROR] undefined (NaN) for x outside of [-1.0, 1.0]
+    [<strong>ERROR</strong>] undefined (NaN) for x outside of [-1.0, 1.0]
 
 
 
@@ -951,7 +2862,7 @@
     <ol>
 
            <span class="types"><span class="type">number</span></span>
-        the floor value (rounded down to nearest integer)
+        the floor value (rounding down to nearest integer)
     </ol>
 
 
@@ -986,7 +2897,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [ERROR] undefined (NaN) for y = 0
+    [<strong>ERROR</strong>] undefined (NaN) for y = 0
 
 
 
@@ -1085,7 +2996,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [ERROR] undefined (NaN) for x &le; 0
+    [<strong>ERROR</strong>] undefined (NaN) for x &le; 0
 
 
 
@@ -1111,6 +3022,49 @@
 
            <span class="types"><span class="type">number</span></span>
         the converted output (degrees)
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "remap"></a>
+    <strong>remap (x, oldMin, oldMax, newMin, newMax)</strong>
+    </dt>
+    <dd>
+    Linearly remaps the value x from the original range [oldMin, oldMax] to the new range [newMin, newMax].  Equivalent to lerp(newMin, newMax, lerpInverse(oldMin, oldMax, x)).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the value to remap from [oldMin, oldMax] range to [newMin, newMax] range
+        </li>
+        <li><span class="parameter">oldMin</span>
+            <span class="types"><span class="type">number</span></span>
+         the lower bound of the original range
+        </li>
+        <li><span class="parameter">oldMax</span>
+            <span class="types"><span class="type">number</span></span>
+         the upper bound of the original range
+        </li>
+        <li><span class="parameter">newMin</span>
+            <span class="types"><span class="type">number</span></span>
+         the lower bound of the new range
+        </li>
+        <li><span class="parameter">newMax</span>
+            <span class="types"><span class="type">number</span></span>
+         the upper bound of the new range
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        the value of x remapped from [oldMin, oldMax] to [newMin, newMax]
     </ol>
 
 
@@ -1161,7 +3115,7 @@
     <strong>rotateVectorByAxisAngle (vec, axis, theta)</strong>
     </dt>
     <dd>
-    Rotates a Vector3D object by an axis vector axis and angle theta.
+    Rotates a Vector3D object by an axis vector and angle theta.
 
 
     <h3>Parameters:</h3>
@@ -1196,7 +3150,7 @@
     <strong>rotFromVector (vec)</strong>
     </dt>
     <dd>
-    Creates a RotVector from a direction vector.  Outputs the X and Y angles, with the Z angle set to 0.
+    Creates a RotVector object from a direction vector.  Outputs the X and Y angles, with the Z angle set to 0.
 
 
     <h3>Parameters:</h3>
@@ -1211,7 +3165,7 @@
     <ol>
 
            <span class="types"><span class="type">RotVector</span></span>
-        the RotVector value
+        the RotVector object
     </ol>
 
 
@@ -1358,7 +3312,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [ERROR] undefined (NaN) for x &lt; 0
+    [<strong>ERROR</strong>] undefined (NaN) for x &lt; 0
 
 
 
@@ -1387,7 +3341,7 @@
     </ol>
 
     <h3>Raises:</h3>
-    [ERROR] undefined (NaN) for x = (&pi;/2 + k) for any integer k
+    [<strong>ERROR</strong>] undefined (NaN) for x = (&pi;/2 + k) for any integer k
 
 
 
@@ -1397,7 +3351,7 @@
     <strong>vectorCross (u, v)</strong>
     </dt>
     <dd>
-    Calculates the vector cross product between the vectors u and v (u &#10799; v).
+    Calculates the vector cross product between the vectors <strong>u</strong> and <strong>v</strong> (<strong>u</strong> &#10799; <strong>v</strong>).
 
 
     <h3>Parameters:</h3>
@@ -1416,7 +3370,7 @@
     <ol>
 
            <span class="types"><span class="type">Vector3D</span></span>
-        the cross product between u and v
+        the cross product between <strong>u</strong> and <strong>v</strong>
     </ol>
 
 
@@ -1428,7 +3382,7 @@
     <strong>vectorDot (u, v)</strong>
     </dt>
     <dd>
-    Calculates the vector dot product between the vectors u and v (u &#8901; v).
+    Calculates the vector dot product between the vectors <strong>u</strong> and <strong>v</strong> (<strong>u</strong> &#8901; <strong>v</strong>).
 
 
     <h3>Parameters:</h3>
@@ -1447,7 +3401,7 @@
     <ol>
 
            <span class="types"><span class="type">number</span></span>
-        the dot product between u and v
+        the dot product between <strong>u</strong> and <strong>v</strong>
     </ol>
 
 
@@ -1459,7 +3413,7 @@
     <strong>vectorLength (v)</strong>
     </dt>
     <dd>
-    Calculates the length of vector v (|v|).
+    Calculates the length of vector <strong>v</strong> (<strong>|v|</strong>).
 
 
     <h3>Parameters:</h3>
@@ -1474,7 +3428,7 @@
     <ol>
 
            <span class="types"><span class="type">number</span></span>
-        the length of vector v
+        the length of vector <strong>v</strong>
     </ol>
 
 
@@ -1486,7 +3440,7 @@
     <strong>vectorNormalize (v)</strong>
     </dt>
     <dd>
-    Calculates the normalized (unit) vector from vector v (v/|v|).
+    Calculates the normalized (unit) vector from vector <strong>v</strong> (<strong>v</strong>/<strong>|v|</strong>).
 
 
     <h3>Parameters:</h3>
@@ -1500,8 +3454,8 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">number</span></span>
-        the normalized vector v&#770;
+           <span class="types"><span class="type">Vector3D</span></span>
+        the normalized vector <strong>v&#770;</strong>
     </ol>
 
 
@@ -1513,7 +3467,7 @@
     <strong>wrapAngle (x)</strong>
     </dt>
     <dd>
-    Wraps the angle x to the range [0, 2&pi;].
+    Wraps the angle x to the range [-&pi;, &pi;].
 
 
     <h3>Parameters:</h3>
@@ -1528,7 +3482,7 @@
     <ol>
 
            <span class="types"><span class="type">number</span></span>
-        the wrapped angle in range [0, 2&pi;]
+        the wrapped angle in range [-&pi;, &pi;]
     </ol>
 
 
@@ -1536,91 +3490,101 @@
 
 </dd>
 </dl>
-    <h2 class="section-header "><a name="Tomb4_interactions"></a>Tomb4 interactions </h2>
+    <h2 class="section-header "><a name="Miscellaneous_functions"></a>Miscellaneous functions </h2>
 
     <dl class="function">
     <dt>
-    <a name = "activateTriggers"></a>
-    <strong>activateTriggers (x, y, z, room[, heavy[, flags]])</strong>
+    <a name = "hasAllFlags"></a>
+    <strong>hasAllFlags (checkedValue, testFlags)</strong>
     </dt>
     <dd>
-    Activates in-level triggers of the sector at coordinates (x, y, z, room).
+    Tests for the occurence of all specified flags in a given integer value.  Can be used with getRoomFlags() and testCollisionSpheres().
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">x</span>
-            <span class="types"><span class="type">number</span></span>
-         the X coordinate
-        </li>
-        <li><span class="parameter">y</span>
-            <span class="types"><span class="type">number</span></span>
-         the Y coordinate
-        </li>
-        <li><span class="parameter">z</span>
-            <span class="types"><span class="type">number</span></span>
-         the Z coordinate
-        </li>
-        <li><span class="parameter">room</span>
+        <li><span class="parameter">checkedValue</span>
             <span class="types"><span class="type">int</span></span>
-         the 'room' coordinate
+         the value against which to compare the test flags
         </li>
-        <li><span class="parameter">heavy</span>
-            <span class="types"><span class="type">bool</span></span>
-         activate heavy triggers (true/false)
-         (<em>optional</em>)
-        </li>
-        <li><span class="parameter">flags</span>
+        <li><span class="parameter">testFlags</span>
             <span class="types"><span class="type">int</span></span>
-         use trigger flags
-         (<em>optional</em>)
+         flags to test for; use the bitwise or operator to combine several flags e.g. FLAG1 | FLAG2 | FLAG3
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        true if all of testFlags occured within checkedValue; false if at least one flag is missing
+    </ol>
 
 
 
 
 </dd>
     <dt>
-    <a name = "activateTriggers"></a>
-    <strong>activateTriggers (x, y, z, room[, heavy[, flags]])</strong>
+    <a name = "hasAnyFlag"></a>
+    <strong>hasAnyFlag (checkedValue, testFlags)</strong>
     </dt>
     <dd>
-    Finds the closest item.
+    Tests for the occurence of any specified flags in a given integer value.  Can be used with getRoomFlags() and testCollisionSpheres().
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">x</span>
-            <span class="types"><span class="type">number</span></span>
-         the X coordinate
-        </li>
-        <li><span class="parameter">y</span>
-            <span class="types"><span class="type">number</span></span>
-         the Y coordinate
-        </li>
-        <li><span class="parameter">z</span>
-            <span class="types"><span class="type">number</span></span>
-         the Z coordinate
-        </li>
-        <li><span class="parameter">room</span>
+        <li><span class="parameter">checkedValue</span>
             <span class="types"><span class="type">int</span></span>
-         the 'room' coordinate
+         the value against which to compare the test flags
         </li>
-        <li><span class="parameter">heavy</span>
-            <span class="types"><span class="type">bool</span></span>
-         activate heavy triggers (true/false)
-         (<em>optional</em>)
-        </li>
-        <li><span class="parameter">flags</span>
+        <li><span class="parameter">testFlags</span>
             <span class="types"><span class="type">int</span></span>
-         use trigger flags
-         (<em>optional</em>)
+         flags to test for; use the bitwise or operator to combine several flags e.g. FLAG1 | FLAG2 | FLAG3
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
 
+           <span class="types"><span class="type">bool</span></span>
+        true if at least one flag occured within checkedValue; false none of testFlags is present
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "interval"></a>
+    <strong>interval (interval[, delay=0])</strong>
+    </dt>
+    <dd>
+    Tests for the occurence of a specific game tick interval.  Can be used as a shorthand for getGameTick() with modulo operator.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">interval</span>
+            <span class="types"><span class="type">int</span></span>
+         the interval value; must be greater or equal to 1
+        </li>
+        <li><span class="parameter">delay</span>
+            <span class="types"><span class="type">int</span></span>
+         the delay of the interval; in the range [0, interval]
+         (<em>default</em> 0)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+        true if the current game tick is on the interval; false otherwise
+    </ol>
+
+    <h3>Raises:</h3>
+    [<strong>ERROR</strong>] if interval is smaller than 1
 
 
 
@@ -1632,7 +3596,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
-<i style="float:right;">Last updated 2025-12-29 13:58:38 </i>
+<i style="float:right;">Last updated 2025-12-30 03:29:08 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
