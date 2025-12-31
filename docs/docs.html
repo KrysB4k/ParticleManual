@@ -30,7 +30,7 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Plugin_interface">Plugin interface </a></li>
+<li><a href="#Plugin_interface_functions">Plugin interface functions </a></li>
 <li><a href="#Randomizing_functions">Randomizing functions </a></li>
 <li><a href="#Procedural_noise_functions">Procedural noise functions </a></li>
 <li><a href="#Particle_functions">Particle functions </a></li>
@@ -45,12 +45,11 @@
 <div id="content">
 
 <h1>Module <code>Functions</code></h1>
-<p>Built-in Particle API functions.</p>
-<p>
-
+<p>This documentation provides a reference for recognized built-in functions in the <strong>Particle System Plugin</strong> Lua Scripting API.<br><br>Functions listings display:<ul><li>the name of the function</li><li>the parameter / argument list (if any), along with expected value types</li><li>the returned values (if any)</li><li>the raised warnings or errors (if any)</li><br>For parameter listings, there is the convention of putting optional parameters in square brackets e.g. <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">[param]</span>, which indicates that the argument is optional and not strictly needed. If such a parameter is also followed by a value with equals sign e.g. <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">[param=value]</span>, this indicates the default value of the optional argument.<br><br>More functions may be added with new releases, so this documentation will be updated.<br><br></p>
 </p>
 
-<h2><a href="#Plugin_interface">Plugin interface </a></h2>
+
+<h2><a href="#Plugin_interface_functions">Plugin interface functions </a></h2>
 <table class="function_list">
 	<tr>
 	<td class="name" nowrap><a href="#checkPartLimit">checkPartLimit (group)</a></td>
@@ -61,7 +60,7 @@
 	<td class="summary">Creates a new ColorRGB object.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#createColorHSV">createColorHSV (hue <br>[, sat=1.0[, val=1.0]])</a></td>
+	<td class="name" nowrap><a href="#createColorHSV">createColorHSV (hue[, sat=1.0[, val=1.0]])</a></td>
 	<td class="summary">Creates a new ColorRGB object from Hue, Saturation and Value.</td>
 	</tr>
 	<tr>
@@ -110,9 +109,10 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#setLogLevel">setLogLevel (logLevel)</a></td>
-	<td class="summary">Sets the Logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">logger message</a>).</td>
+	<td class="summary">Sets the Logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">Logger message</a>).</td>
 	</tr>
 </table>
+<br>
 <h2><a href="#Randomizing_functions">Randomizing functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -129,9 +129,10 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#randomSpherePoint">randomSpherePoint (radius)</a></td>
-	<td class="summary">Generates a random vector (point) on a 3D sphere of a given radius.</td>
+	<td class="summary">Generates a random vector (point) on a 3D sphere of a given radius, centered at origin.</td>
 	</tr>
 </table>
+<br>
 <h2><a href="#Procedural_noise_functions">Procedural noise functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -147,6 +148,7 @@
 	<td class="summary">Takes a noise generator object and produces a pseudo-random curl vector that changes over time.</td>
 	</tr>
 </table>
+<br>
 <h2><a href="#Particle_functions">Particle functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -155,7 +157,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partAnimate">partAnimate (part, start, end[, frameRate=1])</a></td>
-	<td class="summary">Animates the particle by cycling over part.spriteIndex (SpriteParticle) or part.meshIndex (meshParticle).</td>
+	<td class="summary">Animates the particle by cycling over part.spriteIndex (SpriteParticle) or part.meshIndex (MeshParticle).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partAttach">partAttach (part, index[, mesh=-1])</a></td>
@@ -174,7 +176,7 @@
 	<td class="summary">Tests if the particle collided with a specified moveable item.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#partCollideFloors">partCollideFloors (part, rebound <br>[, margin=0.0[, accurate=false]])</a></td>
+	<td class="name" nowrap><a href="#partCollideFloors">partCollideFloors (part, rebound[, margin=0.0<br>[, accurate=false]])</a></td>
 	<td class="summary">Tests if the particle collided with a floor or ceiling.</td>
 	</tr>
 	<tr>
@@ -186,7 +188,7 @@
 	<td class="summary">Manually detaches the particle to from its tethering moveable and mesh (resets the part.emitterIndex and part.emitterNode to default).</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#partFollow">partFollow (part, target, maxSpeed, <br>outerDist, minDist)</a></td>
+	<td class="name" nowrap><a href="#partFollow">partFollow (part, target, maxSpeed, outerDist, <br>minDist)</a></td>
 	<td class="summary">Makes the particle follow a Vector3D target, while maintaining a minimum spherical distance away from the target.</td>
 	</tr>
 	<tr>
@@ -210,10 +212,11 @@
 	<td class="summary">Like partKill(), but additionally shatters the mesh of the mesh particle as the part is killed.</td>
 	</tr>
 </table>
+<br>
 <h2><a href="#Game_interactions">Game interactions </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#activateTriggers">activateTriggers (x, y, z, room[, heavy=false<br>[, flags]])</a></td>
+	<td class="name" nowrap><a href="#activateTriggers">activateTriggers (x, y, z, room[, heavy=false[, flags]])</a></td>
 	<td class="summary">Activates in-level triggers of the sector at coordinates (x, y, z, room).</td>
 	</tr>
 	<tr>
@@ -241,7 +244,7 @@
 	<td class="summary">Gets the ItemInfo object of the given moveable index.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#getItemJointPosition">getItemJointPosition (index, mesh, xOffset, <br>yOffset, zOffset)</a></td>
+	<td class="name" nowrap><a href="#getItemJointPosition">getItemJointPosition (index, mesh, xOffset, yOffset, <br>zOffset)</a></td>
 	<td class="summary">Gets the joint position of a specified mesh of a moveable.</td>
 	</tr>
 	<tr>
@@ -249,7 +252,7 @@
 	<td class="summary">Gets the joint rotation of a specified mesh of a moveable.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#getItemJointPosRot">getItemJointPosRot (index, mesh, xOffset, <br>yOffset, zOffset)</a></td>
+	<td class="name" nowrap><a href="#getItemJointPosRot">getItemJointPosRot (index, mesh, xOffset, yOffset, <br>zOffset)</a></td>
 	<td class="summary">Fused function that combines <a href="docs.html#getItemJointPosition">getItemJointPosition</a> and <a href="docs.html#getItemJointRotation">getItemJointRotation</a>.</td>
 	</tr>
 	<tr>
@@ -313,14 +316,15 @@
 	<td class="summary">Tests if there is a wall at coordinates (x, y, z, room)</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#triggerDynamicLight">triggerDynamicLight (x, y, z, intensity, <br>red, green, blue)</a></td>
+	<td class="name" nowrap><a href="#triggerDynamicLight">triggerDynamicLight (x, y, z, intensity, red, green, <br>blue)</a></td>
 	<td class="summary">Triggers a dynamic light at the given (x, y, z) coordinates for one game tick.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#triggerShockwave">triggerShockwave (x, y, z, innerRad, outerRad, <br>speed, life, red, green, blue, xRot, flags)</a></td>
+	<td class="name" nowrap><a href="#triggerShockwave">triggerShockwave (x, y, z, innerRad, outerRad, speed, <br>life, red, green, blue, xRot, flags)</a></td>
 	<td class="summary">Triggers a shockwave effect at the given (x, y, z) coordinates.</td>
 	</tr>
 </table>
+<br>
 <h2><a href="#TRNG_interactions">TRNG interactions </a></h2>
 <table class="function_list">
 	<tr>
@@ -336,6 +340,7 @@
 	<td class="summary">Sets the tomb4 moveable index as the current Selected Item / Found Item index.</td>
 	</tr>
 </table>
+<br>
 <h2><a href="#Math_related_functions">Math-related functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -415,7 +420,7 @@
 	<td class="summary">Converts value expressed in radians to value expressed in degrees.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#remap">remap (x, oldMin, oldMax, newMin, <br>newMax)</a></td>
+	<td class="name" nowrap><a href="#remap">remap (x, oldMin, oldMax, newMin, newMax)</a></td>
 	<td class="summary">Linearly remaps the value x from the original range [oldMin, oldMax] to the new range [newMin, newMax].</td>
 	</tr>
 	<tr>
@@ -423,7 +428,7 @@
 	<td class="summary">Rotates a Vector3D object by a set of Euler angles (x, y, z).</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#rotateVectorByAxisAngle">rotateVectorByAxisAngle (vec, axis, <br>theta)</a></td>
+	<td class="name" nowrap><a href="#rotateVectorByAxisAngle">rotateVectorByAxisAngle (vec, axis, theta)</a></td>
 	<td class="summary">Rotates a Vector3D object by an axis vector and angle theta.</td>
 	</tr>
 	<tr>
@@ -475,6 +480,7 @@
 	<td class="summary">Wraps the angle x to the range [-&pi;, &pi;].</td>
 	</tr>
 </table>
+<br>
 <h2><a href="#Miscellaneous_functions">Miscellaneous functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -495,7 +501,7 @@
 <br/>
 
 
-    <h2 class="section-header "><a name="Plugin_interface"></a>Plugin interface </h2>
+    <h2 class="section-header "><a name="Plugin_interface_functions"></a>Plugin interface functions </h2>
 
     <dl class="function">
     <dt>
@@ -518,7 +524,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if limit not reached yet (or partLimit not set for group); false if limit reached
+        <i><strong>true</strong></i> if limit not reached yet (or partLimit not set for group); <i><strong>false</strong></i> if limit reached
     </ol>
 
 
@@ -609,11 +615,11 @@
     <ul>
         <li><span class="parameter">init</span>
             <span class="types">optional <span class="type">func</span></span>
-         the initialization function; pass nil if no init function desired
+         the initialization function; pass <i><strong>nil</strong></i> if no init function desired
         </li>
         <li><span class="parameter">update</span>
             <span class="types">optional <span class="type">func</span></span>
-         the update function; pass nil if no update function desired
+         the update function; pass <i><strong>nil</strong></i> if no update function desired
         </li>
     </ul>
 
@@ -647,8 +653,8 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">MeshParticle</span></span>
-        the MeshParticle object
+           <span class="types">optional <span class="type">MeshParticle</span></span>
+        the MeshParticle object; <i><strong>nil</strong></i> if particle Limit reached
     </ol>
 
     <h3>Raises:</h3>
@@ -766,8 +772,8 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">SpriteParticle</span></span>
-        the SpriteParticle object
+           <span class="types">optional <span class="type">SpriteParticle</span></span>
+        the SpriteParticle object; <i><strong>nil</strong></i> if particle Limit reached
     </ol>
 
     <h3>Raises:</h3>
@@ -816,7 +822,7 @@
     <strong>invokeInit (group)</strong>
     </dt>
     <dd>
-    Invokes the init function of specified particle group.  Can only be used for groups with autoTrigger set to false.
+    Invokes the init function of specified particle group.  Can only be used for groups with autoTrigger set to <i><strong>false</strong></i>.
 
 
     <h3>Parameters:</h3>
@@ -829,7 +835,7 @@
 
 
     <h3>Raises:</h3>
-    [<strong>ERROR</strong>] if the group.autoTrigger is set to true
+    [<strong>ERROR</strong>] if the group.autoTrigger is set to <i><strong>true</strong></i>
 
 
 
@@ -898,6 +904,12 @@
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types">optional <span class="type">Module</span></span>
+        the module context object associated with the module script (if not present, returns <i><strong>nil</strong></i>)
+    </ol>
 
     <h3>Raises:</h3>
     [<strong>ERROR</strong>] if the requested module is not found in the modulescripts folder (or the folder is missing).
@@ -910,7 +922,7 @@
     <strong>setLogLevel (logLevel)</strong>
     </dt>
     <dd>
-    Sets the Logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">Logger message</a>).  Can only be called in the level-loading phase (i.e. inside a level script).
+    Sets the logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">logger message</a>).  Can only be called in the level-loading phase (i.e. inside a level script).
 
 
     <h3>Parameters:</h3>
@@ -927,6 +939,8 @@
 
 </dd>
 </dl>
+<br/>
+<br/>
     <h2 class="section-header "><a name="Randomizing_functions"></a>Randomizing functions </h2>
 
     <dl class="function">
@@ -1024,7 +1038,7 @@
     <strong>randomSpherePoint (radius)</strong>
     </dt>
     <dd>
-    Generates a random vector (point) on a 3D sphere of a given radius.
+    Generates a random vector (point) on a 3D sphere of a given radius, centered at origin.
 
 
     <h3>Parameters:</h3>
@@ -1039,7 +1053,7 @@
     <ol>
 
            <span class="types"><span class="type">Vector3D</span></span>
-        the random vector
+        the random vector from origin point (0, 0, 0)
     </ol>
 
 
@@ -1047,6 +1061,8 @@
 
 </dd>
 </dl>
+<br/>
+<br/>
     <h2 class="section-header "><a name="Procedural_noise_functions"></a>Procedural noise functions </h2>
 
     <dl class="function">
@@ -1055,7 +1071,7 @@
     <strong>noise (gen, scale, x[, y[, z[, w]]])</strong>
     </dt>
     <dd>
-    Takes a noise generator object and produces a pseudo-random scalar noise output.  Noise values can be generated from 1 up to 4 separate numerical inputs (x, y, z, w).
+    Takes a noise generator object and produces a pseudo-random scalar noise output.  Noise values can be generated from up to 4 separate numerical inputs (x, y, z, w).
 
 
     <h3>Parameters:</h3>
@@ -1193,6 +1209,8 @@
 
 </dd>
 </dl>
+<br/>
+<br/>
     <h2 class="section-header "><a name="Particle_functions"></a>Particle functions </h2>
 
     <dl class="function">
@@ -1201,7 +1219,7 @@
     <strong>partAbsPos (part)</strong>
     </dt>
     <dd>
-    Calculates the absolute position of the particle in world coordinates instead of relative coordinates.  If the particle is not tethered to any moveable, returns vector identical to part.pos.
+    Calculates the absolute position of the particle in world coordinates instead of relative coordinates.  If the particle is not tethered to any moveable, returns vector identical to <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.pos</span>.
 
 
     <h3>Parameters:</h3>
@@ -1228,7 +1246,7 @@
     <strong>partAnimate (part, start, end[, frameRate=1])</strong>
     </dt>
     <dd>
-    Animates the particle by cycling over part.spriteIndex (SpriteParticle) or part.meshIndex (meshParticle).
+    Animates the particle by cycling over <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.spriteIndex</span> (<span class="type">SpriteParticle</span>) or <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.meshIndex</span> (<span class="type">MeshParticle</span>).
 
 
     <h3>Parameters:</h3>
@@ -1262,7 +1280,7 @@
     <strong>partAttach (part, index[, mesh=-1])</strong>
     </dt>
     <dd>
-    Manually tethers the particle to a certain moveable and mesh (sets the part.emitterIndex and part.emitterNode).
+    Manually tethers the particle to a certain moveable and mesh (sets the <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.emitterIndex</span> and <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.emitterNode</span>).
 
 
     <h3>Parameters:</h3>
@@ -1385,7 +1403,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if collision with moveable occured; false otherwise
+        <i><strong>true</strong></i> if collision with moveable occured; <i><strong>false</strong></i> otherwise
     </ol>
 
     <h3>Raises:</h3>
@@ -1420,7 +1438,7 @@
         <li><span class="parameter">accurate</span>
             <span class="types"><span class="type">bool</span></span>
          controls if the collision is geometrically correct, respecting slopes
-         (<em>default</em> false)
+         (<em>default</em> <i><strong>false</strong></i>)
         </li>
     </ul>
 
@@ -1428,7 +1446,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if collision with surface occured (and particle is reflected); false otherwise
+        <i><strong>true</strong></i> if collision with surface occured (and particle is reflected); <i><strong>false</strong></i> otherwise
     </ol>
 
 
@@ -1459,7 +1477,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if collision with wall occured (and particle is reflected); false otherwise
+        <i><strong>true</strong></i> if collision with wall occured (and particle is reflected); <i><strong>false</strong></i> otherwise
     </ol>
 
 
@@ -1471,7 +1489,7 @@
     <strong>partDetach (part)</strong>
     </dt>
     <dd>
-    Manually detaches the particle to from its tethering moveable and mesh (resets the part.emitterIndex and part.emitterNode to default).
+    Manually detaches the particle to from its tethering moveable and mesh (resets the <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.emitterIndex</span> and <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.emitterNode</span> to default).
 
 
     <h3>Parameters:</h3>
@@ -1544,7 +1562,7 @@
         </li>
         <li><span class="parameter">targetMesh</span>
             <span class="types">optional <span class="type">int</span></span>
-         the targeted mesh or nil (no mesh)
+         the targeted mesh or <i><strong>nil</strong></i> (no mesh)
         </li>
         <li><span class="parameter">turnSpeed</span>
             <span class="types"><span class="type">number</span></span>
@@ -1557,8 +1575,8 @@
         </li>
         <li><span class="parameter">predict</span>
             <span class="types"><span class="type">bool</span></span>
-         if set to true, predicts the position of moving targets
-         (<em>default</em> false)
+         if set to <i><strong>true</strong></i>, predicts the position of moving targets
+         (<em>default</em> <i><strong>false</strong></i>)
         </li>
     </ul>
 
@@ -1574,7 +1592,7 @@
     <strong>partKill (part)</strong>
     </dt>
     <dd>
-    Immediately kills (and deactivates) the particle instance.  Use this function instead of manually setting part.lifeCounter to 0.
+    Immediately kills (and deactivates) the particle instance. Use this function instead of manually setting <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.lifeCounter</span> to 0.
 
 
     <h3>Parameters:</h3>
@@ -1664,6 +1682,8 @@
 
 </dd>
 </dl>
+<br/>
+<br/>
     <h2 class="section-header "><a name="Game_interactions"></a>Game interactions </h2>
 
     <dl class="function">
@@ -1696,7 +1716,7 @@
         <li><span class="parameter">heavy</span>
             <span class="types"><span class="type">bool</span></span>
          activate heavy triggers
-         (<em>default</em> false)
+         (<em>default</em> <i><strong>false</strong></i>)
         </li>
         <li><span class="parameter">flags</span>
             <span class="types"><span class="type">int</span></span>
@@ -1739,7 +1759,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        tomb4 index of nearest moveable item matching criteria; nil if no item found
+        tomb4 index of nearest moveable item matching criteria; <i><strong>nil</strong></i> if no item found
     </ol>
 
 
@@ -1778,7 +1798,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        the ceiling height at the given coordinates; nil if sector is a wall
+        the ceiling height at the given coordinates; <i><strong>nil</strong></i> if sector is a wall
     </ol>
 
 
@@ -1817,7 +1837,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        the floor height at the given coordinates; nil if sector is a wall
+        the floor height at the given coordinates; <i><strong>nil</strong></i> if sector is a wall
     </ol>
 
 
@@ -1856,7 +1876,7 @@
     <ol>
 
            <span class="types">optional <span class="type">Vector3D</span></span>
-        the normal vector at the given coordinates; nil if sector is a wall
+        the normal vector at the given coordinates; <i><strong>nil</strong></i> if sector is a wall
     </ol>
 
 
@@ -2127,7 +2147,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        tomb4 index of aimed enemy; nil if no enemy is targeted
+        tomb4 index of aimed enemy; <i><strong>nil</strong></i> if no enemy is targeted
     </ol>
 
 
@@ -2310,7 +2330,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        the water depth at the given coordinates; nil if sector is a wall
+        the water depth at the given coordinates; <i><strong>nil</strong></i> if sector is a wall
     </ol>
 
 
@@ -2349,7 +2369,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        the water surface height at the given coordinates; nil if no water room or sector is a wall
+        the water surface height at the given coordinates; <i><strong>nil</strong></i> if no water room or sector is a wall
     </ol>
 
 
@@ -2375,7 +2395,7 @@
     <strong>soundEffect (sfx[, pos=nil[, flags]])</strong>
     </dt>
     <dd>
-    Plays a specified sound effect.  If nil is passed for pos, plays the sound globally.
+    Plays a specified sound effect.  If <i><strong>nil</strong></i> is passed for pos, plays the sound globally.
 
 
     <h3>Parameters:</h3>
@@ -2386,8 +2406,8 @@
         </li>
         <li><span class="parameter">pos</span>
             <span class="types"><span class="type">Vector3D</span></span>
-         the coordinates for the sound location or nil
-         (<em>default</em> nil)
+         the coordinates for the sound location or <i><strong>nil</strong></i>
+         (<em>default</em> <i><strong>nil</strong></i>)
         </li>
         <li><span class="parameter">flags</span>
             <span class="types"><span class="type">int</span></span>
@@ -2470,7 +2490,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if there is a wall/block, false if there is free space (no wall)
+        <i><strong>true</strong></i> if there is a wall/block, <i><strong>false</strong></i> if there is free space (no wall)
     </ol>
 
 
@@ -2588,6 +2608,8 @@
 
 </dd>
 </dl>
+<br/>
+<br/>
     <h2 class="section-header "><a name="TRNG_interactions"></a>TRNG interactions </h2>
 
     <dl class="function">
@@ -2616,7 +2638,7 @@
     <strong>performTriggerGroup (id)</strong>
     </dt>
     <dd>
-    Executes a TriggerGroup from the current level.  If the TriggerGroup has any Condition triggers, it will return the boolean result of the conditions (all condition must pass for the final result to be true).
+    Executes a TriggerGroup from the current level.  If the TriggerGroup has any Condition triggers, it will return the boolean result of the conditions (all condition must pass for the final result to be <i><strong>true</strong></i>).
 
 
     <h3>Parameters:</h3>
@@ -2631,7 +2653,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        the execution status of the TG (always true if no Condition triggers)
+        the execution status of the TG (always <i><strong>true</strong></i> if no Condition triggers)
     </ol>
 
 
@@ -2643,7 +2665,7 @@
     <strong>setSelectedItem (index)</strong>
     </dt>
     <dd>
-    Sets the tomb4 moveable index as the current Selected Item / Found Item index.  Can be used to apply TRNG features to moveables obtained through Lua scripts (e.g. by redirecting with TGROUP&#95;USE&#95;FOUND&#95;ITEM&#95;INDEX in a TriggerGroup executed with <a href="docs.html#performTriggerGroup">performTriggerGroup</a>).
+    Sets the tomb4 moveable index as the current Selected Item / Found Item index.  Can be used to apply TRNG features to moveables obtained through Lua scripts (e.g. by redirecting with <strong>TGROUP&#95;USE&#95;FOUND&#95;ITEM&#95;INDEX</strong> in a TriggerGroup executed with <a href="docs.html#performTriggerGroup">performTriggerGroup</a>).
 
 
     <h3>Parameters:</h3>
@@ -2662,6 +2684,8 @@
 
 </dd>
 </dl>
+<br/>
+<br/>
     <h2 class="section-header "><a name="Math_related_functions"></a>Math-related functions </h2>
 
     <dl class="function">
@@ -3235,7 +3259,7 @@
     <strong>remap (x, oldMin, oldMax, newMin, newMax)</strong>
     </dt>
     <dd>
-    Linearly remaps the value x from the original range [oldMin, oldMax] to the new range [newMin, newMax].  Equivalent to lerp(newMin, newMax, lerpInverse(oldMin, oldMax, x)).
+    Linearly remaps the value x from the original range [oldMin, oldMax] to the new range [newMin, newMax]. Output equivalent to:<br><span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">lerp(newMin, newMax, lerpInverse(oldMin, oldMax, x))</span>.
 
 
     <h3>Parameters:</h3>
@@ -3692,6 +3716,8 @@
 
 </dd>
 </dl>
+<br/>
+<br/>
     <h2 class="section-header "><a name="Miscellaneous_functions"></a>Miscellaneous functions </h2>
 
     <dl class="function">
@@ -3719,7 +3745,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if all of testFlags occured within checkedValue; false if at least one flag is missing
+        <i><strong>true</strong></i> if all of testFlags occured within checkedValue; <i><strong>false</strong></i> if at least one flag is missing
     </ol>
 
 
@@ -3750,7 +3776,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if at least one flag occured within checkedValue; false none of testFlags is present
+        <i><strong>true</strong></i> if at least one flag occured within checkedValue; <i><strong>false</strong></i> none of testFlags is present
     </ol>
 
 
@@ -3782,7 +3808,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        true if the current game tick is on the interval; false otherwise
+        <i><strong>true</strong></i> if the current game tick is on the interval; <i><strong>false</strong></i> otherwise
     </ol>
 
     <h3>Raises:</h3>
@@ -3798,7 +3824,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
-<i style="float:right;">Last updated 2025-12-30 16:13:26 </i>
+<i style="float:right;">Last updated 2025-12-31 15:49:35 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
