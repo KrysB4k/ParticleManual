@@ -70,12 +70,16 @@ body {
     background-color: #ffffff; margin: 0px;
 }
 
-code, tt { font-family: monospace; font-size: 1.1em; }
-span.parameter { font-family: 'Consolas', Courier, monospace;}
+code, tt {color: #324048; font-family: 'Consolas', monospace; font-weight: bolder;}
+span.parameter { font-family: 'Consolas', monospace; }
 span.parameter:after { content:":"; }
 span.types:before { content:"("; }
 span.types:after { content:")"; }
 .type { font-weight: bold; font-style:italic }
+.keyword {font-weight: bold; font-style:italic}
+ul.field-list > li { margin-bottom: 10px; }
+
+.section-header {margin-top: 40px;}
 
 body, p, td, th { font-size: .95em; line-height: 1.2em;}
 
@@ -152,7 +156,7 @@ table.index td { text-align: left; vertical-align: top; }
 
 #navigation {
     float: left;
-    width: 14em;
+    width: 20em;
     vertical-align: top;
     background-color: #f0f0f0;
     overflow: visible;
@@ -186,9 +190,9 @@ table.index td { text-align: left; vertical-align: top; }
 }
 
 #content {
-    margin-left: 14em;
+    margin-left: 20em;
     padding: 1em;
-    width: 1000px;
+    width: 1200px;
     border-left: 2px solid #cccccc;
     border-right: 2px solid #cccccc;
     background-color: #ffffff;
@@ -254,6 +258,8 @@ table.function_list {
     border-style: solid;
     border-color: #cccccc;
     border-collapse: collapse;
+    table-layout: auto;
+    margin-bottom: 40px;
 }
 table.function_list td {
     border-width: 1px;
@@ -261,7 +267,7 @@ table.function_list td {
     border-style: solid;
     border-color: #cccccc;
 }
-table.function_list td.name { background-color: #f0f0f0; min-width: 200px; }
+table.function_list td.name { background-color: #f0f0f0; min-width: 350px; max-width: 600px; white-space: normal;}
 table.function_list td.summary { width: 100%; }
 
 ul.nowrap {
@@ -269,7 +275,7 @@ ul.nowrap {
     white-space:nowrap;
 }
 
-dl.table dt, dl.function dt {color: #324048; font-family: 'Consolas', Courier, monospace; font-weight: bolder; font-size: 1.10em; border-top: 1px solid #ccc; padding-top: 1em;}
+dl.table dt, dl.function dt {font-family: "Consolas", monospace; font-size: 1.1em; color: #324048; border-top: 1px solid #ccc; padding-top: 1em;}
 dl.table dd, dl.function dd {padding-bottom: 1em; margin: 10px 0 0 20px;}
 dl.table h3, dl.function h3 {font-size: .95em;}
 

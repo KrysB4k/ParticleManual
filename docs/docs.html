@@ -30,6 +30,7 @@
 
 <h2>Contents</h2>
 <ul>
+<li><a href="#Plugin_data_types">Plugin data types </a></li>
 <li><a href="#Plugin_interface_functions">Plugin interface functions </a></li>
 <li><a href="#Randomizing_functions">Randomizing functions </a></li>
 <li><a href="#Procedural_noise_functions">Procedural noise functions </a></li>
@@ -44,16 +45,62 @@
 
 <div id="content">
 
-<h1>Module <code>Functions</code></h1>
-<p>This documentation provides a reference for recognized built-in functions in the <strong>Particle System Plugin</strong> Lua Scripting API.<br><br>Functions listings display:<ul><li>the name of the function</li><li>the parameter / argument list (if any), along with expected value types</li><li>the returned values (if any)</li><li>the raised warnings or errors (if any)</li><br>For parameter listings, there is the convention of putting optional parameters in square brackets e.g. <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">[param]</span>, which indicates that the argument is optional and not strictly needed. If such a parameter is also followed by a value with equals sign e.g. <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">[param=value]</span>, this indicates the default value of the optional argument.<br><br>More functions may be added with new releases, so this documentation will be updated.<br><br></p>
-</p>
+<p>This documentation provides a reference for recognized plugin data types and built-in functions in the <strong>Particle System Plugin</strong> Lua Scripting API.<br><br>Functions listings display:<ul><li>the name of the function</li><li>the parameter / argument list (if any), along with expected value types</li><li>the returned values (if any)</li><li>the raised warnings or errors (if any)</li><br>For parameter listings, a convention is used where some parameters are in square brackets: <code>[param]</code>, this indicates that the argument is optional and not needed.</p>
+<p> If the parameter is followed by a value with equals sign: <code>[param=value]</code>, this indicates the default value of the optional argument.<br><br>More functions may be added with new releases and this documentation will be update accordingly.<br><br></p>
 
 
+<h2><a href="#Plugin_data_types">Plugin data types </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ColorRGB">ColorRGB</a></td>
+	<td class="summary">Data type representing a 24-bit (8-bit/8-bit/8-bit) RGB color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Vector3D">Vector3D</a></td>
+	<td class="summary">Data type representing a 3D cartesian vector.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#RotVector">RotVector</a></td>
+	<td class="summary">Data type comprised of a set of XYZ euler angles for representing a rotation.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ScaleVector">ScaleVector</a></td>
+	<td class="summary">Data type comprised of a set of XYZ scale values for representing a mesh scale.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Module">Module</a></td>
+	<td class="summary">Data type representing a module context.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#NodeAttachment">NodeAttachment</a></td>
+	<td class="summary">Data type representing the particle tethering settings of a particle group.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ParticleGroup">ParticleGroup</a></td>
+	<td class="summary">Data type representing particle groups in the Particle System Plugin.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SpriteParticle">SpriteParticle</a></td>
+	<td class="summary">Data type representing sprite particles in the Particle System Plugin.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#MeshParticle">MeshParticle</a></td>
+	<td class="summary">Data type representing mesh particles in the Particle System Plugin.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ItemInfo">ItemInfo</a></td>
+	<td class="summary">Data type representing the moveable object infos exposed from the game.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#StaticInfo">StaticInfo</a></td>
+	<td class="summary">Data type representing the static object infos exposed from the game.</td>
+	</tr>
+</table>
 <h2><a href="#Plugin_interface_functions">Plugin interface functions </a></h2>
 <table class="function_list">
 	<tr>
 	<td class="name" nowrap><a href="#checkPartLimit">checkPartLimit (group)</a></td>
-	<td class="summary">Checks if the particle group's partLimit (if set) was reached yet.</td>
+	<td class="summary">Checks if the particle group's particle limit (if set) was reached yet.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#createColor">createColor (r, g, b)</a></td>
@@ -112,7 +159,6 @@
 	<td class="summary">Sets the Logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">Logger message</a>).</td>
 	</tr>
 </table>
-<br>
 <h2><a href="#Randomizing_functions">Randomizing functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -132,7 +178,6 @@
 	<td class="summary">Generates a random vector (point) on a 3D sphere of a given radius, centered at origin.</td>
 	</tr>
 </table>
-<br>
 <h2><a href="#Procedural_noise_functions">Procedural noise functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -148,7 +193,6 @@
 	<td class="summary">Takes a noise generator object and produces a pseudo-random curl vector that changes over time.</td>
 	</tr>
 </table>
-<br>
 <h2><a href="#Particle_functions">Particle functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -157,18 +201,18 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partAnimate">partAnimate (part, start, end[, frameRate=1])</a></td>
-	<td class="summary">Animates the particle by cycling over part.spriteIndex (SpriteParticle) or part.meshIndex (MeshParticle).</td>
+	<td class="summary">Animates the particle by cycling over <code>part.spriteIndex</code> (SpriteParticle) or <code>part.meshIndex</code> (meshParticle).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partAttach">partAttach (part, index[, mesh=-1])</a></td>
-	<td class="summary">Manually tethers the particle to a certain moveable and mesh (sets the part.emitterIndex and part.emitterNode).</td>
+	<td class="summary">Manually tethers the particle to a certain moveable and mesh (sets the <code>part.emitterIndex</code> and <code>part.emitterNode</code>).</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partAttractToItem">partAttractToItem (part, index, radius, strength)</a></td>
 	<td class="summary">Attracts the particle towards a specified moveable.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#partAvoidRoomGeometry">partAvoidRoomGeometry (part, wallMargin, <br>floorMargin, strength)</a></td>
+	<td class="name" nowrap><a href="#partAvoidRoomGeometry">partAvoidRoomGeometry (part, wallMargin, floorMargin, strength)</a></td>
 	<td class="summary">Makes the particle repel from room geometry (walls, floors and ceilings).</td>
 	</tr>
 	<tr>
@@ -176,7 +220,7 @@
 	<td class="summary">Tests if the particle collided with a specified moveable item.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#partCollideFloors">partCollideFloors (part, rebound[, margin=0.0<br>[, accurate=false]])</a></td>
+	<td class="name" nowrap><a href="#partCollideFloors">partCollideFloors (part, rebound[, margin=0.0[, accurate=false]])</a></td>
 	<td class="summary">Tests if the particle collided with a floor or ceiling.</td>
 	</tr>
 	<tr>
@@ -185,14 +229,14 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#partDetach">partDetach (part)</a></td>
-	<td class="summary">Manually detaches the particle to from its tethering moveable and mesh (resets the part.emitterIndex and part.emitterNode to default).</td>
+	<td class="summary">Manually detaches the particle to from its tethering moveable and mesh (resets the <code>part.emitterIndex</code> and <code>part.emitterNode</code> to default).</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#partFollow">partFollow (part, target, maxSpeed, outerDist, <br>minDist)</a></td>
+	<td class="name" nowrap><a href="#partFollow">partFollow (part, target, maxSpeed, outerDist, minDist)</a></td>
 	<td class="summary">Makes the particle follow a Vector3D target, while maintaining a minimum spherical distance away from the target.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#partHoming">partHoming (part, targetIndex, targetMesh, <br>turnSpeed[, accel=0.0[, predict=false]])</a></td>
+	<td class="name" nowrap><a href="#partHoming">partHoming (part, targetIndex, targetMesh, turnSpeed[, accel=0.0[, predict=false]])</a></td>
 	<td class="summary">Makes the particle home onto a moveable target (similarly to a projectile).</td>
 	</tr>
 	<tr>
@@ -209,10 +253,9 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#meshShatter">meshShatter (part)</a></td>
-	<td class="summary">Like partKill(), but additionally shatters the mesh of the mesh particle as the part is killed.</td>
+	<td class="summary">Like <a href="docs.html#partKill">partKill</a>, but shatters the mesh of the mesh particle upon killing the instance.</td>
 	</tr>
 </table>
-<br>
 <h2><a href="#Game_interactions">Game interactions </a></h2>
 <table class="function_list">
 	<tr>
@@ -220,7 +263,7 @@
 	<td class="summary">Activates in-level triggers of the sector at coordinates (x, y, z, room).</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#findNearestItem">findNearestItem (pos, radius[, table])</a></td>
+	<td class="name" nowrap><a href="#findNearestItem">findNearestItem (pos, radius[, slots])</a></td>
 	<td class="summary">Finds the closest moveable item to a position within a given radius, from an (optional) list of slots.</td>
 	</tr>
 	<tr>
@@ -244,7 +287,7 @@
 	<td class="summary">Gets the ItemInfo object of the given moveable index.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#getItemJointPosition">getItemJointPosition (index, mesh, xOffset, yOffset, <br>zOffset)</a></td>
+	<td class="name" nowrap><a href="#getItemJointPosition">getItemJointPosition (index, mesh, xOffset, yOffset, zOffset)</a></td>
 	<td class="summary">Gets the joint position of a specified mesh of a moveable.</td>
 	</tr>
 	<tr>
@@ -252,7 +295,7 @@
 	<td class="summary">Gets the joint rotation of a specified mesh of a moveable.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#getItemJointPosRot">getItemJointPosRot (index, mesh, xOffset, yOffset, <br>zOffset)</a></td>
+	<td class="name" nowrap><a href="#getItemJointPosRot">getItemJointPosRot (index, mesh, xOffset, yOffset, zOffset)</a></td>
 	<td class="summary">Fused function that combines <a href="docs.html#getItemJointPosition">getItemJointPosition</a> and <a href="docs.html#getItemJointRotation">getItemJointRotation</a>.</td>
 	</tr>
 	<tr>
@@ -280,7 +323,7 @@
 	<td class="summary">Converts the levelmap room ID to the proper tomb4 room index.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#getRoomStatics">getRoomStatics (room[, table])</a></td>
+	<td class="name" nowrap><a href="#getRoomStatics">getRoomStatics (room[, slots])</a></td>
 	<td class="summary">Retrieves a table of StaticInfo objects placed in a given room.</td>
 	</tr>
 	<tr>
@@ -316,15 +359,14 @@
 	<td class="summary">Tests if there is a wall at coordinates (x, y, z, room)</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#triggerDynamicLight">triggerDynamicLight (x, y, z, intensity, red, green, <br>blue)</a></td>
+	<td class="name" nowrap><a href="#triggerDynamicLight">triggerDynamicLight (x, y, z, intensity, red, green, blue)</a></td>
 	<td class="summary">Triggers a dynamic light at the given (x, y, z) coordinates for one game tick.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#triggerShockwave">triggerShockwave (x, y, z, innerRad, outerRad, speed, <br>life, red, green, blue, xRot, flags)</a></td>
+	<td class="name" nowrap><a href="#triggerShockwave">triggerShockwave (x, y, z, innerRad, outerRad, speed, life, red, green, blue, xRot, flags)</a></td>
 	<td class="summary">Triggers a shockwave effect at the given (x, y, z) coordinates.</td>
 	</tr>
 </table>
-<br>
 <h2><a href="#TRNG_interactions">TRNG interactions </a></h2>
 <table class="function_list">
 	<tr>
@@ -340,7 +382,6 @@
 	<td class="summary">Sets the tomb4 moveable index as the current Selected Item / Found Item index.</td>
 	</tr>
 </table>
-<br>
 <h2><a href="#Math_related_functions">Math-related functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -480,7 +521,6 @@
 	<td class="summary">Wraps the angle x to the range [-&pi;, &pi;].</td>
 	</tr>
 </table>
-<br>
 <h2><a href="#Miscellaneous_functions">Miscellaneous functions </a></h2>
 <table class="function_list">
 	<tr>
@@ -501,6 +541,582 @@
 <br/>
 
 
+    <h2 class="section-header "><a name="Plugin_data_types"></a>Plugin data types </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "ColorRGB"></a>
+    <span class="type">ColorRGB</span>
+    </dt>
+    <dd>
+    Data type representing a 24-bit (8-bit/8-bit/8-bit) RGB color.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">r</span>
+            <span class="types"><span class="type">number</span></span>
+         the Red color component [0, 255] (default 0)
+        </li>
+        <li><span class="parameter">g</span>
+            <span class="types"><span class="type">number</span></span>
+         the Green color component [0, 255] (default 0)
+        </li>
+        <li><span class="parameter">b</span>
+            <span class="types"><span class="type">number</span></span>
+         the Blue color component [0, 255] (default 0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Vector3D"></a>
+    <span class="type">Vector3D</span>
+    </dt>
+    <dd>
+    Data type representing a 3D cartesian vector.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the X coordinate (default 0.0)
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the Y coordinate (default 0.0)
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         the Z coordinate (default 0.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "RotVector"></a>
+    <span class="type">RotVector</span>
+    </dt>
+    <dd>
+    Data type comprised of a set of XYZ euler angles for representing a rotation.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the X angle (radians) [0, 2&pi;] (default 0.0)
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the Y angle (radians) [0, 2&pi;] (default 0.0)
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         the Z angle (radians) [0, 2&pi;] (default 0.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ScaleVector"></a>
+    <span class="type">ScaleVector</span>
+    </dt>
+    <dd>
+    Data type comprised of a set of XYZ scale values for representing a mesh scale.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         the X scale (default 1.0)
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         the Y scale (default 1.0)
+        </li>
+        <li><span class="parameter">z</span>
+            <span class="types"><span class="type">number</span></span>
+         the Z scale (default 1.0)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Module"></a>
+    <span class="type">Module</span>
+    </dt>
+    <dd>
+    Data type representing a module context object.  Created through <a href="docs.html#createModule">createModule</a> function. Only one such object may exist per module file and is returned when importing a module with <a href="docs.html#require">require</a>.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">groups</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the particle groups table of the module (only <span class="keyword"><a href="docs.html#ParticleGroup">ParticleGroup</a></span> values accepted)
+        </li>
+        <li><span class="parameter">params</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the parameters table of the module (<span class="keyword">bool</span>, <span class="keyword">int</span>, <span class="keyword">number</span> or <span class="keyword">string</span> values accepted)
+        </li>
+        <li><span class="parameter">save</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the savegame table of the module (<span class="keyword">bool</span>, <span class="keyword">int</span>, <span class="keyword">number</span> or <span class="keyword">nil</span> values accepted)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "NodeAttachment"></a>
+    <span class="type">NodeAttachment</span>
+    </dt>
+    <dd>
+    Data type representing the particle tethering settings of a particle group.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">cutoff</span>
+            <span class="types"><span class="type">int</span></span>
+         the duration for the tethering (default 0; set NO_CUTOFF for indefinite tethering)
+        </li>
+        <li><span class="parameter">random</span>
+            <span class="types"><span class="type">int</span></span>
+         the randomization for the cutoff duration (default 0)
+        </li>
+        <li><span class="parameter">tetherType</span>
+            <span class="types"><span class="type">int</span></span>
+         the tethering type assigned for the group (default TETHER_ROTATING)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ParticleGroup"></a>
+    <span class="type">ParticleGroup</span>
+    </dt>
+    <dd>
+    Data type representing particle groups in the Particle System Plugin.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">attach</span>
+            <span class="types"><a class="type" href="docs.html#NodeAttachment">NodeAttachment</a></span>
+         the particle tethering settings for the group
+        </li>
+        <li><span class="parameter">autoTrigger</span>
+            <span class="types"><span class="type">bool</span></span>
+         the auto-triggering setting for the group init function (default <span class="keyword">true</span>)
+        </li>
+        <li><span class="parameter">blendMode</span>
+            <span class="types"><span class="type">int</span></span>
+         the blending mode of the group (sprite particles only) (default BLEND_COLORADD)
+        </li>
+        <li><span class="parameter">drawMode</span>
+            <span class="types"><span class="type">int</span></span>
+         the drawing mode of the group (sprite particles only) (default DRAW_SPRITE)
+        </li>
+        <li><span class="parameter">ignorePerspective</span>
+            <span class="types"><span class="type">bool</span></span>
+         setting to ignore perspective (depth) when drawing sprite particles (default <span class="keyword">false</span>)
+        </li>
+        <li><span class="parameter">immortal</span>
+            <span class="types"><span class="type">bool</span></span>
+         the immortality setting of the group particles (default <span class="keyword">false</span>)
+        </li>
+        <li><span class="parameter">lightMode</span>
+            <span class="types"><span class="type">int</span></span>
+         the lighting mode of the group (sprite particles only) (default LIGHT_STATIC)
+        </li>
+        <li><span class="parameter">partCount</span>
+            <span class="types"><span class="type">int</span></span>
+         the current count of active particles for the group (read-only)
+        </li>
+        <li><span class="parameter">partLimit</span>
+            <span class="types"><span class="type">int</span></span>
+         the particle limit setting for the group (default 0; i.e. no limit)
+        </li>
+        <li><span class="parameter">saved</span>
+            <span class="types"><span class="type">bool</span></span>
+         the setting for savegame persistence of the group particles (default <span class="keyword">false</span>)
+        </li>
+        <li><span class="parameter">screenSpace</span>
+            <span class="types"><span class="type">bool</span></span>
+         the screen-space setting of the group (default <span class="keyword">false</span>)
+        </li>
+        <li><span class="parameter">spriteSlot</span>
+            <span class="types"><span class="type">int</span></span>
+         the sprite texture slot used by sprite particles (default SLOT&#95;DEFAULT&#95;SPRITES)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SpriteParticle"></a>
+    <span class="type">SpriteParticle</span>
+    </dt>
+    <dd>
+    Data type representing sprite particles in the Particle System Plugin.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">accel</span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the acceleration vector
+        </li>
+        <li><span class="parameter">data</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the extra data table of the particle (<span class="keyword">bool</span>, <span class="keyword">int</span>, <span class="keyword">number</span> or <span class="keyword">nil</span> values accepted)
+        </li>
+        <li><span class="parameter">emitterIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 emitter item index (default -1)
+        </li>
+        <li><span class="parameter">emitterNode</span>
+            <span class="types"><span class="type">int</span></span>
+         the mesh index of the emitting node; set only after setting <code>emitterIndex</code> (default -1)
+        </li>
+        <li><span class="parameter">lifeCounter</span>
+            <span class="types"><span class="type">int</span></span>
+         the life counter, counting down the life span of the particle [0, 32767] (default 0)
+        </li>
+        <li><span class="parameter">lifeSpan</span>
+            <span class="types"><span class="type">int</span></span>
+         the life span of the particle [0, 32767] (default 0)
+        </li>
+        <li><span class="parameter">pos</span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the position vector
+        </li>
+        <li><span class="parameter">roomIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 room index of the particle; necessary if the particle uses collision functions (default 0)
+        </li>
+        <li><span class="parameter">t</span>
+            <span class="types"><span class="type">number</span></span>
+         the t-parameter value [0.0, 1.0] (read-only)
+        </li>
+        <li><span class="parameter">vel</span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the velocity vector<br><br>
+        </li>
+        <li><span class="parameter">spriteIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the sprite texture index for particle appearance (default 0)
+        </li>
+        <li><span class="parameter">colCust</span>
+            <span class="types"><a class="type" href="docs.html#ColorRGB">ColorRGB</a></span>
+         the current color of particle
+        </li>
+        <li><span class="parameter">colStart</span>
+            <span class="types"><a class="type" href="docs.html#ColorRGB">ColorRGB</a></span>
+         the starting color of particle
+        </li>
+        <li><span class="parameter">colEnd</span>
+            <span class="types"><a class="type" href="docs.html#ColorRGB">ColorRGB</a></span>
+         the ending color of particle
+        </li>
+        <li><span class="parameter">fadeIn</span>
+            <span class="types"><span class="type">int</span></span>
+         the fade-in duration of the particle [0, 32767] (default 0)
+        </li>
+        <li><span class="parameter">fadeOut</span>
+            <span class="types"><span class="type">int</span></span>
+         the fade-out duration of the particle [0, 32767] (default 0)
+        </li>
+        <li><span class="parameter">rot</span>
+            <span class="types"><span class="type">number</span></span>
+         the billboard rotation of the particle (radians, default 0.0)
+        </li>
+        <li><span class="parameter">rotVel</span>
+            <span class="types"><span class="type">number</span></span>
+         the billboard angular velocity of the particle (radians, default 0.0)
+        </li>
+        <li><span class="parameter">rot3D</span>
+            <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
+         the 3D sprite rotation of the particle
+        </li>
+        <li><span class="parameter">rotVel3D</span>
+            <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
+         the 3D sprite angular velocity of the particle
+        </li>
+        <li><span class="parameter">sizeCust</span>
+            <span class="types"><span class="type">int</span></span>
+         the current size of the particle [0, 65535]
+        </li>
+        <li><span class="parameter">sizeStart</span>
+            <span class="types"><span class="type">int</span></span>
+         the starting size of the particle [0, 65535]
+        </li>
+        <li><span class="parameter">sizeEnd</span>
+            <span class="types"><span class="type">int</span></span>
+         the ending size of the particle [0, 65535]
+        </li>
+        <li><span class="parameter">sizeRatio</span>
+            <span class="types"><span class="type">number</span></span>
+         the width/height ratio of the particle [-1.0, 1.0]
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "MeshParticle"></a>
+    <span class="type">MeshParticle</span>
+    </dt>
+    <dd>
+    Data type representing mesh particles in the Particle System Plugin.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">accel</span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the acceleration vector
+        </li>
+        <li><span class="parameter">data</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.4/manual.html#6.6">table</a></span>
+         the extra data table of the particle (<span class="keyword">bool</span>, <span class="keyword">int</span>, <span class="keyword">number</span> or <span class="keyword">nil</span> values accepted)
+        </li>
+        <li><span class="parameter">emitterIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 emitter item index (default -1)
+        </li>
+        <li><span class="parameter">emitterNode</span>
+            <span class="types"><span class="type">int</span></span>
+         the mesh index of the emitting node; set only after setting <code>emitterIndex</code> (default -1)
+        </li>
+        <li><span class="parameter">lifeCounter</span>
+            <span class="types"><span class="type">int</span></span>
+         the life counter, counting down the life span of the particle [0, 32767] (default 0)
+        </li>
+        <li><span class="parameter">lifeSpan</span>
+            <span class="types"><span class="type">int</span></span>
+         the life span of the particle [0, 32767] (default 0)
+        </li>
+        <li><span class="parameter">pos</span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the position vector
+        </li>
+        <li><span class="parameter">roomIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 room index of the particle; necessary if the particle uses collision functions (default 0)
+        </li>
+        <li><span class="parameter">t</span>
+            <span class="types"><span class="type">number</span></span>
+         the t-parameter value [0.0, 1.0] (read-only)
+        </li>
+        <li><span class="parameter">vel</span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the velocity vector<br><br>
+        </li>
+        <li><span class="parameter">object</span>
+            <span class="types"><span class="type">int</span></span>
+         the moveable object slot to which <code>meshIndex</code> refers to
+        </li>
+        <li><span class="parameter">meshIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the index of mesh to take for the mesh particle appearance
+        </li>
+        <li><span class="parameter">rot</span>
+            <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
+         the 3D mesh rotation
+        </li>
+        <li><span class="parameter">rotVel</span>
+            <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
+         the 3D mesh angular velocity
+        </li>
+        <li><span class="parameter">scale</span>
+            <span class="types"><a class="type" href="docs.html#ScaleVector">ScaleVector</a></span>
+         the XYZ scale of the mesh
+        </li>
+        <li><span class="parameter">transparency</span>
+            <span class="types"><span class="type">int</span></span>
+         the alpha transparency of the mesh
+        </li>
+        <li><span class="parameter">tint</span>
+            <span class="types"><a class="type" href="docs.html#ColorRGB">ColorRGB</a></span>
+         the tint of the mesh (if statically-lit)
+        </li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "ItemInfo"></a>
+    <span class="type">ItemInfo</span>
+    </dt>
+    <dd>
+    Data type representing the moveable object infos exposed from the game.  Can be obtained with <a href="docs.html#getItemInfo">getItemInfo</a>.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">animNumber</span>
+            <span class="types"><span class="type">int</span></span>
+         the current animation number of the item
+        </li>
+        <li><span class="parameter">frameNumber</span>
+            <span class="types"><span class="type">int</span></span>
+         the frame number relative to current <code>animNumber</code>
+        </li>
+        <li><span class="parameter">currentAnimState</span>
+            <span class="types"><span class="type">int</span></span>
+         the current anim state number of the item
+        </li>
+        <li><span class="parameter">goalAnimState</span>
+            <span class="types"><span class="type">int</span></span>
+         the goal anim state number of the item
+        </li>
+        <li><span class="parameter">speed</span>
+            <span class="types"><span class="type">int</span></span>
+         the horizontal speed of the item
+        </li>
+        <li><span class="parameter">fallSpeed</span>
+            <span class="types"><span class="type">int</span></span>
+         the vertical speed of the item
+        </li>
+        <li><span class="parameter">floorDistance</span>
+            <span class="types"><span class="type">int</span></span>
+         the distance to the floor (read-only, only used for certain slots)
+        </li>
+        <li><span class="parameter">hitPoints</span>
+            <span class="types"><span class="type">int</span></span>
+         the hit points (health) of the item
+        </li>
+        <li><span class="parameter">itemFlag1</span>
+            <span class="types"><span class="type">int</span></span>
+         a numeric field used for various purposes in certain slots
+        </li>
+        <li><span class="parameter">itemFlag2</span>
+            <span class="types"><span class="type">int</span></span>
+         a numeric field used for various purposes in certain slots
+        </li>
+        <li><span class="parameter">itemFlag3</span>
+            <span class="types"><span class="type">int</span></span>
+         a numeric field used for various purposes in certain slots
+        </li>
+        <li><span class="parameter">itemFlag4</span>
+            <span class="types"><span class="type">int</span></span>
+         a numeric field used for various purposes in certain slots
+        </li>
+        <li><span class="parameter">meshBits</span>
+            <span class="types"><span class="type">int</span></span>
+         the visibility bit-flags of meshes in the item (read-only)
+        </li>
+        <li><span class="parameter">meshes</span>
+            <span class="types"><span class="type">int</span></span>
+         the count of meshes in the item's moveable slot (read-only)
+        </li>
+        <li><span class="parameter">ocbNumber</span>
+            <span class="types"><span class="type">int</span></span>
+         the OCB number set for the item
+        </li>
+        <li><span class="parameter">pos</span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the XYZ coordinates of the item
+        </li>
+        <li><span class="parameter">roomIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 room index of the item (read-only)
+        </li>
+        <li><span class="parameter">rot</span>
+            <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
+         the XYZ rotation angles of the item
+        </li>
+        <li><span class="parameter">slot</span>
+            <span class="types"><span class="type">int</span></span>
+         the moveable slot number of the item (read-only)
+        </li>
+        <li><span class="parameter">tombIndex</span>
+            <span class="types"><span class="type">int</span></span>
+         the tomb4 moveable index of the item (read-only)
+        </li>
+        <li><span class="parameter">triggered</span>
+            <span class="types"><span class="type">bool</span></span>
+         activation / triggering status of the item (read-only)<ul><li><span class="keyword">true</span> if item is triggered or active</li><li><span class="keyword">false</span> if item is untriggered, dead or inactive</li></ul>
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "StaticInfo"></a>
+    <span class="type">StaticInfo</span>
+    </dt>
+    <dd>
+    Data type representing the static object infos exposed from the game.  Single StaticInfo is returned by <a href="docs.html#getStatic">getStatic</a>, while <a href="docs.html#getRoomStatics">getRoomStatics</a> returns a table of StaticInfo.
+
+
+    <h3>Fields:</h3>
+    <ul class="field-list">
+        <li><span class="parameter">ocbFlags</span>
+            <span class="types"><span class="type">int</span></span>
+         the OCB / flags of the static (read-only)
+        </li>
+        <li><span class="parameter">pos</span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the XYZ coordinates of the static (read-only)
+        </li>
+        <li><span class="parameter">rot</span>
+            <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
+         rotation of the static (only Y rotation, read-only)
+        </li>
+        <li><span class="parameter">slot</span>
+            <span class="types"><span class="type">int</span></span>
+         the static slot number of the static (read-only)
+        </li>
+        <li><span class="parameter">tint</span>
+            <span class="types"><a class="type" href="docs.html#ColorRGB">ColorRGB</a></span>
+         the color-tint of the static (read-only)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
     <h2 class="section-header "><a name="Plugin_interface_functions"></a>Plugin interface functions </h2>
 
     <dl class="function">
@@ -509,13 +1125,13 @@
     <strong>checkPartLimit (group)</strong>
     </dt>
     <dd>
-    Checks if the particle group's partLimit (if set) was reached yet.  Used when managing particle effects with limited spawn counts.
+    Checks if the particle group's particle limit (if set) was reached yet.  Used when managing particle effects with limited spawn counts.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">group</span>
-            <span class="types"><span class="type">ParticleGroup</span></span>
+            <span class="types"><a class="type" href="docs.html#ParticleGroup">ParticleGroup</a></span>
          the particle group
         </li>
     </ul>
@@ -524,7 +1140,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        <i><strong>true</strong></i> if limit not reached yet (or partLimit not set for group); <i><strong>false</strong></i> if limit reached
+        <span class="keyword">true</span> if limit not reached yet (or <code>group.partLimit</code> not set for group); <span class="keyword">false</span> if limit reached
     </ol>
 
 
@@ -558,7 +1174,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">ColorRGB</span></span>
+           <span class="types"><a class="type" href="docs.html#ColorRGB">ColorRGB</a></span>
         the ColorRGB object
     </ol>
 
@@ -595,7 +1211,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">ColorRGB</span></span>
+           <span class="types"><a class="type" href="docs.html#ColorRGB">ColorRGB</a></span>
         the ColorRGB object
     </ol>
 
@@ -615,18 +1231,18 @@
     <ul>
         <li><span class="parameter">init</span>
             <span class="types">optional <span class="type">func</span></span>
-         the initialization function; pass <i><strong>nil</strong></i> if no init function desired
+         the initialization function; pass <span class="keyword">nil</span> if no init function desired
         </li>
         <li><span class="parameter">update</span>
             <span class="types">optional <span class="type">func</span></span>
-         the update function; pass <i><strong>nil</strong></i> if no update function desired
+         the update function; pass <span class="keyword">nil</span> if no update function desired
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">ParticleGroup</span></span>
+           <span class="types"><a class="type" href="docs.html#ParticleGroup">ParticleGroup</a></span>
         the ParticleGroup object
     </ol>
 
@@ -645,7 +1261,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">group</span>
-            <span class="types"><span class="type">ParticleGroup</span></span>
+            <span class="types"><a class="type" href="docs.html#ParticleGroup">ParticleGroup</a></span>
          the group the new particle belongs to
         </li>
     </ul>
@@ -653,12 +1269,12 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types">optional <span class="type">MeshParticle</span></span>
-        the MeshParticle object; <i><strong>nil</strong></i> if particle Limit reached
+           <span class="types">optional <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
+        the MeshParticle object; <span class="keyword">nil</span> if particle Limit reached
     </ol>
 
     <h3>Raises:</h3>
-    [<strong>WARN</strong>] if group.partLimit was set and limit was exceeded
+    [<strong>WARN</strong>] if <code>group.partLimit</code> was set and limit was exceeded
 
 
 
@@ -675,7 +1291,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Module</span></span>
+           <span class="types"><a class="type" href="docs.html#Module">Module</a></span>
         the Module context object
     </ol>
 
@@ -764,7 +1380,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">group</span>
-            <span class="types"><span class="type">ParticleGroup</span></span>
+            <span class="types"><a class="type" href="docs.html#ParticleGroup">ParticleGroup</a></span>
          the group the new particle belongs to
         </li>
     </ul>
@@ -772,12 +1388,12 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types">optional <span class="type">SpriteParticle</span></span>
-        the SpriteParticle object; <i><strong>nil</strong></i> if particle Limit reached
+           <span class="types">optional <a class="type" href="docs.html#SpriteParticle">SpriteParticle</a></span>
+        the SpriteParticle object; <span class="keyword">nil</span> if particle Limit reached
     </ol>
 
     <h3>Raises:</h3>
-    [<strong>WARN</strong>] if group.partLimit was set and limit was exceeded
+    [<strong>WARN</strong>] if <code>group.partLimit</code> was set and limit was exceeded
 
 
 
@@ -809,7 +1425,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the Vector3D object
     </ol>
 
@@ -822,20 +1438,20 @@
     <strong>invokeInit (group)</strong>
     </dt>
     <dd>
-    Invokes the init function of specified particle group.  Can only be used for groups with autoTrigger set to <i><strong>false</strong></i>.
+    Invokes the init function of specified particle group.  Can only be used for groups with auto-triggering set to <span class="keyword">false</span>.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">group</span>
-            <span class="types"><span class="type">ParticleGroup</span></span>
+            <span class="types"><a class="type" href="docs.html#ParticleGroup">ParticleGroup</a></span>
          the group of which to manually invoke (call) the init function
         </li>
     </ul>
 
 
     <h3>Raises:</h3>
-    [<strong>ERROR</strong>] if the group.autoTrigger is set to <i><strong>true</strong></i>
+    [<strong>ERROR</strong>] if the <code>group.autoTrigger</code> is set to <span class="keyword">true</span>
 
 
 
@@ -851,7 +1467,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">group</span>
-            <span class="types"><span class="type">ParticleGroup</span></span>
+            <span class="types"><a class="type" href="docs.html#ParticleGroup">ParticleGroup</a></span>
          the group of which to kill (clear) all active particles
         </li>
     </ul>
@@ -907,8 +1523,8 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types">optional <span class="type">Module</span></span>
-        the module context object associated with the module script (if not present, returns <i><strong>nil</strong></i>)
+           <span class="types">optional <a class="type" href="docs.html#Module">Module</a></span>
+        the module context object associated with the module script (if not present, returns <span class="keyword">nil</span>).
     </ol>
 
     <h3>Raises:</h3>
@@ -922,7 +1538,7 @@
     <strong>setLogLevel (logLevel)</strong>
     </dt>
     <dd>
-    Sets the logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">logger message</a>).  Can only be called in the level-loading phase (i.e. inside a level script).
+    Sets the Logging level (lowest permitted rank of <a href="../coder/Chapter2.html#id3">Logger message</a>).  Can only be called in the level-loading phase (i.e. inside a level script).
 
 
     <h3>Parameters:</h3>
@@ -939,8 +1555,6 @@
 
 </dd>
 </dl>
-<br/>
-<br/>
     <h2 class="section-header "><a name="Randomizing_functions"></a>Randomizing functions </h2>
 
     <dl class="function">
@@ -1052,7 +1666,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the random vector from origin point (0, 0, 0)
     </ol>
 
@@ -1061,8 +1675,6 @@
 
 </dd>
 </dl>
-<br/>
-<br/>
     <h2 class="section-header "><a name="Procedural_noise_functions"></a>Procedural noise functions </h2>
 
     <dl class="function">
@@ -1152,7 +1764,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         curl vector; if only x, y inputs are given, generates a vector with zero Z component (x, y, 0.0), otherwise generates a full 3D vector (x, y, z)
     </ol>
 
@@ -1200,7 +1812,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         curl vector; if only x, y inputs are given, generates a vector with zero Z component (x, y, 0.0), otherwise generates a full 3D vector (x, y, z)
     </ol>
 
@@ -1209,8 +1821,6 @@
 
 </dd>
 </dl>
-<br/>
-<br/>
     <h2 class="section-header "><a name="Particle_functions"></a>Particle functions </h2>
 
     <dl class="function">
@@ -1219,13 +1829,13 @@
     <strong>partAbsPos (part)</strong>
     </dt>
     <dd>
-    Calculates the absolute position of the particle in world coordinates instead of relative coordinates.  If the particle is not tethered to any moveable, returns vector identical to <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.pos</span>.
+    Calculates the absolute position of the particle in world coordinates instead of relative coordinates.  If the particle is not tethered to any moveable, returns vector identical to <code>part.pos</code>.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
     </ul>
@@ -1233,7 +1843,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the absolute position of the particle
     </ol>
 
@@ -1246,13 +1856,13 @@
     <strong>partAnimate (part, start, end[, frameRate=1])</strong>
     </dt>
     <dd>
-    Animates the particle by cycling over <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.spriteIndex</span> (<span class="type">SpriteParticle</span>) or <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.meshIndex</span> (<span class="type">MeshParticle</span>).
+    Animates the particle by cycling over <code>part.spriteIndex</code> (SpriteParticle) or <code>part.meshIndex</code> (meshParticle).
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">start</span>
@@ -1280,13 +1890,13 @@
     <strong>partAttach (part, index[, mesh=-1])</strong>
     </dt>
     <dd>
-    Manually tethers the particle to a certain moveable and mesh (sets the <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.emitterIndex</span> and <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.emitterNode</span>).
+    Manually tethers the particle to a certain moveable and mesh (sets the <code>part.emitterIndex</code> and <code>part.emitterNode</code>).
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">index</span>
@@ -1318,7 +1928,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">index</span>
@@ -1353,7 +1963,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">wallMargin</span>
@@ -1386,7 +1996,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">index</span>
@@ -1403,7 +2013,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        <i><strong>true</strong></i> if collision with moveable occured; <i><strong>false</strong></i> otherwise
+        <span class="keyword">true</span> if collision with moveable occured; <span class="keyword">false</span> otherwise
     </ol>
 
     <h3>Raises:</h3>
@@ -1423,7 +2033,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">rebound</span>
@@ -1438,7 +2048,7 @@
         <li><span class="parameter">accurate</span>
             <span class="types"><span class="type">bool</span></span>
          controls if the collision is geometrically correct, respecting slopes
-         (<em>default</em> <i><strong>false</strong></i>)
+         (<em>default</em> <span class="keyword">false</span>)
         </li>
     </ul>
 
@@ -1446,7 +2056,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        <i><strong>true</strong></i> if collision with surface occured (and particle is reflected); <i><strong>false</strong></i> otherwise
+        <span class="keyword">true</span> if collision with surface occured (and particle is reflected); <span class="keyword">false</span> otherwise
     </ol>
 
 
@@ -1464,7 +2074,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">rebound</span>
@@ -1477,7 +2087,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        <i><strong>true</strong></i> if collision with wall occured (and particle is reflected); <i><strong>false</strong></i> otherwise
+        <span class="keyword">true</span> if collision with wall occured (and particle is reflected); <span class="keyword">false</span> otherwise
     </ol>
 
 
@@ -1489,13 +2099,13 @@
     <strong>partDetach (part)</strong>
     </dt>
     <dd>
-    Manually detaches the particle to from its tethering moveable and mesh (resets the <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.emitterIndex</span> and <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.emitterNode</span> to default).
+    Manually detaches the particle to from its tethering moveable and mesh (resets the <code>part.emitterIndex</code> and <code>part.emitterNode</code> to default).
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
     </ul>
@@ -1516,11 +2126,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">target</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the target position to follow
         </li>
         <li><span class="parameter">maxSpeed</span>
@@ -1553,7 +2163,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">targetIndex</span>
@@ -1562,7 +2172,7 @@
         </li>
         <li><span class="parameter">targetMesh</span>
             <span class="types">optional <span class="type">int</span></span>
-         the targeted mesh or <i><strong>nil</strong></i> (no mesh)
+         the targeted mesh or <span class="keyword">nil</span> (no mesh)
         </li>
         <li><span class="parameter">turnSpeed</span>
             <span class="types"><span class="type">number</span></span>
@@ -1575,8 +2185,8 @@
         </li>
         <li><span class="parameter">predict</span>
             <span class="types"><span class="type">bool</span></span>
-         if set to <i><strong>true</strong></i>, predicts the position of moving targets
-         (<em>default</em> <i><strong>false</strong></i>)
+         if set to <span class="keyword">true</span>, predicts the position of moving targets
+         (<em>default</em> <span class="keyword">false</span>)
         </li>
     </ul>
 
@@ -1592,13 +2202,13 @@
     <strong>partKill (part)</strong>
     </dt>
     <dd>
-    Immediately kills (and deactivates) the particle instance. Use this function instead of manually setting <span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">part.lifeCounter</span> to 0.
+    Immediately kills (and deactivates) the particle instance.  Use this function instead of manually setting <code>part.lifeCounter</code> to 0.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
     </ul>
@@ -1619,7 +2229,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">maxSpeed</span>
@@ -1644,7 +2254,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">SpriteParticle</span> or <span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#SpriteParticle">SpriteParticle</a> or <a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the particle instance
         </li>
         <li><span class="parameter">strength</span>
@@ -1663,13 +2273,13 @@
     <strong>meshShatter (part)</strong>
     </dt>
     <dd>
-    Like partKill(), but additionally shatters the mesh of the mesh particle as the part is killed.
+    Like <a href="docs.html#partKill">partKill</a>, but shatters the mesh of the mesh particle upon killing the instance.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">part</span>
-            <span class="types"><span class="type">MeshParticle</span></span>
+            <span class="types"><a class="type" href="docs.html#MeshParticle">MeshParticle</a></span>
          the mesh particle instance
         </li>
     </ul>
@@ -1682,8 +2292,6 @@
 
 </dd>
 </dl>
-<br/>
-<br/>
     <h2 class="section-header "><a name="Game_interactions"></a>Game interactions </h2>
 
     <dl class="function">
@@ -1716,7 +2324,7 @@
         <li><span class="parameter">heavy</span>
             <span class="types"><span class="type">bool</span></span>
          activate heavy triggers
-         (<em>default</em> <i><strong>false</strong></i>)
+         (<em>default</em> <span class="keyword">false</span>)
         </li>
         <li><span class="parameter">flags</span>
             <span class="types"><span class="type">int</span></span>
@@ -1732,7 +2340,7 @@
 </dd>
     <dt>
     <a name = "findNearestItem"></a>
-    <strong>findNearestItem (pos, radius[, table])</strong>
+    <strong>findNearestItem (pos, radius[, slots])</strong>
     </dt>
     <dd>
     Finds the closest moveable item to a position within a given radius, from an (optional) list of slots.
@@ -1741,14 +2349,14 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">pos</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the position to start searching from
         </li>
         <li><span class="parameter">radius</span>
             <span class="types"><span class="type">number</span></span>
          the maximum search radius (in units) away from pos
         </li>
-        <li><span class="parameter">table</span>
+        <li><span class="parameter">slots</span>
             <span class="types"><span class="type">{int,...}</span></span>
          table of slot indices / SLOT_ constants
          (<em>optional</em>)
@@ -1759,7 +2367,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        tomb4 index of nearest moveable item matching criteria; <i><strong>nil</strong></i> if no item found
+        tomb4 index of nearest moveable item matching criteria; <span class="keyword">nil</span> if no item found
     </ol>
 
 
@@ -1798,7 +2406,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        the ceiling height at the given coordinates; <i><strong>nil</strong></i> if sector is a wall
+        the ceiling height at the given coordinates; <span class="keyword">nil</span> if sector is a wall
     </ol>
 
 
@@ -1837,7 +2445,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        the floor height at the given coordinates; <i><strong>nil</strong></i> if sector is a wall
+        the floor height at the given coordinates; <span class="keyword">nil</span> if sector is a wall
     </ol>
 
 
@@ -1875,8 +2483,8 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types">optional <span class="type">Vector3D</span></span>
-        the normal vector at the given coordinates; <i><strong>nil</strong></i> if sector is a wall
+           <span class="types">optional <a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+        the normal vector at the given coordinates; <span class="keyword">nil</span> if sector is a wall
     </ol>
 
 
@@ -1922,7 +2530,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">ItemInfo</span></span>
+           <span class="types"><a class="type" href="docs.html#ItemInfo">ItemInfo</a></span>
         the associated ItemInfo object
     </ol>
 
@@ -1967,7 +2575,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the position vector of the joint
     </ol>
 
@@ -2000,7 +2608,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">RotVector</span></span>
+           <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
         the rotation vector of the joint
     </ol>
 
@@ -2045,10 +2653,10 @@
     <h3>Returns:</h3>
     <ol>
         <li>
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the position vector of the joint</li>
         <li>
-           <span class="types"><span class="type">RotVector</span></span>
+           <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
         the rotation vector of the joint</li>
     </ol>
 
@@ -2147,7 +2755,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        tomb4 index of aimed enemy; <i><strong>nil</strong></i> if no enemy is targeted
+        tomb4 index of aimed enemy; <span class="keyword">nil</span> if no enemy is targeted
     </ol>
 
 
@@ -2210,7 +2818,7 @@
 </dd>
     <dt>
     <a name = "getRoomStatics"></a>
-    <strong>getRoomStatics (room[, table])</strong>
+    <strong>getRoomStatics (room[, slots])</strong>
     </dt>
     <dd>
     Retrieves a table of StaticInfo objects placed in a given room.  An optional table of specific static slots can be provided, otherwise all statics will be gathered.
@@ -2222,7 +2830,7 @@
             <span class="types"><span class="type">int</span></span>
          the tomb4 room index
         </li>
-        <li><span class="parameter">table</span>
+        <li><span class="parameter">slots</span>
             <span class="types"><span class="type">{int,...}</span></span>
          table of static slots / SLOT_constants
          (<em>optional</em>)
@@ -2232,7 +2840,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">{StaticInfo,...}</span></span>
+           <span class="types"><a class="type" href="docs.html#StaticInfo">{StaticInfo,...}</a></span>
         table of StaticInfo objects
     </ol>
 
@@ -2259,7 +2867,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">StaticInfo</span></span>
+           <span class="types"><a class="type" href="docs.html#StaticInfo">StaticInfo</a></span>
         the associated StaticInfo object
     </ol>
 
@@ -2330,7 +2938,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        the water depth at the given coordinates; <i><strong>nil</strong></i> if sector is a wall
+        the water depth at the given coordinates; <span class="keyword">nil</span> if sector is a wall
     </ol>
 
 
@@ -2369,7 +2977,7 @@
     <ol>
 
            <span class="types">optional <span class="type">int</span></span>
-        the water surface height at the given coordinates; <i><strong>nil</strong></i> if no water room or sector is a wall
+        the water surface height at the given coordinates; <span class="keyword">nil</span> if no water room or sector is a wall
     </ol>
 
 
@@ -2395,7 +3003,7 @@
     <strong>soundEffect (sfx[, pos=nil[, flags]])</strong>
     </dt>
     <dd>
-    Plays a specified sound effect.  If <i><strong>nil</strong></i> is passed for pos, plays the sound globally.
+    Plays a specified sound effect.  If <span class="keyword">nil</span> is passed for pos, plays the sound globally.
 
 
     <h3>Parameters:</h3>
@@ -2405,9 +3013,9 @@
          sound effect ID number
         </li>
         <li><span class="parameter">pos</span>
-            <span class="types"><span class="type">Vector3D</span></span>
-         the coordinates for the sound location or <i><strong>nil</strong></i>
-         (<em>default</em> <i><strong>nil</strong></i>)
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
+         the coordinates for the sound location or <span class="keyword">nil</span>
+         (<em>default</em> <span class="keyword">nil</span>)
         </li>
         <li><span class="parameter">flags</span>
             <span class="types"><span class="type">int</span></span>
@@ -2436,7 +3044,7 @@
          the tomb4 item index
         </li>
         <li><span class="parameter">pos</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the position of the testing sphere
         </li>
         <li><span class="parameter">radius</span>
@@ -2490,7 +3098,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        <i><strong>true</strong></i> if there is a wall/block, <i><strong>false</strong></i> if there is free space (no wall)
+        <span class="keyword">true</span> if there is a wall/block, <span class="keyword">false</span> if there is free space (no wall)
     </ol>
 
 
@@ -2608,8 +3216,6 @@
 
 </dd>
 </dl>
-<br/>
-<br/>
     <h2 class="section-header "><a name="TRNG_interactions"></a>TRNG interactions </h2>
 
     <dl class="function">
@@ -2638,7 +3244,7 @@
     <strong>performTriggerGroup (id)</strong>
     </dt>
     <dd>
-    Executes a TriggerGroup from the current level.  If the TriggerGroup has any Condition triggers, it will return the boolean result of the conditions (all condition must pass for the final result to be <i><strong>true</strong></i>).
+    Executes a TriggerGroup from the current level.  If the TriggerGroup has any Condition triggers, it will return the boolean result of the conditions (all condition must pass for the final result to be <span class="keyword">true</span>).
 
 
     <h3>Parameters:</h3>
@@ -2653,7 +3259,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        the execution status of the TG (always <i><strong>true</strong></i> if no Condition triggers)
+        the execution status of the TG (always <span class="keyword">true</span> if no Condition triggers)
     </ol>
 
 
@@ -2665,7 +3271,7 @@
     <strong>setSelectedItem (index)</strong>
     </dt>
     <dd>
-    Sets the tomb4 moveable index as the current Selected Item / Found Item index.  Can be used to apply TRNG features to moveables obtained through Lua scripts (e.g. by redirecting with <strong>TGROUP&#95;USE&#95;FOUND&#95;ITEM&#95;INDEX</strong> in a TriggerGroup executed with <a href="docs.html#performTriggerGroup">performTriggerGroup</a>).
+    Sets the tomb4 moveable index as the current Selected Item / Found Item index.  Can be used to apply TRNG features to moveables obtained through Lua scripts (e.g. by redirecting with TGROUP&#95;USE&#95;FOUND&#95;ITEM&#95;INDEX in a TriggerGroup executed with <a href="docs.html#performTriggerGroup">performTriggerGroup</a>).
 
 
     <h3>Parameters:</h3>
@@ -2684,8 +3290,6 @@
 
 </dd>
 </dl>
-<br/>
-<br/>
     <h2 class="section-header "><a name="Math_related_functions"></a>Math-related functions </h2>
 
     <dl class="function">
@@ -2986,11 +3590,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">vec1</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the first vector
         </li>
         <li><span class="parameter">vec2</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the second vector
         </li>
     </ul>
@@ -3017,11 +3621,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">vec1</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the first vector
         </li>
         <li><span class="parameter">vec2</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the second vector
         </li>
         <li><span class="parameter">dist</span>
@@ -3259,7 +3863,7 @@
     <strong>remap (x, oldMin, oldMax, newMin, newMax)</strong>
     </dt>
     <dd>
-    Linearly remaps the value x from the original range [oldMin, oldMax] to the new range [newMin, newMax]. Output equivalent to:<br><span style="font-family: 'Consolas', Courier, monospace; font-weight: bolder;">lerp(newMin, newMax, lerpInverse(oldMin, oldMax, x))</span>.
+    Linearly remaps the value x from the original range [oldMin, oldMax] to the new range [newMin, newMax].  Output equivalent to:<br><code>lerp(newMin, newMax, lerpInverse(oldMin, oldMax, x))</code>.
 
 
     <h3>Parameters:</h3>
@@ -3308,7 +3912,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">vec</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the input vector
         </li>
         <li><span class="parameter">x</span>
@@ -3328,7 +3932,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the rotated vector
     </ol>
 
@@ -3347,11 +3951,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">vec</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the input vector
         </li>
         <li><span class="parameter">axis</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the rotation axis
         </li>
         <li><span class="parameter">theta</span>
@@ -3363,7 +3967,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the rotated vector
     </ol>
 
@@ -3382,7 +3986,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">vec</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the input direction vector
         </li>
     </ul>
@@ -3390,7 +3994,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">RotVector</span></span>
+           <span class="types"><a class="type" href="docs.html#RotVector">RotVector</a></span>
         the RotVector object
     </ol>
 
@@ -3506,7 +4110,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the Vector3D object containing XYZ cartesian coordinates
     </ol>
 
@@ -3583,11 +4187,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">u</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the first vector
         </li>
         <li><span class="parameter">v</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the second vector
         </li>
     </ul>
@@ -3595,7 +4199,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the cross product between <strong>u</strong> and <strong>v</strong>
     </ol>
 
@@ -3614,11 +4218,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">u</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the first vector
         </li>
         <li><span class="parameter">v</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the second vector
         </li>
     </ul>
@@ -3645,7 +4249,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">v</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the input vector
         </li>
     </ul>
@@ -3672,7 +4276,7 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">v</span>
-            <span class="types"><span class="type">Vector3D</span></span>
+            <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
          the input vector
         </li>
     </ul>
@@ -3680,7 +4284,7 @@
     <h3>Returns:</h3>
     <ol>
 
-           <span class="types"><span class="type">Vector3D</span></span>
+           <span class="types"><a class="type" href="docs.html#Vector3D">Vector3D</a></span>
         the normalized vector <strong>v&#770;</strong>
     </ol>
 
@@ -3716,8 +4320,6 @@
 
 </dd>
 </dl>
-<br/>
-<br/>
     <h2 class="section-header "><a name="Miscellaneous_functions"></a>Miscellaneous functions </h2>
 
     <dl class="function">
@@ -3745,7 +4347,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        <i><strong>true</strong></i> if all of testFlags occured within checkedValue; <i><strong>false</strong></i> if at least one flag is missing
+        <span class="keyword">true</span> if all of testFlags occured within checkedValue; <span class="keyword">false</span> if at least one flag is missing
     </ol>
 
 
@@ -3776,7 +4378,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        <i><strong>true</strong></i> if at least one flag occured within checkedValue; <i><strong>false</strong></i> none of testFlags is present
+        <span class="keyword">true</span> if at least one flag occured within checkedValue; <span class="keyword">false</span> none of testFlags is present
     </ol>
 
 
@@ -3808,7 +4410,7 @@
     <ol>
 
            <span class="types"><span class="type">bool</span></span>
-        <i><strong>true</strong></i> if the current game tick is on the interval; <i><strong>false</strong></i> otherwise
+        <span class="keyword">true</span> if the current game tick is on the interval; <span class="keyword">false</span> otherwise
     </ol>
 
     <h3>Raises:</h3>
@@ -3824,7 +4426,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
-<i style="float:right;">Last updated 2025-12-31 15:49:35 </i>
+<i style="float:right;">Last updated 2026-01-02 18:46:05 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
